@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Fall Detection and Classification{% endblock %}
+
+{% block content %}
+<!-- Page content -->
+<main>
+    <div class="container-fluid">
+        <div class="text-center">
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="img-fluid small-image">
+        </div>
+        <h4 class="text-center" id="ucsm">University of Computer Studies, Mandalay</h4>
+        <h2 class="text-center">Fall Detection and Classification with Multiple Cameras based on Features Fusion
+            and CNN-LSTM
+        </h2>
+    </div>
+    <div class="row">
+        <div class="col-md-4 text-center info">
+            <p>Presented By:</p>
+            <p>Win Pa Pa San</p>
+            <p>8Ph.D-6, MKPT-6830</p>
+        </div>
+        <div class="col-md-4 text-center info">
+            <p>Third Seminar</p>
+            <p>7.1.2025</p>
+        </div>
+        <div class="col-md-4 text-center info">
+            <p>Supervised By:</p>
+            <p>Dr. Myo Khaing</p>
+        </div>
+    </div>
+</main>
+<!-- End Page Content -->
+<style>
+    .small-image {
+        max-width: 100px;
+        height: auto;
+    }
+</style>
+{% endblock %}
+
+</body>
+
+</html>

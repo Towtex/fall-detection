@@ -1,0 +1,17 @@
+#ucsm {
+    color: darkblue;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+#main_content {
+    text-decoration: underline;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.info {
+    margin-top: 50px;
+    font-size: 1.2rem;
+    font-weight: bold;
+}

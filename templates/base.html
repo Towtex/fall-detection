@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='logo.png') }}">
+    <title>{% block title %}Fall Detection and Classification{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    <header>
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-sm navbar-dark bg-dark fixed-top">
+            <ul class="nav nav-pills">
+                <li class="nav-item">
+                    <a class="nav-link text-white {% if active_page == 'index' %}active{% endif %}"
+                        href="index">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white {% if active_page == 'preprocessing' %}active{% endif %}"
+                        href="preprocessing">Preprocessing</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white {% if active_page == 'training' %}active{% endif %}"
+                        href="training">Training</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white {% if active_page == 'testing' %}active{% endif %}"
+                        href="testing">Testing</a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container" style="margin-top: 80px;">
+        {% block content %}{% endblock %}
+    </main>
+    <!-- <footer class="text-center fixed-bottom bg-dark text-white">
+        <p class="">&copy; 2024 University of Computer Studies, Mandalay</p>
+    </footer> -->
+    <!-- Bootstrap Scripts -->
+    <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+</body>
+
+</html>
