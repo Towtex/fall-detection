@@ -1,17 +1,30 @@
-#ucsm {
-    color: darkblue;
-    padding: 1rem;
-    margin-bottom: 1rem;
-}
-
-#main_content {
-    text-decoration: underline;
-    padding: 1rem;
-    margin-bottom: 1rem;
+html {
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 16px;
 }
 
 .info {
-    margin-top: 50px;
-    font-size: 1.2rem;
-    font-weight: bold;
+    font-size: 1.2em;
+    line-height: 0.8em;
+    margin-top: 4.5rem;
+}
+
+.small-image {
+    height: auto;
+    max-width: 100px;
+}
+
+#main_content {
+    margin-bottom: 1em;
+    padding: 1em;
+}
+
+#ucsm-logo {
+    margin: 1em;
+}
+
+#ucsm-text {
+    color: darkblue;
+    font-size: 2em;
+    margin-bottom: 0.5em;
 }
