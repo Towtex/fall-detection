@@ -14,6 +14,10 @@ html {
     max-width: 100px;
 }
 
+#btn-create-common-bg {
+    margin: 1em;
+}
+
 #main_content {
     margin-bottom: 1em;
     padding: 1em;
