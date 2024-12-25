@@ -4,7 +4,7 @@ import os
 import numpy as np
 
 
-def create_common_background_image(fld_path, condition):
+def create_common_background_image(fld_path: str, condition: str):
     image_path = os.path.join(fld_path, condition, 'RGB')
     maskPath = os.path.join(fld_path, condition, 'Mask')
     file_list = os.listdir(image_path)
