@@ -1,5 +1,4 @@
 import cv2
-import sys
 import os
 import numpy as np
 
@@ -48,8 +47,3 @@ def create_common_background_image(fld_path: str, condition: str):
     cv2.imwrite(path, bg_result)
     # cv2.imshow('bg_result', bg_result)
     cv2.waitKey(0)
-
-# if __name__ == '__main__':
-#     fld_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'UP_Fall_Dataset', 'Common Background Creation'))
-#     condition = 'Camera1_Con1'
-#     create_common_background_image(fld_path, condition)
