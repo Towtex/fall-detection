@@ -37,7 +37,7 @@ def create_common_background_image(fld_path: str, condition: str):
         os.path.dirname(__file__),
         '..',
         '..',
-        'images',
+        'output',
         'common background creation',
         f'background_{condition}.png'
     ))

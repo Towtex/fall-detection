@@ -2,3 +2,4 @@ __pycache__/
 .venv
 images/
 UP_Fall_Dataset/
+output/
