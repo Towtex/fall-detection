@@ -32,15 +32,15 @@ def create_common_background_image(fld_path: str, condition: str):
     mask2 = data2.astype(np.uint8)
 
     bg_result = image3 + image4
-    path = os.path.abspath(os.path.join(
+    path = os.path.join(
         os.path.dirname(__file__),
         '..',
         '..',
         'output',
         'common background creation',
         f'background_{condition}.png'
-    ))
-
+    )
+    
     # Create directory if it doesn't exist
     os.makedirs(os.path.dirname(path), exist_ok=True)
     
