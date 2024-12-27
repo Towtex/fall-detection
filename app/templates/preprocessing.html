@@ -3,19 +3,48 @@
 {% block title %}Preprocessing - Fall Detection and Classification{% endblock %}
 
 {% block content %}
-<div>
-    <label for="camera-select">Camera: </label>
-    <select id="camera-select">
-        <option value="1">1</option>
-        <option value="2">2</option>
-    </select>
+<div class="container-fluid">
+    <div class="col-md-6">
+        <label for="camera-select">Camera: </label>
+        <select id="camera-select">
+            <option value="1">1</option>
+            <option value="2">2</option>
+        </select>
 
-    <label for="condition-select">Condition: </label>
-    <select id="condition-select">
-        <option value="1">1</option>
-        <option value="2">2</option>
-    </select>
+        <label for="condition-select">Condition: </label>
+        <select id="condition-select">
+            <option value="1">1</option>
+            <option value="2">2</option>
+        </select>
+    </div>
+    <button type="button" class="btn btn-primary col-md-6" id="btn-create-common-bg">Create Common Background</button>
 </div>
-    <button type="button" class="btn btn-primary" id="btn-create-common-bg">Create Common Background</button>
-    <script src="{{ url_for('static', filename='js/preprocessing.js') }}"></script>
+
+<div class="container-fluid">
+    <div class="col-md-6">
+        <label for="subject-select">Subject: </label>
+        <select id="subject-select">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+            <option value="13">13</option>
+            <option value="14">14</option>
+            <option value="15">15</option>
+            <option value="16">16</option>
+            <option value="17">17</option>
+        </select>
+    </div>
+    <button type="button" class="btn btn-primary col-md-6" id="btn-create-bg">Create Background</button>
+</div>
+
+<script src="{{ url_for('static', filename='js/preprocessing.js') }}"></script>
 {% endblock %}

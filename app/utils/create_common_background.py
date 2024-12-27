@@ -37,7 +37,7 @@ def create_common_background_image(fld_path: str, condition: str):
         '..',
         '..',
         'output',
-        'common background creation',
+        'common background images',
         f'background_{condition}.png'
     )
     
