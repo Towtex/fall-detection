@@ -41,7 +41,7 @@ def create_background_image(dataset_path: str, cbg_path: str, subject: str):
                     cbg_image = cv2.imread(cbg_filename)
                     path = os.path.join(
                         output_path,
-                        'background images',
+                        'background_images',
                         f'{sub_str}_{act_str}_{trial_str}_{cam_str}',
                         'background.png'
                     )
@@ -103,7 +103,7 @@ def create_background_image(dataset_path: str, cbg_path: str, subject: str):
                 bg_result = image3 + image4
                 path = os.path.join(
                     output_path,
-                    'background images',
+                    'background_images',
                     f'{sub_str}_{act_str}_{trial_str}_{cam_str}',
                     'background.png'
                 )
