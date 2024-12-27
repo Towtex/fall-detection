@@ -3,8 +3,8 @@
 {% block title %}Preprocessing - Fall Detection and Classification{% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-    <div class="col-md-6">
+<div class="row">
+    <div class="col-md-4 text-end">
         <label for="camera-select">Camera: </label>
         <select id="camera-select">
             <option value="1">1</option>
@@ -17,11 +17,13 @@
             <option value="2">2</option>
         </select>
     </div>
-    <button type="button" class="btn btn-primary col-md-6" id="btn-create-common-bg">Create Common Background</button>
+    <div class="col-md-8">
+        <button type="button" class="btn btn-primary" id="btn-create-common-bg">Create Common Background</button>
+    </div>
 </div>
 
-<div class="container-fluid">
-    <div class="col-md-6">
+<div class="row">
+    <div class="col-md-4 text-end">
         <label for="subject-select">Subject: </label>
         <select id="subject-select">
             <option value="1">1</option>
@@ -43,7 +45,9 @@
             <option value="17">17</option>
         </select>
     </div>
-    <button type="button" class="btn btn-primary col-md-6" id="btn-create-bg">Create Background</button>
+    <div class="col-md-8">
+        <button type="button" class="btn btn-primary" id="btn-create-subject-bg">Create Subject Background</button>
+    </div>
 </div>
 
 <script src="{{ url_for('static', filename='js/preprocessing.js') }}"></script>
