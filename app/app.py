@@ -2,16 +2,16 @@ import os
 import webview
 import threading
 
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, url_for, send_from_directory
 from utils.create_common_background import create_common_background_image
 from utils.create_background import create_background_image
 from utils.extract_fg_fd import extract_fg
 
 
 app = Flask(__name__, static_folder='static', template_folder='templates')
+app.config['OUTPUT_FOLDER'] = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'output'))
 
 ### Page routes
-
 # 404 error page
 @app.errorhandler(404)
 def page_not_found(e):
@@ -52,7 +52,17 @@ def create_common_background():
     )
     
     create_common_background_image(dataset_path, condition=f'Camera{camera}_Con{condition}')
-    return jsonify({'message': 'Common background created successfully'}), 200
+    image_url = os.path.abspath(
+        os.path.join(
+            os.path.dirname(__file__),
+            '..',
+            'output',
+            'common_background_images',
+            f'background_Camera{camera}_Con{condition}.png'
+        )
+    )
+    print(image_url)
+    return jsonify({'message': 'Common background created successfully', 'image_url': image_url}), 200
 
 @app.route('/api/create_background', methods=['POST'])
 def create_background():
@@ -70,7 +80,7 @@ def create_background():
             os.path.dirname(__file__),
             '..',
             'output',
-            'common background images'
+            'common_background_images'
         )
     )
     create_background_image(dataset_path, cbg_path, subject)
@@ -92,6 +102,10 @@ def extract_fg_fd():
             for action in range(1, 12):
                 extract_fg(dataset_path, int(subject), camera, trial, action)
     return jsonify({'message': 'Foreground extraction using FD completed successfully'}), 200
+
+@app.route('/output/<path:filename>')
+def output_file(filename):
+    return send_from_directory(app.config['OUTPUT_FOLDER'], filename)
 ### End API routes
 
 # def run_flask():
@@ -104,6 +118,6 @@ def extract_fg_fd():
 #     webview.create_window(
 #         'Fall Detection and Classification with Multiple Cameras Based on Features Fusion and CNN-LST',
 #         'http://127.0.0.1:5000'
-#         )
+#     )
 #     webview.start()
 #     os._exit(0)

@@ -19,6 +19,7 @@
     </div>
     <div class="col-md-6">
         <button type="button" class="btn btn-primary" id="btn-create-common-bg">Create Common Background</button>
+        <button type="button" class="btn btn-danger" id="btn-clear-common-bg">Clear</button>
     </div>
 </div>
 
@@ -78,5 +79,11 @@
     </div>
 </div>
 
+<div class="row" style="margin: 1rem;">
+    <div class="col-md-12 text-center" id="common-bg-container">
+        <!-- Images will be displayed here -->
+    </div>
+    <hr>
+</div>
 <script src="{{ url_for('static', filename='js/preprocessing.js') }}"></script>
 {% endblock %}

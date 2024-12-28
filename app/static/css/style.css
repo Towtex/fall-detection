@@ -13,6 +13,25 @@ select {
     margin-top: 4.5rem;
 }
 
+.image-container {
+    display: inline-block;
+    margin: 1rem;
+    text-align: center;
+}
+
+.medium-image {
+    margin: 1rem;
+    width: 200px;
+    height: auto;
+}
+
+.image-label {
+    color: #333;
+    font-size: 1rem;
+    margin-top: 0.5rem;
+    text-align: center;
+}
+
 .small-image {
     height: auto;
     max-width: 100px;
