@@ -2,7 +2,7 @@ import os
 import webview
 import threading
 
-from flask import Flask, render_template, request, jsonify, url_for, send_from_directory
+from flask import Flask, render_template, request, jsonify, url_for, send_from_directory, Response
 from utils.create_common_background import create_common_background_image
 from utils.create_background import create_background_image
 from utils.extract_fg_fd import extract_fg
@@ -114,11 +114,13 @@ def extract_fg_fd():
             'UP_Fall_Dataset'
         )
     )
-    for camera in range(1, 3):
-        for trial in range(1, 4):
-            for action in range(1, 12):
-                extract_fg(dataset_path, int(subject), camera, trial, action)
-    return jsonify({'message': 'Foreground extraction using FD completed successfully'}), 200
+    def generate():
+        for camera in range(1, 3):
+            for trial in range(1, 4):
+                for action in range(1, 12):
+                    extract_fg(dataset_path, int(subject), camera, trial, action)
+                    yield f'data: Processing camera {camera}, trial {trial}, action {action}\n\n'
+    return Response(generate(), mimetype='text/event-stream')
 
 # Serve files dynamically from the output folder
 @app.route('/output/<path:filename>')

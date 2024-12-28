@@ -97,15 +97,19 @@ document.getElementById('btn-clear-subject-bg').addEventListener('click', functi
     if (hr && hr.tagName === 'HR') hr.remove();
 });
 
+let extractFgFdController = new AbortController();
+
 document.getElementById('btn-extract-fg-fd').addEventListener('click', function () {
     const subject = document.getElementById('subject-select-fg').value;
     console.log('Subject:', subject);
+    extractFgFdController = new AbortController();
     fetch('/api/extract_fg_fd', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ subject: subject })
+        body: JSON.stringify({ subject: subject }),
+        signal: extractFgFdController.signal
     })
         .then(response => {
             if (response.ok) {
@@ -115,7 +119,15 @@ document.getElementById('btn-extract-fg-fd').addEventListener('click', function 
             }
         })
         .catch(error => {
-            console.error('Error:', error);
-            alert('An error occurred while extracting FG FD.');
+            if (error.name === 'AbortError') {
+                console.log('Foreground extraction using FD was aborted.');
+            } else {
+                console.error('Error:', error);
+                alert('An error occurred while extracting FG FD.');
+            }
         });
+});
+
+document.getElementById('btn-stop-extract-fg-fd').addEventListener('click', function () {
+    extractFgFdController.abort();
 });
