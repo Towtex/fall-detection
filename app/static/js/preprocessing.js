@@ -22,7 +22,7 @@ document.getElementById('btn-create-common-bg').addEventListener('click', functi
     });
 });
 
-document.getElementById('btn-create-bg').addEventListener('click', function() {
+document.getElementById('btn-create-subject-bg').addEventListener('click', function() {
     const subject = document.getElementById('subject-select').value;
     console.log('Subject:', subject);
     fetch('/api/create_background', {

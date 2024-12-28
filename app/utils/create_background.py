@@ -8,7 +8,8 @@ def create_background_image(dataset_path: str, cbg_path: str, subject: str):
         os.path.join(
             os.path.dirname('app.py'),
             '..',
-            'output'
+            'output',
+            f'Subject_{subject}',
         )
     )
     sub_str = f'Subject{subject}'
@@ -26,6 +27,13 @@ def create_background_image(dataset_path: str, cbg_path: str, subject: str):
                     f'{sub_str}{act_str}{trial_str}{cam_str}'
                 )
                 
+                # path to save the background images
+                path = os.path.join(
+                    output_path,
+                    'background_images',
+                    f'{sub_str}_{cam_str}_{trial_str}_{act_str}_background.png',
+                )
+                          
                 if (action <= 6 or action == 11):
                     cbg_filename = os.path.join(
                         cbg_path,
@@ -39,12 +47,6 @@ def create_background_image(dataset_path: str, cbg_path: str, subject: str):
                 
                 if (action == 11):
                     cbg_image = cv2.imread(cbg_filename)
-                    path = os.path.join(
-                        output_path,
-                        'background_images',
-                        f'{sub_str}_{act_str}_{trial_str}_{cam_str}',
-                        'background.png'
-                    )
                     os.makedirs(os.path.dirname(path), exist_ok=True)
                     cv2.imwrite(path, cbg_image)
                     
@@ -101,12 +103,6 @@ def create_background_image(dataset_path: str, cbg_path: str, subject: str):
                 image4 = cbg_image * im_bool1
                    
                 bg_result = image3 + image4
-                path = os.path.join(
-                    output_path,
-                    'background_images',
-                    f'{sub_str}_{act_str}_{trial_str}_{cam_str}',
-                    'background.png'
-                )
                 os.makedirs(os.path.dirname(path), exist_ok=True)
                 cv2.imwrite(path, bg_result)
                 # print(f'Background image created for {path}')
