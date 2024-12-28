@@ -5,7 +5,7 @@ import threading
 from flask import Flask, render_template, request, jsonify
 from utils.create_common_background import create_common_background_image
 from utils.create_background import create_background_image
-from utils.Extract_Fg_FD import extract_fg
+from utils.extract_fg_fd import extract_fg
 
 
 app = Flask(__name__, static_folder='static', template_folder='templates')
