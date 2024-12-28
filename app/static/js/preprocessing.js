@@ -44,8 +44,6 @@ document.getElementById('btn-create-common-bg').addEventListener('click', functi
 
 document.getElementById('btn-clear-common-bg').addEventListener('click', function () {
     document.getElementById('common-bg-container').innerHTML = '';
-    const hr = document.querySelector('#common-bg-container').previousElementSibling;
-    if (hr && hr.tagName === 'HR') hr.remove();
 });
 
 document.getElementById('btn-create-subject-bg').addEventListener('click', function () {
@@ -93,8 +91,6 @@ document.getElementById('btn-create-subject-bg').addEventListener('click', funct
 
 document.getElementById('btn-clear-subject-bg').addEventListener('click', function () {
     document.getElementById('subject-bg-container').innerHTML = '';
-    const hr = document.querySelector('#subject-bg-container').previousElementSibling;
-    if (hr && hr.tagName === 'HR') hr.remove();
 });
 
 let extractFgFdController = new AbortController();
@@ -130,4 +126,5 @@ document.getElementById('btn-extract-fg-fd').addEventListener('click', function 
 
 document.getElementById('btn-stop-extract-fg-fd').addEventListener('click', function () {
     extractFgFdController.abort();
+    alert('Foreground extraction using FD has been stopped.');
 });

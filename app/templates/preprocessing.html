@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="row" style="margin: 1rem;">
-    <div class="col-md-6 text-end">
+    <div class="col-md-5 text-end">
         <label for="camera-select">Camera: </label>
         <select id="camera-select">
             <option value="1">1</option>
@@ -17,14 +17,16 @@
             <option value="2">2</option>
         </select>
     </div>
-    <div class="col-md-6">
-        <button type="button" class="btn btn-primary" id="btn-create-common-bg">Create Common Background</button>
+    <div class="col-md-3">
+        <button type="button" class="btn btn-primary w-100" id="btn-create-common-bg">Create Common Background</button>
+    </div>
+    <div class="col-md-4 text-start">
         <button type="button" class="btn btn-danger" id="btn-clear-common-bg">Clear</button>
     </div>
 </div>
 
 <div class="row" style="margin: 1rem;">
-    <div class="col-md-6 text-end">
+    <div class="col-md-5 text-end">
         <label for="subject-select">Subject: </label>
         <select id="subject-select">
             <option value="1">1</option>
@@ -46,14 +48,16 @@
             <option value="17">17</option>
         </select>
     </div>
-    <div class="col-md-6">
-        <button type="button" class="btn btn-primary" id="btn-create-subject-bg">Create Subject Background</button>
+    <div class="col-md-3">
+        <button type="button" class="btn btn-primary w-100" id="btn-create-subject-bg">Create Subject Background</button>
+    </div>
+    <div class="col-md-4 text-start">
         <button type="button" class="btn btn-danger" id="btn-clear-subject-bg">Clear</button>
     </div>
 </div>
 
 <div class="row" style="margin: 1rem;">
-    <div class="col-md-6 text-end">
+    <div class="col-md-5 text-end">
         <label for="subject-select-fg">Subject: </label>
         <select id="subject-select-fg">
             <option value="1">1</option>
@@ -75,8 +79,10 @@
             <option value="17">17</option>
         </select>
     </div>
-    <div class="col-md-6">
-        <button type="button" class="btn btn-primary" id="btn-extract-fg-fd">Extract FG FD</button>
+    <div class="col-md-3 text-center">
+        <button type="button" class="btn btn-primary w-100" id="btn-extract-fg-fd">Extract FG FD</button>
+    </div>
+    <div class="col-md-4 text-start">
         <button type="button" class="btn btn-danger" id="btn-stop-extract-fg-fd">Stop</button>
     </div>
 </div>
