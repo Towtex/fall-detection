@@ -3,8 +3,8 @@
 {% block title %}Preprocessing - Fall Detection and Classification{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-4 text-end">
+<div class="row" style="margin: 1rem;">
+    <div class="col-md-6 text-end">
         <label for="camera-select">Camera: </label>
         <select id="camera-select">
             <option value="1">1</option>
@@ -17,13 +17,13 @@
             <option value="2">2</option>
         </select>
     </div>
-    <div class="col-md-8">
+    <div class="col-md-6">
         <button type="button" class="btn btn-primary" id="btn-create-common-bg">Create Common Background</button>
     </div>
 </div>
 
-<div class="row">
-    <div class="col-md-4 text-end">
+<div class="row" style="margin: 1rem;">
+    <div class="col-md-6 text-end">
         <label for="subject-select">Subject: </label>
         <select id="subject-select">
             <option value="1">1</option>
@@ -45,8 +45,36 @@
             <option value="17">17</option>
         </select>
     </div>
-    <div class="col-md-8">
+    <div class="col-md-6">
         <button type="button" class="btn btn-primary" id="btn-create-subject-bg">Create Subject Background</button>
+    </div>
+</div>
+
+<div class="row" style="margin: 1rem;">
+    <div class="col-md-6 text-end">
+        <label for="subject-select-fg">Subject: </label>
+        <select id="subject-select-fg">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+            <option value="13">13</option>
+            <option value="14">14</option>
+            <option value="15">15</option>
+            <option value="16">16</option>
+            <option value="17">17</option>
+        </select>
+    </div>
+    <div class="col-md-6">
+        <button type="button" class="btn btn-primary" id="btn-extract-fg-fd">Extract FG FD</button>
     </div>
 </div>
 

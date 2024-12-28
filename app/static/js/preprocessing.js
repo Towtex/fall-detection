@@ -44,3 +44,26 @@ document.getElementById('btn-create-subject-bg').addEventListener('click', funct
         alert('An error occurred while creating background images.');
     });
 });
+
+document.getElementById('btn-extract-fg-fd').addEventListener('click', function() {
+    const subject = document.getElementById('subject-select-fg').value;
+    console.log('Subject:', subject);
+    fetch('/api/extract_fg_fd', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ subject: subject })
+    })
+    .then(response => {
+        if (response.ok) {
+            alert('Foreground extraction using FD completed successfully for Subject ' + subject + '!');
+        } else {
+            alert('Failed to extract Foreground using FD.');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while extracting FG FD.');
+    });
+});

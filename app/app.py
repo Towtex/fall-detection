@@ -5,6 +5,7 @@ import threading
 from flask import Flask, render_template, request, jsonify
 from utils.create_common_background import create_common_background_image
 from utils.create_background import create_background_image
+from utils.Extract_Fg_FD import extract_fg
 
 
 app = Flask(__name__, static_folder='static', template_folder='templates')
@@ -74,6 +75,23 @@ def create_background():
     )
     create_background_image(dataset_path, cbg_path, subject)
     return jsonify({'message': 'Background created successfully'}), 200
+
+@app.route('/api/extract_fg_fd', methods=['POST'])
+def extract_fg_fd():
+    data = request.get_json()
+    subject = data.get('subject')
+    dataset_path = os.path.abspath(
+        os.path.join(
+            os.path.dirname(__file__),
+            '..',
+            'UP_Fall_Dataset'
+        )
+    )
+    for camera in range(1, 3):
+        for trial in range(1, 4):
+            for action in range(1, 12):
+                extract_fg(dataset_path, int(subject), camera, trial, action)
+    return jsonify({'message': 'Foreground extraction using FD completed successfully'}), 200
 ### End API routes
 
 # def run_flask():
