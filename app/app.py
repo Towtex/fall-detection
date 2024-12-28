@@ -52,17 +52,20 @@ def create_common_background():
     )
     
     create_common_background_image(dataset_path, condition=f'Camera{camera}_Con{condition}')
-    image_url = os.path.abspath(
-        os.path.join(
-            os.path.dirname(__file__),
-            '..',
-            'output',
-            'common_background_images',
-            f'background_Camera{camera}_Con{condition}.png'
-        )
+    image_dir = os.path.join(
+        os.path.dirname(__file__),
+        '..',
+        'output',
+        'common_background_images'
     )
-    print(image_url)
-    return jsonify({'message': 'Common background created successfully', 'image_url': image_url}), 200
+    # List all image files in the directory
+    image_paths = [url_for('serve_common_image', filename=filename) for filename in os.listdir(image_dir) if filename.endswith('.png')]
+
+    # Return the image paths in the response
+    return jsonify({
+        'message': 'Common background created successfully.',
+        'images': image_paths
+    }), 200
 
 @app.route('/api/create_background', methods=['POST'])
 def create_background():
@@ -84,7 +87,21 @@ def create_background():
         )
     )
     create_background_image(dataset_path, cbg_path, subject)
-    return jsonify({'message': 'Background created successfully'}), 200
+    image_dir = os.path.join(
+        os.path.dirname(__file__),
+        '..',
+        'output',
+        f'Subject_{subject}',
+        'background_images'
+    )
+    # List all image files in the directory
+    image_paths = [url_for('serve_image', subject=subject, filename=filename) for filename in os.listdir(image_dir) if filename.endswith('.png')]
+
+    # Return the image paths in the response
+    return jsonify({
+        'message': 'Background images created successfully.',
+        'images': image_paths
+    }), 200
 
 @app.route('/api/extract_fg_fd', methods=['POST'])
 def extract_fg_fd():
@@ -103,9 +120,22 @@ def extract_fg_fd():
                 extract_fg(dataset_path, int(subject), camera, trial, action)
     return jsonify({'message': 'Foreground extraction using FD completed successfully'}), 200
 
+# Serve files dynamically from the output folder
 @app.route('/output/<path:filename>')
 def output_file(filename):
     return send_from_directory(app.config['OUTPUT_FOLDER'], filename)
+
+# Serve files dynamically from the output folder
+@app.route('/output/<subject>/background_images/<filename>')
+def serve_image(subject, filename):
+    folder_path = os.path.join(app.config['OUTPUT_FOLDER'], f'Subject_{subject}', 'background_images')
+    return send_from_directory(folder_path, filename)
+
+# Serve files dynamically from the output folder
+@app.route('/output/common_background_images/<filename>')
+def serve_common_image(filename):
+    folder_path = os.path.join(app.config['OUTPUT_FOLDER'], 'common_background_images')
+    return send_from_directory(folder_path, filename)
 ### End API routes
 
 # def run_flask():

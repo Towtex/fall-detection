@@ -13,20 +13,25 @@ document.getElementById('btn-create-common-bg').addEventListener('click', functi
         .then(data => {
             if (data.message) {
                 alert('Common background image created successfully for Camera ' + camera + ' Condition ' + condition + '!');
-                const imgContainer = document.createElement('div');
-                imgContainer.className = 'image-container';
+                const container = document.getElementById('common-bg-container');
+                container.innerHTML = ''; // Clear previous images
 
-                const img = document.createElement('img');
-                img.src = `/output/common_background_images/background_Camera${camera}_Con${condition}.png`;
-                img.className = 'medium-image';
+                data.images.forEach(imagePath => {
+                    const imgContainer = document.createElement('div');
+                    imgContainer.className = 'image-container';
 
-                const label = document.createElement('div');
-                label.className = 'image-label';
-                label.textContent = `Camera ${camera} - Condition ${condition}`;
+                    const img = document.createElement('img');
+                    img.src = imagePath; // Image source from backend
+                    img.className = 'medium-image';
 
-                imgContainer.appendChild(img);
-                imgContainer.appendChild(label);
-                document.getElementById('common-bg-container').appendChild(imgContainer);
+                    const label = document.createElement('div');
+                    label.className = 'image-label';
+                    label.textContent = imagePath.split('/').pop(); // Display the image name
+
+                    imgContainer.appendChild(img);
+                    imgContainer.appendChild(label);
+                    container.appendChild(imgContainer);
+                });
             } else {
                 alert('Failed to create common background image.');
             }
@@ -39,6 +44,8 @@ document.getElementById('btn-create-common-bg').addEventListener('click', functi
 
 document.getElementById('btn-clear-common-bg').addEventListener('click', function () {
     document.getElementById('common-bg-container').innerHTML = '';
+    const hr = document.querySelector('#common-bg-container').previousElementSibling;
+    if (hr && hr.tagName === 'HR') hr.remove();
 });
 
 document.getElementById('btn-create-subject-bg').addEventListener('click', function () {
@@ -51,9 +58,29 @@ document.getElementById('btn-create-subject-bg').addEventListener('click', funct
         },
         body: JSON.stringify({ subject: subject })
     })
-        .then(response => {
-            if (response.ok) {
+        .then(response => response.json())
+        .then(data => {
+            if (data.message) {
                 alert('Background images created successfully for Subject ' + subject + '!');
+                const container = document.getElementById('subject-bg-container');
+                container.innerHTML = ''; // Clear previous images
+
+                data.images.forEach(imagePath => {
+                    const imgContainer = document.createElement('div');
+                    imgContainer.className = 'image-container';
+
+                    const img = document.createElement('img');
+                    img.src = imagePath; // Image source from backend
+                    img.className = 'small-image';
+
+                    const label = document.createElement('div');
+                    label.className = 'image-label';
+                    label.textContent = imagePath.split('/').pop(); // Display the image name
+
+                    imgContainer.appendChild(img);
+                    imgContainer.appendChild(label);
+                    container.appendChild(imgContainer);
+                });
             } else {
                 alert('Failed to create background images.');
             }
@@ -62,6 +89,12 @@ document.getElementById('btn-create-subject-bg').addEventListener('click', funct
             console.error('Error:', error);
             alert('An error occurred while creating background images.');
         });
+});
+
+document.getElementById('btn-clear-subject-bg').addEventListener('click', function () {
+    document.getElementById('subject-bg-container').innerHTML = '';
+    const hr = document.querySelector('#subject-bg-container').previousElementSibling;
+    if (hr && hr.tagName === 'HR') hr.remove();
 });
 
 document.getElementById('btn-extract-fg-fd').addEventListener('click', function () {
