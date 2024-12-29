@@ -99,6 +99,10 @@ document.getElementById('btn-extract-fg-fd').addEventListener('click', function 
     const subject = document.getElementById('subject-select-fg').value;
     console.log('Subject:', subject);
     extractFgFdController = new AbortController();
+
+    // Show starting message
+    alert('Starting foreground extraction using FD for Subject ' + subject + '...');
+
     fetch('/api/extract_fg_fd', {
         method: 'POST',
         headers: {
@@ -109,7 +113,9 @@ document.getElementById('btn-extract-fg-fd').addEventListener('click', function 
     })
         .then(response => {
             if (response.ok) {
-                alert('Foreground extraction using FD completed successfully for Subject ' + subject + '!');
+                response.text().then(() => {
+                    alert('Foreground extraction using FD completed successfully for Subject ' + subject + '!');
+                });
             } else {
                 alert('Failed to extract Foreground using FD.');
             }
@@ -135,10 +141,10 @@ document.getElementById('btn-extract-fg-yolo').addEventListener('click', functio
     const subject = document.getElementById('subject-select-fg-yolo').value;
     console.log('Subject:', subject);
     extractFgYoloController = new AbortController();
-    
+
     // Show starting message
     alert('Starting foreground extraction using YOLO for Subject ' + subject + '...');
-    
+
     fetch('/api/extract_fg_yolo', {
         method: 'POST',
         headers: {
@@ -149,7 +155,9 @@ document.getElementById('btn-extract-fg-yolo').addEventListener('click', functio
     })
         .then(response => {
             if (response.ok) {
-                alert('Foreground extraction using YOLO completed successfully for Subject ' + subject + '!');
+                response.text().then(() => {
+                    alert('Foreground extraction using YOLO completed successfully for Subject ' + subject + '!');
+                });
             } else {
                 alert('Failed to extract Foreground using YOLO.');
             }
