@@ -6,6 +6,7 @@ from flask import Flask, render_template, request, jsonify, url_for, send_from_d
 from utils.create_common_background import create_common_background_image
 from utils.create_background import create_background_image
 from utils.extract_fg_fd import extract_fg
+from utils.extract_fg_yolo import extract_fg_yolo
 
 
 app = Flask(__name__, static_folder='static', template_folder='templates')
@@ -114,12 +115,33 @@ def extract_fg_fd():
             'UP_Fall_Dataset'
         )
     )
+    
     def generate():
         for camera in range(1, 3):
             for trial in range(1, 4):
                 for action in range(1, 12):
-                    extract_fg(dataset_path, int(subject), camera, trial, action)
+                    extract_fg(dataset_path, subject, camera, trial, action)
                     yield f'data: Processing camera {camera}, trial {trial}, action {action}\n\n'
+    return Response(generate(), mimetype='text/event-stream')
+
+@app.route('/api/extract_fg_yolo', methods=['POST'])
+def extract_fg_yolo_api():
+    data = request.get_json()
+    subject = data.get('subject')
+    dataset_path = os.path.abspath(
+        os.path.join(
+            os.path.dirname(__file__),
+            '..',
+            'UP_Fall_Dataset'
+        )
+    )
+    
+    def generate():
+        for camera in range(1, 3):
+            for trial in range(1, 4):
+                for action in range(1, 12):
+                    extract_fg_yolo(dataset_path, subject, camera, trial, action)
+                    yield f'data: Processing subject {subject}, camera {camera}, trial {trial}, action {action}\n\n'
     return Response(generate(), mimetype='text/event-stream')
 
 # Serve files dynamically from the output folder
