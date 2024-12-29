@@ -41,7 +41,12 @@ def extract_fg(dataset_path: str, subject: str, camera: int, trial: int, action:
         f'{sub_str}{act_str}{trial_str}{cam_str}'
     )
     print(f"Extracting FG from {main_folder}")
+    
     input_folder = os.path.join(main_folder, 'RGB')
+    if not os.path.exists(input_folder):
+        print(f"{input_folder} does not exist")
+        return
+    
     output_folder = os.path.abspath(
         os.path.join(
             os.path.dirname(__file__),
@@ -51,9 +56,6 @@ def extract_fg(dataset_path: str, subject: str, camera: int, trial: int, action:
             f'Subject_{subject}',
         )
     )
-    if not os.path.exists(input_folder):
-        print(f"{input_folder} does not exist")
-        return
     
     # if os.path.exists(output_folder):
     #     shutil.rmtree(output_folder)
@@ -75,8 +77,8 @@ def extract_fg(dataset_path: str, subject: str, camera: int, trial: int, action:
     bg_frame = cv2.imread(bg_file)
     bg_frame = cv2.resize(bg_frame, (320, 240))
     #bgImg = cv2.cvtColor(bgFrame,cv2.COLOR_BGR2GRAY)
-    index = start
-    while index <= total_files:
+    
+    for index in range(start, total_files + 1, inc):
         start_time = time.time()
         # print(file_list[index-1])
         frame2 = cv2.imread(os.path.join(input_folder, file_list[index-1]))
@@ -103,23 +105,4 @@ def extract_fg(dataset_path: str, subject: str, camera: int, trial: int, action:
         )
         os.makedirs(path, exist_ok=True)
         cv2.imwrite(os.path.join(path, file_list[index-1]), result_img)
-        print(f"Extracted {file_list[index-1]}")
-        index = index + inc
-
-# if __name__ == '__main__':
-#     dataset_path = os.path.abspath(
-#         os.path.join(
-#             os.path.dirname(__file__),
-#             '..',
-#             '..',
-#             'UP_Fall_Dataset'
-#         )
-#     )
-    # for subject in range(1, 18):
-    #     print(f"Subject {subject}")
-    #     for camera in range(1, 3):
-    #         print(f"Camera {camera}")
-    #         for trial in range(1, 4):
-    #             for action in range(1, 12):
-    #                 extract_fg(dataset_path, subject, camera, trial, action)
-    # extract_fg(dataset_path, 1, 1, 1, 1)
+        print(f"Extracted FG {file_list[index-1]}")
