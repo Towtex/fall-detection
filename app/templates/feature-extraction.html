@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}Features Extraction and Fusion{% endblock %}
+
+{% block content %}
+<div class="row" style="margin: 1rem;">
+    <div class="col-md-5 text-end">
+        <label for="subject-select-fg">Subject: </label>
+        <select id="subject-select-fg">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+            <option value="13">13</option>
+            <option value="14">14</option>
+            <option value="15">15</option>
+            <option value="16">16</option>
+            <option value="17">17</option>
+        </select>
+    </div>
+    <div class="col-md-3 text-center">
+        <button type="button" class="btn btn-primary w-100" id="btn-extract-fg-fd">Extract FG FD</button>
+    </div>
+    <div class="col-md-4 text-start">
+        <button type="button" class="btn btn-danger" id="btn-stop-extract-fg-fd">Stop</button>
+    </div>
+</div>
+
+<div class="row" style="margin: 1rem;">
+    <div class="col-md-5 text-end">
+        <label for="subject-select-fg-yolo">Subject: </label>
+        <select id="subject-select-fg-yolo">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+            <option value="13">13</option>
+            <option value="14">14</option>
+            <option value="15">15</option>
+            <option value="16">16</option>
+            <option value="17">17</option>
+        </select>
+    </div>
+    <div class="col-md-3 text-center">
+        <button type="button" class="btn btn-primary w-100" id="btn-extract-fg-yolo">Extract FG YOLO</button>
+    </div>
+    <div class="col-md-4 text-start">
+        <button type="button" class="btn btn-danger" id="btn-stop-extract-fg-yolo">Stop</button>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/feature-extraction.js') }}"></script>
+{% endblock %}
