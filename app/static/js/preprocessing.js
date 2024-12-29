@@ -26,7 +26,7 @@ document.getElementById('btn-create-common-bg').addEventListener('click', functi
 
                     const label = document.createElement('div');
                     label.className = 'image-label';
-                    label.textContent = imagePath.split('/').pop(); // Display the image name
+                    label.textContent = imagePath.split('/').pop().replace('.png', ''); // Display the image name
 
                     imgContainer.appendChild(img);
                     imgContainer.appendChild(label);
@@ -48,44 +48,45 @@ document.getElementById('btn-clear-common-bg').addEventListener('click', functio
 
 document.getElementById('btn-create-subject-bg').addEventListener('click', function () {
     const subject = document.getElementById('subject-select').value;
-    console.log('Subject:', subject);
+    const camera = document.getElementById('camera-select').value;
+    const trial = document.getElementById('trial-select').value;
+    const activity = document.getElementById('activity-select').value;
+    console.log('Subject:', subject, 'Camera:', camera, 'Trial:', trial, 'Activity:', activity);
     fetch('/api/create_background', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ subject: subject })
+        body: JSON.stringify({ subject: subject, camera: camera, trial: trial, activity: activity })
     })
         .then(response => response.json())
         .then(data => {
             if (data.message) {
-                alert('Background images created successfully for Subject ' + subject + '!');
+                alert('Background image created successfully for Subject ' + subject + ' Camera ' + camera + ' Trial ' + trial + ' Activity ' + activity + '!');
                 const container = document.getElementById('subject-bg-container');
                 container.innerHTML = ''; // Clear previous images
 
-                data.images.forEach(imagePath => {
-                    const imgContainer = document.createElement('div');
-                    imgContainer.className = 'image-container';
+                const imgContainer = document.createElement('div');
+                imgContainer.className = 'image-container';
 
-                    const img = document.createElement('img');
-                    img.src = imagePath; // Image source from backend
-                    img.className = 'small-image';
+                const img = document.createElement('img');
+                img.src = data.image; // Image source from backend
+                img.className = 'large-image';
 
-                    const label = document.createElement('div');
-                    label.className = 'image-label';
-                    label.textContent = imagePath.split('/').pop(); // Display the image name
+                const label = document.createElement('div');
+                label.className = 'image-label';
+                label.textContent = data.image.split('/').pop().replace('.png', '').replace(/_/g, ' '); // Display the image name without .png and replace underscores with spaces
 
-                    imgContainer.appendChild(img);
-                    imgContainer.appendChild(label);
-                    container.appendChild(imgContainer);
-                });
+                imgContainer.appendChild(img);
+                imgContainer.appendChild(label);
+                container.appendChild(imgContainer);
             } else {
-                alert('Failed to create background images.');
+                alert('Failed to create background image.');
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('An error occurred while creating background images.');
+            alert('An error occurred while creating background image.');
         });
 });
 

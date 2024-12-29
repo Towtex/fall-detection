@@ -76,6 +76,9 @@ def create_common_background():
 def create_background():
     data = request.get_json()
     subject = data.get('subject')
+    camera = data.get('camera')
+    trial = data.get('trial')
+    activity = data.get('activity')
     dataset_path = os.path.abspath(
         os.path.join(
             os.path.dirname(__file__),
@@ -91,21 +94,13 @@ def create_background():
             'common_background_images'
         )
     )
-    create_background_image(dataset_path, cbg_path, subject)
-    image_dir = os.path.join(
-        os.path.dirname(__file__),
-        '..',
-        'output',
-        f'Subject_{subject}',
-        'background_images'
-    )
-    # List all image files in the directory
-    image_paths = [url_for('serve_image', subject=subject, filename=filename) for filename in os.listdir(image_dir) if filename.endswith('.png')]
+    image_path = create_background_image(dataset_path, cbg_path, subject, camera, trial, activity)
+    image_url = url_for('serve_image', subject=subject, filename=os.path.basename(image_path))
 
-    # Return the image paths in the response
+    # Return the image path in the response
     return jsonify({
-        'message': 'Background images created successfully.',
-        'images': image_paths
+        'message': 'Background image created successfully.',
+        'image': image_url
     }), 200
 
 @app.route('/api/extract_fg_fd', methods=['POST'])
