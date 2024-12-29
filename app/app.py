@@ -28,6 +28,10 @@ app.add_url_rule('/index', 'index', index)
 def preprocessing():
     return render_template('preprocessing.html', active_page='preprocessing')
 
+@app.route('/feature-extraction')
+def feature_extraction():
+    return render_template('feature-extraction.html', active_page='feature-extraction')
+
 @app.route('/training')
 def training():
     return render_template('training.html', active_page='training')
@@ -35,10 +39,6 @@ def training():
 @app.route('/testing')
 def testing():
     return render_template('testing.html', active_page='testing')
-
-@app.route('/feature-extraction')
-def feature_extraction():
-    return render_template('feature_extraction.html', active_page='feature-extraction')
 ### End page routes
 
 ### API routes
