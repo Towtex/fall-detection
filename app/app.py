@@ -107,6 +107,9 @@ def create_background():
 def extract_fg_fd():
     data = request.get_json()
     subject = data.get('subject')
+    camera = data.get('camera')
+    trial = data.get('trial')
+    activity = data.get('activity')
     dataset_path = os.path.abspath(
         os.path.join(
             os.path.dirname(__file__),
@@ -116,11 +119,13 @@ def extract_fg_fd():
     )
     
     def generate():
-        for camera in range(1, 3):
-            for trial in range(1, 4):
-                for action in range(1, 12):
-                    extract_fg(dataset_path, subject, camera, trial, action)
-                    yield f'data: Processing camera {camera}, trial {trial}, action {action}\n\n'
+        if activity == 'all':
+            for act in range(1, 12):
+                extract_fg(dataset_path, subject, camera, trial, act)
+                yield f'data: Processing subject {subject}, camera {camera}, trial {trial}, activity {act}\n\n'
+        else:
+            extract_fg(dataset_path, subject, camera, trial, int(activity))
+            yield f'data: Processing subject {subject}, camera {camera}, trial {trial}, activity {activity}\n\n'
     return Response(generate(), mimetype='text/event-stream')
 
 @app.route('/api/extract_fg_yolo', methods=['POST'])

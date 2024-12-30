@@ -102,6 +102,7 @@ def extract_fg(dataset_path: str, subject: str, camera: int, trial: int, action:
             'extracted_fg_fd',
             cam_str,
             trial_str,
+            act_str
         )
         os.makedirs(path, exist_ok=True)
         cv2.imwrite(os.path.join(path, file_list[index-1]), result_img)

@@ -16,7 +16,6 @@ def bwaeraopen(image, size):
 
 def take_max_obj(image):
     output = image
-    print(f"Image shape: {image.shape}, dtype: {image.dtype}")
     nlabels, labels, stats, centroids = cv2.connectedComponentsWithStats(image)
     all_size = stats[:, 4]
     len_s = len(all_size)
@@ -99,6 +98,7 @@ def extract_fg_yolo(dataset_path: str, subject: str, camera: int, trial: int, ac
             'extracted_fg_yolo',
             cam_str,
             trial_str,
+            act_str
         )
         os.makedirs(path, exist_ok=True)  # Ensure the directory exists
         cv2.imwrite(os.path.join(path, file_list[index - 1]), result_img)
