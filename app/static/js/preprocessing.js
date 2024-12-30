@@ -1,5 +1,28 @@
+function createImageContainer(imageSrc, labelText) {
+    const imgContainer = document.createElement('div');
+    imgContainer.className = 'image-container';
+
+    const img = document.createElement('img');
+    img.src = imageSrc;
+    img.className = 'large-image';
+
+    const label = document.createElement('div');
+    label.className = 'image-label';
+    label.textContent = labelText;
+
+    imgContainer.appendChild(img);
+    imgContainer.appendChild(label);
+
+    return imgContainer;
+}
+
+function formatImageName(imagePath) {
+    const imageName = imagePath.split('/').pop().replace('.png', '').replace(/_/g, ' ');
+    return imageName.replace('Subject', 'Subject_').replace('Trial', 'Trial_').replace('Activity', 'Activity_').replace('Con', 'Condition_').replace('Camera', 'Camera_').replace('background', 'background for ');
+}
+
 document.getElementById('btn-create-common-bg').addEventListener('click', function () {
-    const camera = document.getElementById('camera-select').value;
+    const camera = document.getElementById('camera-select-common').value;
     const condition = document.getElementById('condition-select').value;
     console.log('Camera:', camera, 'Condition:', condition);
     fetch('/api/create_common_background', {
@@ -16,22 +39,9 @@ document.getElementById('btn-create-common-bg').addEventListener('click', functi
                 const container = document.getElementById('common-bg-container');
                 container.innerHTML = ''; // Clear previous images
 
-                data.images.forEach(imagePath => {
-                    const imgContainer = document.createElement('div');
-                    imgContainer.className = 'image-container';
-
-                    const img = document.createElement('img');
-                    img.src = imagePath; // Image source from backend
-                    img.className = 'medium-image';
-
-                    const label = document.createElement('div');
-                    label.className = 'image-label';
-                    label.textContent = imagePath.split('/').pop().replace('.png', ''); // Display the image name
-
-                    imgContainer.appendChild(img);
-                    imgContainer.appendChild(label);
-                    container.appendChild(imgContainer);
-                });
+                const formattedName = formatImageName(data.image);
+                const imgContainer = createImageContainer(data.image, formattedName);
+                container.appendChild(imgContainer);
             } else {
                 alert('Failed to create common background image.');
             }
@@ -48,7 +58,7 @@ document.getElementById('btn-clear-common-bg').addEventListener('click', functio
 
 document.getElementById('btn-create-subject-bg').addEventListener('click', function () {
     const subject = document.getElementById('subject-select').value;
-    const camera = document.getElementById('camera-select').value;
+    const camera = document.getElementById('camera-select-subject').value;
     const trial = document.getElementById('trial-select').value;
     const activity = document.getElementById('activity-select').value;
     console.log('Subject:', subject, 'Camera:', camera, 'Trial:', trial, 'Activity:', activity);
@@ -62,24 +72,21 @@ document.getElementById('btn-create-subject-bg').addEventListener('click', funct
         .then(response => response.json())
         .then(data => {
             if (data.message) {
-                alert('Background image created successfully for Subject ' + subject + ' Camera ' + camera + ' Trial ' + trial + ' Activity ' + activity + '!');
+                alert(data.message);
                 const container = document.getElementById('subject-bg-container');
                 container.innerHTML = ''; // Clear previous images
 
-                const imgContainer = document.createElement('div');
-                imgContainer.className = 'image-container';
-
-                const img = document.createElement('img');
-                img.src = data.image; // Image source from backend
-                img.className = 'large-image';
-
-                const label = document.createElement('div');
-                label.className = 'image-label';
-                label.textContent = data.image.split('/').pop().replace('.png', '').replace(/_/g, ' '); // Display the image name without .png and replace underscores with spaces
-
-                imgContainer.appendChild(img);
-                imgContainer.appendChild(label);
-                container.appendChild(imgContainer);
+                if (activity === 'all') {
+                    data.images.forEach(imagePath => {
+                        const formattedName = formatImageName(imagePath);
+                        const imgContainer = createImageContainer(imagePath, formattedName);
+                        container.appendChild(imgContainer);
+                    });
+                } else {
+                    const formattedName = formatImageName(data.image);
+                    const imgContainer = createImageContainer(data.image, formattedName);
+                    container.appendChild(imgContainer);
+                }
             } else {
                 alert('Failed to create background image.');
             }

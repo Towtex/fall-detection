@@ -1,6 +1,7 @@
 import os
 import webview
 import threading
+import logging
 
 from flask import Flask, render_template, request, jsonify, url_for, send_from_directory, Response
 from utils.create_common_background import create_common_background_image
@@ -11,6 +12,9 @@ from utils.extract_fg_yolo import extract_fg_yolo
 
 app = Flask(__name__, static_folder='static', template_folder='templates')
 app.config['OUTPUT_FOLDER'] = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'output'))
+
+# Configure logging
+logging.basicConfig(level=logging.DEBUG)
 
 ### Page routes
 # 404 error page
@@ -56,20 +60,21 @@ def create_common_background():
         )
     )
     
-    create_common_background_image(dataset_path, condition=f'Camera{camera}_Con{condition}')
-    image_dir = os.path.join(
-        os.path.dirname(__file__),
-        '..',
-        'output',
-        'common_background_images'
-    )
-    # List all image files in the directory
-    image_paths = [url_for('serve_common_image', filename=filename) for filename in os.listdir(image_dir) if filename.endswith('.png')]
+    image_path = create_common_background_image(dataset_path, condition=f'Camera{camera}_Con{condition}')
+    logging.debug(f'Created common background image path: {image_path}')
+    
+    if image_path is None:
+        return jsonify({
+            'message': 'Failed to create common background image.',
+            'image': None
+        }), 500
 
-    # Return the image paths in the response
+    image_url = url_for('serve_common_image', filename=os.path.basename(image_path))
+
+    # Return the image path in the response
     return jsonify({
         'message': 'Common background created successfully.',
-        'images': image_paths
+        'image': image_url
     }), 200
 
 @app.route('/api/create_background', methods=['POST'])
@@ -94,14 +99,26 @@ def create_background():
             'common_background_images'
         )
     )
-    image_path = create_background_image(dataset_path, cbg_path, subject, camera, trial, activity)
-    image_url = url_for('serve_image', subject=subject, filename=os.path.basename(image_path))
+    if activity == "all":
+        image_paths = []
+        for act in range(1, 12):
+            image_path = create_background_image(dataset_path, cbg_path, subject, camera, trial, str(act))
+            image_url = url_for('serve_image', subject=subject, camera=camera, trial=trial, activity=str(act), filename=os.path.basename(image_path))
+            image_paths.append(image_url)
+        return jsonify({
+            'message': 'Background images created successfully for all activities.',
+            'images': image_paths
+        }), 200
+    else:
+        image_path = create_background_image(dataset_path, cbg_path, subject, camera, trial, activity)
+        print(image_path)
+        image_url = url_for('serve_image', subject=subject, camera=camera, trial=trial, activity=activity, filename=os.path.basename(image_path))
 
-    # Return the image path in the response
-    return jsonify({
-        'message': 'Background image created successfully.',
-        'image': image_url
-    }), 200
+        # Return the image path in the response
+        return jsonify({
+            'message': 'Background image created successfully.',
+            'image': image_url
+        }), 200
 
 @app.route('/api/extract_fg_fd', methods=['POST'])
 def extract_fg_fd():
@@ -154,9 +171,16 @@ def output_file(filename):
     return send_from_directory(app.config['OUTPUT_FOLDER'], filename)
 
 # Serve files dynamically from the output folder
-@app.route('/output/<subject>/background_images/<filename>')
-def serve_image(subject, filename):
-    folder_path = os.path.join(app.config['OUTPUT_FOLDER'], f'Subject_{subject}', 'background_images')
+@app.route('/output/<subject>/Camera_<camera>/Trial_<trial>/Activity_<activity>/background_image/<filename>')
+def serve_image(subject, camera, trial, activity, filename):
+    folder_path = os.path.join(
+        app.config['OUTPUT_FOLDER'], 
+        f'Subject_{subject}', 
+        f'Camera_{camera}', 
+        f'Trial_{trial}', 
+        f'Activity_{activity}', 
+        'background_image'
+    )
     return send_from_directory(folder_path, filename)
 
 # Serve files dynamically from the output folder

@@ -60,6 +60,9 @@ def extract_fg_yolo(dataset_path: str, subject: str, camera: int, trial: int, ac
             '..',
             'output',
             f'Subject_{subject}',
+            f'Camera_{camera}',
+            f'Trial_{trial}',
+            f'Activity_{action}'
         )
     ) 
     
@@ -96,9 +99,6 @@ def extract_fg_yolo(dataset_path: str, subject: str, camera: int, trial: int, ac
         path = os.path.join(
             output_folder,
             'extracted_fg_yolo',
-            cam_str,
-            trial_str,
-            act_str
         )
         os.makedirs(path, exist_ok=True)  # Ensure the directory exists
         cv2.imwrite(os.path.join(path, file_list[index - 1]), result_img)

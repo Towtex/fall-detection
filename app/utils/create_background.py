@@ -11,6 +11,7 @@ def create_background_image(dataset_path: str, cbg_path: str, subject: str, came
             f'Subject_{subject}',
             f'Camera_{camera}',
             f'Trial_{trial}',
+            f'Activity_{activity}'
         )
     )
     sub_str = f'Subject{subject}'
@@ -28,19 +29,19 @@ def create_background_image(dataset_path: str, cbg_path: str, subject: str, came
     # path to save the background images
     path = os.path.join(
         output_path,
-        'background_images',
-        f'{sub_str}_{cam_str}_{trial_str}_{act_str}_background.png',
+        'background_image',
+        f'background_{sub_str}_{cam_str}_{trial_str}_{act_str}.png',
     )
                   
     if (int(activity) <= 6 or int(activity) == 11):
         cbg_filename = os.path.join(
             cbg_path,
-            f'background_{cam_str}_Con1.png'
+            f'cm_background_{cam_str}_Con1.png'
         )
     else:
         cbg_filename = os.path.join(
             cbg_path,
-            f'background_{cam_str}_Con2.png'
+            f'cm_background_{cam_str}_Con2.png'
         )
     
     if (int(activity) == 11):

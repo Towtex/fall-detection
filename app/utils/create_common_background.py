@@ -38,12 +38,11 @@ def create_common_background_image(fld_path: str, condition: str):
         '..',
         'output',
         'common_background_images',
-        f'background_{condition}.png'
+        f'cm_background_{condition}.png'
     )
     
     # Create directory if it doesn't exist
     os.makedirs(os.path.dirname(path), exist_ok=True)
     
     cv2.imwrite(path, bg_result)
-    # cv2.imshow('bg_result', bg_result)
-    cv2.waitKey(0)
+    return path  # Return the path of the created image
