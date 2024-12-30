@@ -35,7 +35,7 @@ document.getElementById('btn-create-common-bg').addEventListener('click', functi
         .then(response => response.json())
         .then(data => {
             if (data.message) {
-                alert('Common background image created successfully for Camera ' + camera + ' Condition ' + condition + '!');
+                alert('Common background image created successfully for Camera: ' + camera + ' Condition: ' + condition + '!');
                 const container = document.getElementById('common-bg-container');
                 container.innerHTML = ''; // Clear previous images
 

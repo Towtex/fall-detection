@@ -9,7 +9,7 @@ document.getElementById('btn-extract-fg-fd').addEventListener('click', function 
     extractFgFdController = new AbortController();
 
     // Show starting message
-    alert(`Starting foreground extraction using FD for Subject ${subject}, Camera ${camera}, Trial ${trial}, Activity ${activity}...`);
+    alert(`Starting foreground extraction using FD for Subject: ${subject}, Camera: ${camera}, Trial: ${trial}, Activity: ${activity}...`);
 
     const startTime = Date.now();
 
@@ -26,7 +26,7 @@ document.getElementById('btn-extract-fg-fd').addEventListener('click', function 
                 response.text().then(() => {
                     const endTime = Date.now();
                     const executionTime = ((endTime - startTime) / 1000).toFixed(2);
-                    alert(`Foreground extraction using FD completed successfully for Subject ${subject}, Camera ${camera}, Trial ${trial}, Activity ${activity} in ${executionTime} seconds!`);
+                    alert(`Foreground extraction using FD completed successfully for Subject: ${subject}, Camera: ${camera}, Trial: ${trial}, Activity: ${activity} in ${executionTime} seconds!`);
                 });
             } else {
                 alert('Failed to extract Foreground using FD.');
@@ -58,7 +58,7 @@ document.getElementById('btn-extract-fg-yolo').addEventListener('click', functio
     extractFgYoloController = new AbortController();
 
     // Show starting message
-    alert(`Starting foreground extraction using YOLO for Subject ${subject}, Camera ${camera}, Trial ${trial}, Activity ${activity}...`);
+    alert(`Starting foreground extraction using YOLO for Subject: ${subject}, Camera: ${camera}, Trial: ${trial}, Activity: ${activity}...`);
 
     const startTime = Date.now();
 
@@ -75,7 +75,7 @@ document.getElementById('btn-extract-fg-yolo').addEventListener('click', functio
                 response.text().then(() => {
                     const endTime = Date.now();
                     const executionTime = ((endTime - startTime) / 1000).toFixed(2);
-                    alert(`Foreground extraction using YOLO completed successfully for Subject ${subject}, Camera ${camera}, Trial ${trial}, Activity ${activity} in ${executionTime} seconds!`);
+                    alert(`Foreground extraction using YOLO completed successfully for Subject: ${subject}, Camera: ${camera}, Trial: ${trial}, Activity: ${activity} in ${executionTime} seconds!`);
                 });
             } else {
                 alert('Failed to extract Foreground using YOLO.');

@@ -73,8 +73,8 @@ def extract_fg(dataset_path: str, subject: str, camera: int, trial: int, action:
     
     bg_file = os.path.join(
         output_folder,
-        'background_images',
-        f'{sub_str}_{cam_str}_{trial_str}_{act_str}_background.png'
+        'background_image',
+        f'background_{sub_str}_{cam_str}_{trial_str}_{act_str}.png'
     )
     # frame1 = np.float32(cv2.imread(file_list[start-1]))
     bg_frame = cv2.imread(bg_file)

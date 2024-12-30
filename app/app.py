@@ -139,9 +139,11 @@ def extract_fg_fd():
         if activity == 'all':
             for act in range(1, 12):
                 extract_fg(dataset_path, subject, camera, trial, act)
+                print(f"Completed extraction for subject: {subject}, camera: {camera}, trial: {trial}, activity: {act}")
                 yield f'data: Processing subject {subject}, camera {camera}, trial {trial}, activity {act}\n\n'
         else:
             extract_fg(dataset_path, subject, camera, trial, int(activity))
+            print(f"Completed extraction for subject: {subject}, camera: {camera}, trial: {trial}, activity: {activity}")
             yield f'data: Processing subject {subject}, camera {camera}, trial {trial}, activity {activity}\n\n'
     return Response(generate(), mimetype='text/event-stream')
 
