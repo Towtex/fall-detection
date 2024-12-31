@@ -10,7 +10,21 @@ select {
 .info {
     font-size: 1.2em;
     line-height: 0.8em;
-    margin-top: 4.5rem;
+    margin-top: 5rem; /* Default margin-top */
+}
+
+/* Responsive margin-top for 1920x1080 resolution */
+@media (min-width: 1920px) {
+    .info {
+        margin-top: 10rem;
+    }
+}
+
+/* Responsive margin-top for 1366x768 resolution */
+@media (min-width: 1366px) and (max-width: 1919px) {
+    .info {
+        margin-top: 6rem;
+    }
 }
 
 .image-container {
