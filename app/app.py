@@ -9,6 +9,7 @@ from utils.create_background import create_background_image
 from utils.extract_fg_fd import extract_fg
 from utils.extract_fg_yolo import extract_fg_yolo
 from utils.create_SHI import create_shi
+from utils.extract_DOF import extract_color_dof
 
 
 app = Flask(__name__, static_folder='static', template_folder='templates')
@@ -261,6 +262,53 @@ def stop_create_shi():
     global abort_signal
     abort_signal.set()
     return jsonify({'message': 'SHI creation has been stopped.'}), 200
+
+@app.route('/api/extract_dof', methods=['POST'])
+def extract_dof_api():
+    global abort_signal
+    abort_signal.clear()
+    data = request.get_json()
+    subject = data.get('subject')
+    camera = data.get('camera')
+    trial = data.get('trial')
+    activity = data.get('activity')
+    dataset_path = os.path.abspath(
+        os.path.join(
+            os.path.dirname(__file__),
+            '..',
+            'UP_Fall_Dataset'
+        )
+    )
+    
+    def generate():
+        if trial == 'all':
+            for tr in range(1, 4):
+                if activity == 'all':
+                    for act in range(1, 12):
+                        if abort_signal.is_set():
+                            break
+                        extract_color_dof(dataset_path, subject, camera, tr, act)
+                        yield f'data: Processing subject {subject}, camera {camera}, trial {tr}, activity {act}\n\n'
+                else:
+                    extract_color_dof(dataset_path, subject, camera, tr, int(activity))
+                    yield f'data: Processing subject {subject}, camera {camera}, trial {tr}, activity {activity}\n\n'
+        else:
+            if activity == 'all':
+                for act in range(1, 12):
+                    if abort_signal.is_set():
+                        break
+                    extract_color_dof(dataset_path, subject, camera, int(trial), act)
+                    yield f'data: Processing subject {subject}, camera {camera}, trial {trial}, activity {act}\n\n'
+            else:
+                extract_color_dof(dataset_path, subject, camera, int(trial), int(activity))
+                yield f'data: Processing subject {subject}, camera {camera}, trial {trial}, activity {activity}\n\n'
+    return Response(generate(), mimetype='text/event-stream')
+
+@app.route('/api/stop_extract_dof', methods=['POST'])
+def stop_extract_dof():
+    global abort_signal
+    abort_signal.set()
+    return jsonify({'message': 'DOF extraction has been stopped.'}), 200
 
 # Serve files dynamically from the output folder
 @app.route('/output/<path:filename>')

@@ -54,6 +54,8 @@ def create_shi(method, dataset_path: str, subject: int, camera: int, trial: int,
     file_list = os.listdir(fg_folder)
     total_files = len(file_list) - 1
     
+    print(f"Creating SHI for subject: {subject}, camera: {camera}, trial: {trial}, activity: {activity}")
+    
     for index in range(1, total_files + 1):
         if abort_signal.is_set():
             print("SHI creation aborted.")

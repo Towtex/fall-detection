@@ -190,3 +190,67 @@ document.getElementById('btn-stop-create-shi').addEventListener('click', functio
         alert('An error occurred while stopping SHI creation.');
     });
 });
+
+let extractDofController = new AbortController();
+
+document.getElementById('btn-extract-dof').addEventListener('click', function () {
+    const subject = document.getElementById('subject-select-dof').value;
+    const camera = document.getElementById('camera-select-dof').value;
+    const trial = document.getElementById('trial-select-dof').value;
+    const activity = document.getElementById('activity-select-dof').value;
+    console.log('Subject:', subject, 'Camera:', camera, 'Trial:', trial, 'Activity:', activity);
+    extractDofController = new AbortController();
+
+    // Show starting message
+    alert(`Starting DOF extraction for Subject: ${subject}, Camera: ${camera}, Trial: ${trial}, Activity: ${activity}...`);
+
+    const startTime = Date.now();
+
+    fetch('/api/extract_dof', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ subject: subject, camera: camera, trial: trial, activity: activity }),
+        signal: extractDofController.signal
+    })
+        .then(response => {
+            if (response.ok) {
+                response.text().then(() => {
+                    const endTime = Date.now();
+                    const executionTime = ((endTime - startTime) / 1000).toFixed(2);
+                    alert(`DOF extraction completed successfully for Subject: ${subject}, Camera: ${camera}, Trial: ${trial}, Activity: ${activity} in ${executionTime} seconds!`);
+                });
+            } else {
+                alert('Failed to extract DOF.');
+            }
+        })
+        .catch(error => {
+            if (error.name === 'AbortError') {
+                console.log('DOF extraction was aborted.');
+            } else {
+                console.error('Error:', error);
+                alert('An error occurred while extracting DOF.');
+            }
+        });
+});
+
+document.getElementById('btn-stop-extract-dof').addEventListener('click', function () {
+    fetch('/api/stop_extract_dof', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => {
+        if (response.ok) {
+            alert('DOF extraction has been stopped.');
+        } else {
+            alert('Failed to stop DOF extraction.');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while stopping DOF extraction.');
+    });
+});
