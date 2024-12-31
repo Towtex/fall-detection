@@ -133,11 +133,12 @@ document.getElementById('btn-create-shi').addEventListener('click', function () 
     const camera = document.getElementById('camera-select-shi').value;
     const trial = document.getElementById('trial-select-shi').value;
     const activity = document.getElementById('activity-select-shi').value;
-    console.log('Subject:', subject, 'Camera:', camera, 'Trial:', trial, 'Activity:', activity);
+    const method = document.getElementById('method-select-shi').value;
+    console.log('Subject:', subject, 'Camera:', camera, 'Trial:', trial, 'Activity:', activity, 'Method:', method);
     createShiController = new AbortController();
 
     // Show starting message
-    alert(`Starting SHI creation for Subject: ${subject}, Camera: ${camera}, Trial: ${trial}, Activity: ${activity}...`);
+    alert(`Starting SHI creation for Subject: ${subject}, Camera: ${camera}, Trial: ${trial}, Activity: ${activity}, Method: ${method}...`);
 
     const startTime = Date.now();
 
@@ -146,7 +147,7 @@ document.getElementById('btn-create-shi').addEventListener('click', function () 
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ subject: subject, camera: camera, trial: trial, activity: activity }),
+        body: JSON.stringify({ subject: subject, camera: camera, trial: trial, activity: activity, method: method }),
         signal: createShiController.signal
     })
         .then(response => {
@@ -154,7 +155,7 @@ document.getElementById('btn-create-shi').addEventListener('click', function () 
                 response.text().then(() => {
                     const endTime = Date.now();
                     const executionTime = ((endTime - startTime) / 1000).toFixed(2);
-                    alert(`SHI creation completed successfully for Subject: ${subject}, Camera: ${camera}, Trial: ${trial}, Activity: ${activity} in ${executionTime} seconds!`);
+                    alert(`SHI creation completed successfully for Subject: ${subject}, Camera: ${camera}, Trial: ${trial}, Activity: ${activity}, Method: ${method} in ${executionTime} seconds!`);
                 });
             } else {
                 alert('Failed to create SHI.');
@@ -171,6 +172,21 @@ document.getElementById('btn-create-shi').addEventListener('click', function () 
 });
 
 document.getElementById('btn-stop-create-shi').addEventListener('click', function () {
-    createShiController.abort();
-    alert('SHI creation has been stopped.');
+    fetch('/api/stop_create_shi', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => {
+        if (response.ok) {
+            alert('SHI creation has been stopped.');
+        } else {
+            alert('Failed to stop SHI creation.');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while stopping SHI creation.');
+    });
 });
