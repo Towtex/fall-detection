@@ -3,28 +3,12 @@ html {
     font-size: 16px;
 }
 
+main {
+    margin-top: 6.5rem;
+}
+
 select {
     margin: 0.5em;
-}
-
-.info {
-    font-size: 1.2em;
-    line-height: 0.8em;
-    margin-top: 5rem; /* Default margin-top */
-}
-
-/* Responsive margin-top for 1920x1080 resolution */
-@media (min-width: 1920px) {
-    .info {
-        margin-top: 10rem;
-    }
-}
-
-/* Responsive margin-top for 1366x768 resolution */
-@media (min-width: 1366px) and (max-width: 1919px) {
-    .info {
-        margin-top: 6rem;
-    }
 }
 
 .image-container {
@@ -33,17 +17,23 @@ select {
     text-align: center;
 }
 
-.medium-image {
-    margin: 1rem;
-    width: 200px;
-    height: auto;
-}
-
 .image-label {
     color: #333;
     font-size: 1rem;
     margin-top: 0.5rem;
     text-align: center;
+}
+
+.info {
+    font-size: 1.2em;
+    line-height: 0.8em;
+    margin-top: 5rem; /* Default margin-top */
+}
+
+.medium-image {
+    margin: 1rem;
+    width: 200px;
+    height: auto;
 }
 
 .small-image {
@@ -57,11 +47,25 @@ select {
 }
 
 #ucsm-logo {
-    margin: 1em;
+    margin: 1.5em;
 }
 
 #ucsm-text {
     color: darkblue;
     font-size: 2em;
     margin-bottom: 0.5em;
+}
+
+/* Responsive margin-top for 1920x1080 resolution */
+@media (min-width: 1920px) {
+    .info {
+        margin-top: 10rem;
+    }
+}
+
+/* Responsive margin-top for 1366x768 resolution */
+@media (min-width: 1366px) and (max-width: 1919px) {
+    .info {
+        margin-top: 10rem;
+    }
 }
