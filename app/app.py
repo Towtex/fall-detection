@@ -175,6 +175,7 @@ def extract_fg_yolo_api():
     abort_signal.clear()
     data = request.get_json()
     subject = data.get('subject')
+    trial = data.get('trial')
     dataset_path = os.path.abspath(
         os.path.join(
             os.path.dirname(__file__),
@@ -184,10 +185,18 @@ def extract_fg_yolo_api():
     )
     
     def generate():
-        for camera in range(1, 3):
-            for trial in range(1, 4):
+        if trial == 'all':
+            for tr in range(1, 4):
+                for camera in range(1, 3):
+                    for action in range(1, 12):
+                        extract_fg_yolo(dataset_path, subject, camera, tr, action, abort_signal)
+                        if abort_signal.is_set():
+                            break
+                        yield f'data: Processing subject {subject}, camera {camera}, trial {tr}, action {action}\n\n'
+        else:
+            for camera in range(1, 3):
                 for action in range(1, 12):
-                    extract_fg_yolo(dataset_path, subject, camera, trial, action, abort_signal)
+                    extract_fg_yolo(dataset_path, subject, camera, int(trial), action, abort_signal)
                     if abort_signal.is_set():
                         break
                     yield f'data: Processing subject {subject}, camera {camera}, trial {trial}, action {action}\n\n'
