@@ -27,7 +27,7 @@ def take_max_obj(image):
                 output[labels == i] = 0
     return output
 
-def extract_fg_yolo(dataset_path: str, subject: str, camera: int, trial: int, action: int):
+def extract_fg_yolo(dataset_path: str, subject: str, camera: int, trial: int, action: int, abort_signal):
     model = YOLO('yolov8m-seg.pt')
     yolo_classes = list(model.names.values())
     class_ids = [yolo_classes.index(clas) for clas in yolo_classes]
@@ -66,12 +66,6 @@ def extract_fg_yolo(dataset_path: str, subject: str, camera: int, trial: int, ac
         )
     ) 
     
-    # if not os.path.exists(output_folder):
-    #     os.mkdir(output_folder)
-    # else:
-    #     shutil.rmtree(output_folder)
-    #     os.mkdir(output_folder)
-
     file_list = os.listdir(input_folder)
     total_files = len(file_list)
 
@@ -79,6 +73,9 @@ def extract_fg_yolo(dataset_path: str, subject: str, camera: int, trial: int, ac
     inc = 3
     
     for index in range(start, total_files + 1, inc):
+        if abort_signal.is_set():
+            print("Extraction aborted")
+            break
         img = cv2.imread(os.path.join(input_folder, file_list[index - 1]))
         img = cv2.resize(img, (width, height))
         mask = np.zeros([height, width], dtype=np.uint8)
@@ -93,13 +90,12 @@ def extract_fg_yolo(dataset_path: str, subject: str, camera: int, trial: int, ac
                         color_number = class_ids.index(int(box.cls[0]))
                         cv2.fillPoly(mask, points, 255)
 
-        # Convert mask to 8-bit single-channel image
         mask = cv2.convertScaleAbs(mask)
         result_img = take_max_obj(mask)
         path = os.path.join(
             output_folder,
             'extracted_fg_yolo',
         )
-        os.makedirs(path, exist_ok=True)  # Ensure the directory exists
+        os.makedirs(path, exist_ok=True)
         cv2.imwrite(os.path.join(path, file_list[index - 1]), result_img)
         print(f"Extracted FG {file_list[index - 1]}")

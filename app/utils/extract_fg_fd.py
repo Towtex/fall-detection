@@ -28,7 +28,7 @@ def take_max_obj(image):
                 output[labels == i] = 0
     return output
 
-def extract_fg(dataset_path: str, subject: str, camera: int, trial: int, action: int):
+def extract_fg(dataset_path: str, subject: str, camera: int, trial: int, action: int, abort_signal):
     sub_str = f'Subject{subject}'
     cam_str = f'Camera{camera}'
     trial_str = f'Trial{trial}'
@@ -82,6 +82,9 @@ def extract_fg(dataset_path: str, subject: str, camera: int, trial: int, action:
     #bgImg = cv2.cvtColor(bgFrame,cv2.COLOR_BGR2GRAY)
     
     for index in range(start, total_files + 1, inc):
+        if abort_signal.is_set():
+            print("Extraction aborted")
+            break
         start_time = time.time()
         # print(file_list[index-1])
         frame2 = cv2.imread(os.path.join(input_folder, file_list[index-1]))

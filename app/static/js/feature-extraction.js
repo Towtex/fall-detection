@@ -43,8 +43,23 @@ document.getElementById('btn-extract-fg-fd').addEventListener('click', function 
 });
 
 document.getElementById('btn-stop-extract-fg-fd').addEventListener('click', function () {
-    extractFgFdController.abort();
-    alert('Foreground extraction using FD has been stopped.');
+    fetch('/api/stop_extract_fg_fd', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => {
+        if (response.ok) {
+            alert('Foreground extraction using FD has been stopped.');
+        } else {
+            alert('Failed to stop foreground extraction using FD.');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while stopping FG FD extraction.');
+    });
 });
 
 let extractFgYoloController = new AbortController();
@@ -92,6 +107,70 @@ document.getElementById('btn-extract-fg-yolo').addEventListener('click', functio
 });
 
 document.getElementById('btn-stop-extract-fg-yolo').addEventListener('click', function () {
-    extractFgYoloController.abort();
-    alert('Foreground extraction using YOLO has been stopped.');
+    fetch('/api/stop_extract_fg_yolo', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+        .then(response => {
+            if (response.ok) {
+                alert('Foreground extraction using YOLO has been stopped.');
+            } else {
+                alert('Failed to stop foreground extraction using YOLO.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while stopping FG YOLO extraction.');
+        });
+});
+
+let createShiController = new AbortController();
+
+document.getElementById('btn-create-shi').addEventListener('click', function () {
+    const subject = document.getElementById('subject-select-shi').value;
+    const camera = document.getElementById('camera-select-shi').value;
+    const trial = document.getElementById('trial-select-shi').value;
+    const activity = document.getElementById('activity-select-shi').value;
+    console.log('Subject:', subject, 'Camera:', camera, 'Trial:', trial, 'Activity:', activity);
+    createShiController = new AbortController();
+
+    // Show starting message
+    alert(`Starting SHI creation for Subject: ${subject}, Camera: ${camera}, Trial: ${trial}, Activity: ${activity}...`);
+
+    const startTime = Date.now();
+
+    fetch('/api/create_shi', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ subject: subject, camera: camera, trial: trial, activity: activity }),
+        signal: createShiController.signal
+    })
+        .then(response => {
+            if (response.ok) {
+                response.text().then(() => {
+                    const endTime = Date.now();
+                    const executionTime = ((endTime - startTime) / 1000).toFixed(2);
+                    alert(`SHI creation completed successfully for Subject: ${subject}, Camera: ${camera}, Trial: ${trial}, Activity: ${activity} in ${executionTime} seconds!`);
+                });
+            } else {
+                alert('Failed to create SHI.');
+            }
+        })
+        .catch(error => {
+            if (error.name === 'AbortError') {
+                console.log('SHI creation was aborted.');
+            } else {
+                console.error('Error:', error);
+                alert('An error occurred while creating SHI.');
+            }
+        });
+});
+
+document.getElementById('btn-stop-create-shi').addEventListener('click', function () {
+    createShiController.abort();
+    alert('SHI creation has been stopped.');
 });

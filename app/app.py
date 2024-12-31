@@ -2,12 +2,14 @@ import os
 import webview
 import threading
 import logging
+import signal
 
 from flask import Flask, render_template, request, jsonify, url_for, send_from_directory, Response
 from utils.create_common_background import create_common_background_image
 from utils.create_background import create_background_image
 from utils.extract_fg_fd import extract_fg
 from utils.extract_fg_yolo import extract_fg_yolo
+from utils.create_SHI import create_SHI
 
 
 app = Flask(__name__, static_folder='static', template_folder='templates')
@@ -15,6 +17,9 @@ app.config['OUTPUT_FOLDER'] = os.path.abspath(os.path.join(os.path.dirname(__fil
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
+
+# Global variable to store the abort signal
+abort_signal = threading.Event()
 
 ### Page routes
 # 404 error page
@@ -122,6 +127,8 @@ def create_background():
 
 @app.route('/api/extract_fg_fd', methods=['POST'])
 def extract_fg_fd():
+    global abort_signal
+    abort_signal.clear()
     data = request.get_json()
     subject = data.get('subject')
     camera = data.get('camera')
@@ -138,19 +145,26 @@ def extract_fg_fd():
     def generate():
         if activity == 'all':
             for act in range(1, 12):
-                extract_fg(dataset_path, subject, camera, trial, act)
+                extract_fg(dataset_path, subject, camera, trial, act, abort_signal)
+                if abort_signal.is_set():
+                    break
                 print(f"Completed extraction for subject: {subject}, camera: {camera}, trial: {trial}, activity: {act}")
                 yield f'data: Processing subject {subject}, camera {camera}, trial {trial}, activity {act}\n\n'
         else:
-            extract_fg(dataset_path, subject, camera, trial, int(activity))
+            extract_fg(dataset_path, subject, camera, trial, int(activity), abort_signal)
             print(f"Completed extraction for subject: {subject}, camera: {camera}, trial: {trial}, activity: {activity}")
             yield f'data: Processing subject {subject}, camera {camera}, trial {trial}, activity {activity}\n\n'
     return Response(generate(), mimetype='text/event-stream')
 
 @app.route('/api/extract_fg_yolo', methods=['POST'])
 def extract_fg_yolo_api():
+    global abort_signal
+    abort_signal.clear()
     data = request.get_json()
     subject = data.get('subject')
+    camera = data.get('camera')
+    trial = data.get('trial')
+    activity = data.get('activity')
     dataset_path = os.path.abspath(
         os.path.join(
             os.path.dirname(__file__),
@@ -160,12 +174,48 @@ def extract_fg_yolo_api():
     )
     
     def generate():
-        for camera in range(1, 3):
-            for trial in range(1, 4):
-                for action in range(1, 12):
-                    extract_fg_yolo(dataset_path, subject, camera, trial, action)
-                    yield f'data: Processing subject {subject}, camera {camera}, trial {trial}, action {action}\n\n'
+        if activity == 'all':
+            for act in range(1, 12):
+                extract_fg_yolo(dataset_path, subject, camera, trial, act, abort_signal)
+                if abort_signal.is_set():
+                    break
+                yield f'data: Processing subject {subject}, camera {camera}, trial {trial}, activity {act}\n\n'
+        else:
+            extract_fg_yolo(dataset_path, subject, camera, trial, int(activity), abort_signal)
+            yield f'data: Processing subject {subject}, camera {camera}, trial {trial}, activity {activity}\n\n'
     return Response(generate(), mimetype='text/event-stream')
+
+@app.route('/api/stop_extract_fg_fd', methods=['POST'])
+def stop_extract_fg_fd():
+    global abort_signal
+    abort_signal.set()
+    return jsonify({'message': 'Foreground extraction using FD has been stopped.'}), 200
+
+@app.route('/api/stop_extract_fg_yolo', methods=['POST'])
+def stop_extract_fg_yolo():
+    global abort_signal
+    abort_signal.set()
+    return jsonify({'message': 'Foreground extraction using YOLO has been stopped.'}), 200
+
+@app.route('/api/create_shi', methods=['POST'])
+def create_shi_api():
+    data = request.get_json()
+    method = data.get('method')
+    subject = data.get('subject')
+    camera = data.get('camera')
+    trial = data.get('trial')
+    action = data.get('action')
+    dataset_path = os.path.abspath(
+        os.path.join(
+            os.path.dirname(__file__),
+            '..',
+            'UP_Fall_Dataset'
+        )
+    )
+    create_SHI(method, dataset_path, subject, camera, trial, action)
+    return jsonify({
+        'message': f'SHI created successfully using {method}.'
+    }), 200
 
 # Serve files dynamically from the output folder
 @app.route('/output/<path:filename>')
