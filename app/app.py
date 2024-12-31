@@ -142,17 +142,31 @@ def extract_fg_fd():
     )
     
     def generate():
-        if activity == 'all':
-            for act in range(1, 12):
-                extract_fg(dataset_path, subject, camera, trial, act, abort_signal)
-                if abort_signal.is_set():
-                    break
-                print(f"Completed extraction for subject: {subject}, camera: {camera}, trial: {trial}, activity: {act}")
-                yield f'data: Processing subject {subject}, camera {camera}, trial {trial}, activity {act}\n\n'
+        if trial == 'all':
+            for tr in range(1, 4):
+                if activity == 'all':
+                    for act in range(1, 12):
+                        if abort_signal.is_set():
+                            break
+                        extract_fg(dataset_path, subject, camera, tr, act, abort_signal)
+                        print(f"Completed extraction for subject: {subject}, camera: {camera}, trial: {tr}, activity: {act}")
+                        yield f'data: Processing subject {subject}, camera {camera}, trial {tr}, activity {act}\n\n'
+                else:
+                    extract_fg(dataset_path, subject, camera, tr, int(activity), abort_signal)
+                    print(f"Completed extraction for subject: {subject}, camera: {camera}, trial: {tr}, activity: {activity}")
+                    yield f'data: Processing subject {subject}, camera {camera}, trial {tr}, activity {activity}\n\n'
         else:
-            extract_fg(dataset_path, subject, camera, trial, int(activity), abort_signal)
-            print(f"Completed extraction for subject: {subject}, camera: {camera}, trial: {trial}, activity: {activity}")
-            yield f'data: Processing subject {subject}, camera {camera}, trial {trial}, activity {activity}\n\n'
+            if activity == 'all':
+                for act in range(1, 12):
+                    if abort_signal.is_set():
+                        break
+                    extract_fg(dataset_path, subject, camera, int(trial), act, abort_signal)
+                    print(f"Completed extraction for subject: {subject}, camera: {camera}, trial: {trial}, activity: {act}")
+                    yield f'data: Processing subject {subject}, camera {camera}, trial {trial}, activity {act}\n\n'
+            else:
+                extract_fg(dataset_path, subject, camera, int(trial), int(activity), abort_signal)
+                print(f"Completed extraction for subject: {subject}, camera: {camera}, trial: {trial}, activity: {activity}")
+                yield f'data: Processing subject {subject}, camera {camera}, trial {trial}, activity {activity}\n\n'
     return Response(generate(), mimetype='text/event-stream')
 
 @app.route('/api/extract_fg_yolo', methods=['POST'])
