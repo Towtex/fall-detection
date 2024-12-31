@@ -10,7 +10,7 @@ from utils.extract_fg_fd import extract_fg
 from utils.extract_fg_yolo import extract_fg_yolo
 from utils.create_SHI import create_shi
 from utils.extract_DOF import extract_color_dof
-
+from utils.create_DOF_SHI import fuse_DOF_SHI
 
 app = Flask(__name__, static_folder='static', template_folder='templates')
 app.config['OUTPUT_FOLDER'] = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'output'))
@@ -20,6 +20,15 @@ logging.basicConfig(level=logging.DEBUG)
 
 # Global variable to store the abort signal
 abort_signal = threading.Event()
+
+# Define dataset_path globally to avoid repetition
+DATASET_PATH = os.path.abspath(
+    os.path.join(
+        os.path.dirname(__file__),
+        '..',
+        'UP_Fall_Dataset'
+    )
+)
 
 ### Page routes
 # 404 error page
@@ -56,14 +65,7 @@ def create_common_background():
     data = request.get_json()
     camera = data.get('camera')
     condition = data.get('condition')
-    dataset_path = os.path.abspath(
-        os.path.join(
-            os.path.dirname(__file__),
-            '..',
-            'UP_Fall_Dataset',
-            'Common Background Creation'
-        )
-    )
+    dataset_path = os.path.join(DATASET_PATH, 'Common Background Creation')
     
     image_path = create_common_background_image(dataset_path, condition=f'Camera{camera}_Con{condition}')
     logging.debug(f'Created common background image path: {image_path}')
@@ -89,13 +91,6 @@ def create_background():
     camera = data.get('camera')
     trial = data.get('trial')
     activity = data.get('activity')
-    dataset_path = os.path.abspath(
-        os.path.join(
-            os.path.dirname(__file__),
-            '..',
-            'UP_Fall_Dataset'
-        )
-    )
     cbg_path = os.path.abspath(
         os.path.join(
             os.path.dirname(__file__),
@@ -107,7 +102,7 @@ def create_background():
     if activity == "all":
         image_paths = []
         for act in range(1, 12):
-            image_path = create_background_image(dataset_path, cbg_path, subject, camera, trial, str(act))
+            image_path = create_background_image(DATASET_PATH, cbg_path, subject, camera, trial, str(act))
             image_url = url_for('serve_image', subject=subject, camera=camera, trial=trial, activity=str(act), filename=os.path.basename(image_path))
             image_paths.append(image_url)
         return jsonify({
@@ -115,7 +110,7 @@ def create_background():
             'images': image_paths
         }), 200
     else:
-        image_path = create_background_image(dataset_path, cbg_path, subject, camera, trial, activity)
+        image_path = create_background_image(DATASET_PATH, cbg_path, subject, camera, trial, activity)
         print(image_path)
         image_url = url_for('serve_image', subject=subject, camera=camera, trial=trial, activity=activity, filename=os.path.basename(image_path))
 
@@ -134,40 +129,38 @@ def extract_fg_fd():
     camera = data.get('camera')
     trial = data.get('trial')
     activity = data.get('activity')
-    dataset_path = os.path.abspath(
-        os.path.join(
-            os.path.dirname(__file__),
-            '..',
-            'UP_Fall_Dataset'
-        )
-    )
     
     def generate():
-        if trial == 'all':
-            for tr in range(1, 4):
+        try:
+            if trial == 'all':
+                for tr in range(1, 4):
+                    if activity == 'all':
+                        for act in range(1, 12):
+                            if abort_signal.is_set():
+                                break
+                            extract_fg(DATASET_PATH, subject, camera, tr, act, abort_signal)
+                            print(f"Completed extraction for subject: {subject}, camera: {camera}, trial: {tr}, activity: {act}")
+                            yield f'data: Processing subject {subject}, camera {camera}, trial {tr}, activity {act}\n\n'
+                    else:
+                        extract_fg(DATASET_PATH, subject, camera, tr, int(activity), abort_signal)
+                        print(f"Completed extraction for subject: {subject}, camera: {camera}, trial: {tr}, activity: {activity}")
+                        yield f'data: Processing subject {subject}, camera {camera}, trial {tr}, activity {activity}\n\n'
+            else:
                 if activity == 'all':
                     for act in range(1, 12):
                         if abort_signal.is_set():
                             break
-                        extract_fg(dataset_path, subject, camera, tr, act, abort_signal)
-                        print(f"Completed extraction for subject: {subject}, camera: {camera}, trial: {tr}, activity: {act}")
-                        yield f'data: Processing subject {subject}, camera {camera}, trial {tr}, activity {act}\n\n'
+                        extract_fg(DATASET_PATH, subject, camera, int(trial), act, abort_signal)
+                        print(f"Completed extraction for subject: {subject}, camera: {camera}, trial: {trial}, activity: {act}")
+                        yield f'data: Processing subject {subject}, camera {camera}, trial {trial}, activity {act}\n\n'
                 else:
-                    extract_fg(dataset_path, subject, camera, tr, int(activity), abort_signal)
-                    print(f"Completed extraction for subject: {subject}, camera: {camera}, trial: {tr}, activity: {activity}")
-                    yield f'data: Processing subject {subject}, camera {camera}, trial {tr}, activity {activity}\n\n'
-        else:
-            if activity == 'all':
-                for act in range(1, 12):
-                    if abort_signal.is_set():
-                        break
-                    extract_fg(dataset_path, subject, camera, int(trial), act, abort_signal)
-                    print(f"Completed extraction for subject: {subject}, camera: {camera}, trial: {trial}, activity: {act}")
-                    yield f'data: Processing subject {subject}, camera {camera}, trial {trial}, activity {act}\n\n'
-            else:
-                extract_fg(dataset_path, subject, camera, int(trial), int(activity), abort_signal)
-                print(f"Completed extraction for subject: {subject}, camera: {camera}, trial: {trial}, activity: {activity}")
-                yield f'data: Processing subject {subject}, camera {camera}, trial {trial}, activity {activity}\n\n'
+                    extract_fg(DATASET_PATH, subject, camera, int(trial), int(activity), abort_signal)
+                    print(f"Completed extraction for subject: {subject}, camera: {camera}, trial: {trial}, activity: {activity}")
+                    yield f'data: Processing subject {subject}, camera {camera}, trial {trial}, activity {activity}\n\n'
+        except FileNotFoundError as e:
+            yield f'data: {str(e)}\n\n'
+            return
+
     return Response(generate(), mimetype='text/event-stream')
 
 @app.route('/api/extract_fg_yolo', methods=['POST'])
@@ -177,30 +170,28 @@ def extract_fg_yolo_api():
     data = request.get_json()
     subject = data.get('subject')
     trial = data.get('trial')
-    dataset_path = os.path.abspath(
-        os.path.join(
-            os.path.dirname(__file__),
-            '..',
-            'UP_Fall_Dataset'
-        )
-    )
     
     def generate():
-        if trial == 'all':
-            for tr in range(1, 4):
+        try:
+            if trial == 'all':
+                for tr in range(1, 4):
+                    for camera in range(1, 3):
+                        for action in range(1, 12):
+                            if abort_signal.is_set():
+                                break
+                            extract_fg_yolo(DATASET_PATH, subject, camera, tr, action, abort_signal)
+                            yield f'data: Processing subject {subject}, camera {camera}, trial {tr}, action {action}\n\n'
+            else:
                 for camera in range(1, 3):
                     for action in range(1, 12):
-                        extract_fg_yolo(dataset_path, subject, camera, tr, action, abort_signal)
                         if abort_signal.is_set():
                             break
-                        yield f'data: Processing subject {subject}, camera {camera}, trial {tr}, action {action}\n\n'
-        else:
-            for camera in range(1, 3):
-                for action in range(1, 12):
-                    extract_fg_yolo(dataset_path, subject, camera, int(trial), action, abort_signal)
-                    if abort_signal.is_set():
-                        break
-                    yield f'data: Processing subject {subject}, camera {camera}, trial {trial}, action {action}\n\n'
+                        extract_fg_yolo(DATASET_PATH, subject, camera, int(trial), action, abort_signal)
+                        yield f'data: Processing subject {subject}, camera {camera}, trial {trial}, action {action}\n\n'
+        except FileNotFoundError as e:
+            yield f'data: {str(e)}\n\n'
+            return
+
     return Response(generate(), mimetype='text/event-stream')
 
 @app.route('/api/stop_extract_fg_fd', methods=['POST'])
@@ -225,36 +216,34 @@ def create_shi_api():
     camera = data.get('camera')
     trial = data.get('trial')
     activity = data.get('activity')
-    dataset_path = os.path.abspath(
-        os.path.join(
-            os.path.dirname(__file__),
-            '..',
-            'UP_Fall_Dataset'
-        )
-    )
     
     def generate():
-        if trial == 'all':
-            for tr in range(1, 4):
+        try:
+            if trial == 'all':
+                for tr in range(1, 4):
+                    if activity == 'all':
+                        for act in range(1, 12):
+                            if abort_signal.is_set():
+                                break
+                            create_shi(method, DATASET_PATH, subject, camera, tr, act, abort_signal)
+                            yield f'data: Processing subject {subject}, camera {camera}, trial {tr}, activity {act}\n\n'
+                    else:
+                        create_shi(method, DATASET_PATH, subject, camera, tr, int(activity), abort_signal)
+                        yield f'data: Processing subject {subject}, camera {camera}, trial {tr}, activity {activity}\n\n'
+            else:
                 if activity == 'all':
                     for act in range(1, 12):
                         if abort_signal.is_set():
                             break
-                        create_shi(method, dataset_path, subject, camera, tr, act, abort_signal)
-                        yield f'data: Processing subject {subject}, camera {camera}, trial {tr}, activity {act}\n\n'
+                        create_shi(method, DATASET_PATH, subject, camera, int(trial), act, abort_signal)
+                        yield f'data: Processing subject {subject}, camera {camera}, trial {trial}, activity {act}\n\n'
                 else:
-                    create_shi(method, dataset_path, subject, camera, tr, int(activity), abort_signal)
-                    yield f'data: Processing subject {subject}, camera {camera}, trial {tr}, activity {activity}\n\n'
-        else:
-            if activity == 'all':
-                for act in range(1, 12):
-                    if abort_signal.is_set():
-                        break
-                    create_shi(method, dataset_path, subject, camera, int(trial), act, abort_signal)
-                    yield f'data: Processing subject {subject}, camera {camera}, trial {trial}, activity {act}\n\n'
-            else:
-                create_shi(method, dataset_path, subject, camera, int(trial), int(activity), abort_signal)
-                yield f'data: Processing subject {subject}, camera {camera}, trial {trial}, activity {activity}\n\n'
+                    create_shi(method, DATASET_PATH, subject, camera, int(trial), int(activity), abort_signal)
+                    yield f'data: Processing subject {subject}, camera {camera}, trial {trial}, activity {activity}\n\n'
+        except FileNotFoundError as e:
+            yield f'data: {str(e)}\n\n'
+            return
+
     return Response(generate(), mimetype='text/event-stream')
 
 @app.route('/api/stop_create_shi', methods=['POST'])
@@ -272,36 +261,34 @@ def extract_dof_api():
     camera = data.get('camera')
     trial = data.get('trial')
     activity = data.get('activity')
-    dataset_path = os.path.abspath(
-        os.path.join(
-            os.path.dirname(__file__),
-            '..',
-            'UP_Fall_Dataset'
-        )
-    )
     
     def generate():
-        if trial == 'all':
-            for tr in range(1, 4):
+        try:
+            if trial == 'all':
+                for tr in range(1, 4):
+                    if activity == 'all':
+                        for act in range(1, 12):
+                            if abort_signal.is_set():
+                                break
+                            extract_color_dof(DATASET_PATH, subject, camera, tr, act)
+                            yield f'data: Processing subject {subject}, camera {camera}, trial {tr}, activity {act}\n\n'
+                    else:
+                        extract_color_dof(DATASET_PATH, subject, camera, tr, int(activity))
+                        yield f'data: Processing subject {subject}, camera {camera}, trial {tr}, activity {activity}\n\n'
+            else:
                 if activity == 'all':
                     for act in range(1, 12):
                         if abort_signal.is_set():
                             break
-                        extract_color_dof(dataset_path, subject, camera, tr, act)
-                        yield f'data: Processing subject {subject}, camera {camera}, trial {tr}, activity {act}\n\n'
+                        extract_color_dof(DATASET_PATH, subject, camera, int(trial), act)
+                        yield f'data: Processing subject {subject}, camera {camera}, trial {trial}, activity {act}\n\n'
                 else:
-                    extract_color_dof(dataset_path, subject, camera, tr, int(activity))
-                    yield f'data: Processing subject {subject}, camera {camera}, trial {tr}, activity {activity}\n\n'
-        else:
-            if activity == 'all':
-                for act in range(1, 12):
-                    if abort_signal.is_set():
-                        break
-                    extract_color_dof(dataset_path, subject, camera, int(trial), act)
-                    yield f'data: Processing subject {subject}, camera {camera}, trial {trial}, activity {act}\n\n'
-            else:
-                extract_color_dof(dataset_path, subject, camera, int(trial), int(activity))
-                yield f'data: Processing subject {subject}, camera {camera}, trial {trial}, activity {activity}\n\n'
+                    extract_color_dof(DATASET_PATH, subject, camera, int(trial), int(activity))
+                    yield f'data: Processing subject {subject}, camera {camera}, trial {trial}, activity {activity}\n\n'
+        except FileNotFoundError as e:
+            yield f'data: {str(e)}\n\n'
+            return
+
     return Response(generate(), mimetype='text/event-stream')
 
 @app.route('/api/stop_extract_dof', methods=['POST'])
@@ -309,6 +296,52 @@ def stop_extract_dof():
     global abort_signal
     abort_signal.set()
     return jsonify({'message': 'DOF extraction has been stopped.'}), 200
+
+@app.route('/api/create_dof_shi', methods=['POST'])
+def create_dof_shi_api():
+    global abort_signal
+    abort_signal.clear()
+    data = request.get_json()
+    method = data.get('method')
+    subject = data.get('subject')
+    camera = data.get('camera')
+    trial = data.get('trial')
+    activity = data.get('activity')
+    
+    def generate():
+        try:
+            if trial == 'all':
+                for tr in range(1, 4):
+                    if activity == 'all':
+                        for act in range(1, 12):
+                            if abort_signal.is_set():
+                                break
+                            fuse_DOF_SHI(DATASET_PATH, subject, camera, tr, act, method)
+                            yield f'data: Processing subject {subject}, camera {camera}, trial {tr}, activity {act}\n\n'
+                    else:
+                        fuse_DOF_SHI(DATASET_PATH, subject, camera, tr, int(activity), method)
+                        yield f'data: Processing subject {subject}, camera {camera}, trial {tr}, activity {activity}\n\n'
+            else:
+                if activity == 'all':
+                    for act in range(1, 12):
+                        if abort_signal.is_set():
+                            break
+                        fuse_DOF_SHI(DATASET_PATH, subject, camera, int(trial), act, method)
+                        yield f'data: Processing subject {subject}, camera {camera}, trial {trial}, activity {act}\n\n'
+                else:
+                    fuse_DOF_SHI(DATASET_PATH, subject, camera, int(trial), int(activity), method)
+                    yield f'data: Processing subject {subject}, camera {camera}, trial {trial}, activity {activity}\n\n'
+        except FileNotFoundError as e:
+            yield f'data: {str(e)}\n\n'
+            return
+
+    return Response(generate(), mimetype='text/event-stream')
+
+@app.route('/api/stop_create_dof_shi', methods=['POST'])
+def stop_create_dof_shi():
+    global abort_signal
+    abort_signal.set()
+    return jsonify({'message': 'DOF SHI creation has been stopped.'}), 200
 
 # Serve files dynamically from the output folder
 @app.route('/output/<path:filename>')
@@ -335,16 +368,16 @@ def serve_common_image(filename):
     return send_from_directory(folder_path, filename)
 ### End API routes
 
-# def run_flask():
-#     app.run(debug=True, use_reloader=False)
+def run_flask():
+    app.run(debug=True, use_reloader=False)
 
-# if __name__ == '__main__':
-#     flask_thread = threading.Thread(target=run_flask)
-#     flask_thread.start()
+if __name__ == '__main__':
+    flask_thread = threading.Thread(target=run_flask)
+    flask_thread.start()
 
-#     webview.create_window(
-#         'Fall Detection and Classification with Multiple Cameras Based on Features Fusion and CNN-LST',
-#         'http://127.0.0.1:5000'
-#     )
-#     webview.start()
-#     os._exit(0)
+    webview.create_window(
+        'Fall Detection and Classification with Multiple Cameras Based on Features Fusion and CNN-LST',
+        'http://127.0.0.1:5000'
+    )
+    webview.start()
+    os._exit(0)

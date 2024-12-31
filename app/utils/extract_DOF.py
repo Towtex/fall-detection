@@ -21,8 +21,7 @@ def extract_color_dof(dataset_path: str, subject: int, camera: int, trial: int, 
     input_folder = os.path.join(main_folder, 'RGB')
     
     if not os.path.exists(input_folder):
-        print(f"Folder {input_folder} does not exist")
-        return
+        raise FileNotFoundError(f"Folder {input_folder} does not exist")
     
     output_folder = os.path.abspath(
         os.path.join(

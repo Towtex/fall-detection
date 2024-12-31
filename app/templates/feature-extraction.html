@@ -240,5 +240,68 @@
     </div>
 </div>
 
+<div class="row" style="margin: 1rem;">
+    <div class="col-md-8 text-end">
+        <label for="method-select-dof-shi">Method: </label>
+        <select id="method-select-dof-shi">
+            <option value="Yolov8">Yolov8</option>
+            <option value="CBF&BS">CBF&BS</option>
+        </select>
+        <label for="subject-select-dof-shi">Subject: </label>
+        <select id="subject-select-dof-shi">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+            <option value="13">13</option>
+            <option value="14">14</option>
+            <option value="15">15</option>
+            <option value="16">16</option>
+            <option value="17">17</option>
+        </select>
+        <label for="camera-select-dof-shi">Camera: </label>
+        <select id="camera-select-dof-shi">
+            <option value="1">1</option>
+            <option value="2">2</option>
+        </select>
+        <label for="trial-select-dof-shi">Trial: </label>
+        <select id="trial-select-dof-shi">
+            <option value="all">All</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+        </select>
+        <label for="activity-select-dof-shi">Activity: </label>
+        <select id="activity-select-dof-shi">
+            <option value="all">All</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+        </select>
+    </div>
+    <div class="col-md-2 text-center">
+        <button type="button" class="btn btn-primary w-100" id="btn-create-dof-shi">Create DOF SHI</button>
+    </div>
+    <div class="col-md-2 text-start">
+        <button type="button" class="btn btn-danger" id="btn-stop-create-dof-shi">Stop</button>
+    </div>
+</div>
+
 <script src="{{ url_for('static', filename='js/feature-extraction.js') }}"></script>
 {% endblock %}

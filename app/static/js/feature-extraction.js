@@ -23,7 +23,11 @@ document.getElementById('btn-extract-fg-fd').addEventListener('click', function 
     })
         .then(response => {
             if (response.ok) {
-                response.text().then(() => {
+                response.text().then(text => {
+                    if (text.includes("does not exist")) {
+                        alert(`ERROR:\n ${text} The operation will abort.`);
+                        return;
+                    }
                     const endTime = Date.now();
                     const executionTime = ((endTime - startTime) / 1000).toFixed(2);
                     alert(`Foreground extraction using FD completed successfully for Subject: ${subject}, Camera: ${camera}, Trial: ${trial}, Activity: ${activity} in ${executionTime} seconds!`);
@@ -37,7 +41,7 @@ document.getElementById('btn-extract-fg-fd').addEventListener('click', function 
                 console.log('Foreground extraction using FD was aborted.');
             } else {
                 console.error('Error:', error);
-                alert('An error occurred while extracting FG FD.');
+                alert(`An error occurred while extracting FG FD: ${error.message}`);
             }
         });
 });
@@ -49,17 +53,17 @@ document.getElementById('btn-stop-extract-fg-fd').addEventListener('click', func
             'Content-Type': 'application/json'
         }
     })
-    .then(response => {
-        if (response.ok) {
-            alert('Foreground extraction using FD has been stopped.');
-        } else {
-            alert('Failed to stop foreground extraction using FD.');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('An error occurred while stopping FG FD extraction.');
-    });
+        .then(response => {
+            if (response.ok) {
+                alert('Foreground extraction using FD has been stopped.');
+            } else {
+                alert('Failed to stop foreground extraction using FD.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while stopping FG FD extraction.');
+        });
 });
 
 let extractFgYoloController = new AbortController();
@@ -87,7 +91,11 @@ document.getElementById('btn-extract-fg-yolo').addEventListener('click', functio
     })
         .then(response => {
             if (response.ok) {
-                response.text().then(() => {
+                response.text().then(text => {
+                    if (text.includes("does not exist")) {
+                        alert(`ERROR:\n ${text} The operation will abort.`);
+                        return;
+                    }
                     const endTime = Date.now();
                     const executionTime = ((endTime - startTime) / 1000).toFixed(2);
                     alert(`Foreground extraction using YOLO completed successfully for Subject: ${subject}, Camera: ${camera}, Trial: ${trial}, Activity: ${activity} in ${executionTime} seconds!`);
@@ -101,7 +109,7 @@ document.getElementById('btn-extract-fg-yolo').addEventListener('click', functio
                 console.log('Foreground extraction using YOLO was aborted.');
             } else {
                 console.error('Error:', error);
-                alert('An error occurred while extracting FG YOLO.');
+                alert(`An error occurred while extracting FG YOLO: ${error.message}`);
             }
         });
 });
@@ -152,7 +160,11 @@ document.getElementById('btn-create-shi').addEventListener('click', function () 
     })
         .then(response => {
             if (response.ok) {
-                response.text().then(() => {
+                response.text().then(text => {
+                    if (text.includes("does not exist")) {
+                        alert(`ERROR:\n ${text} The operation will abort.`);
+                        return;
+                    }
                     const endTime = Date.now();
                     const executionTime = ((endTime - startTime) / 1000).toFixed(2);
                     alert(`SHI creation completed successfully for Subject: ${subject}, Camera: ${camera}, Trial: ${trial}, Activity: ${activity}, Method: ${method} in ${executionTime} seconds!`);
@@ -166,7 +178,7 @@ document.getElementById('btn-create-shi').addEventListener('click', function () 
                 console.log('SHI creation was aborted.');
             } else {
                 console.error('Error:', error);
-                alert('An error occurred while creating SHI.');
+                alert(`An error occurred while creating SHI: ${error.message}`);
             }
         });
 });
@@ -178,17 +190,17 @@ document.getElementById('btn-stop-create-shi').addEventListener('click', functio
             'Content-Type': 'application/json'
         }
     })
-    .then(response => {
-        if (response.ok) {
-            alert('SHI creation has been stopped.');
-        } else {
-            alert('Failed to stop SHI creation.');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('An error occurred while stopping SHI creation.');
-    });
+        .then(response => {
+            if (response.ok) {
+                alert('SHI creation has been stopped.');
+            } else {
+                alert('Failed to stop SHI creation.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while stopping SHI creation.');
+        });
 });
 
 let extractDofController = new AbortController();
@@ -216,7 +228,11 @@ document.getElementById('btn-extract-dof').addEventListener('click', function ()
     })
         .then(response => {
             if (response.ok) {
-                response.text().then(() => {
+                response.text().then(text => {
+                    if (text.includes("does not exist")) {
+                        alert(`ERROR:\n ${text} The operation will abort.`);
+                        return;
+                    }
                     const endTime = Date.now();
                     const executionTime = ((endTime - startTime) / 1000).toFixed(2);
                     alert(`DOF extraction completed successfully for Subject: ${subject}, Camera: ${camera}, Trial: ${trial}, Activity: ${activity} in ${executionTime} seconds!`);
@@ -230,7 +246,7 @@ document.getElementById('btn-extract-dof').addEventListener('click', function ()
                 console.log('DOF extraction was aborted.');
             } else {
                 console.error('Error:', error);
-                alert('An error occurred while extracting DOF.');
+                alert(`An error occurred while extracting DOF: ${error.message}`);
             }
         });
 });
@@ -242,15 +258,84 @@ document.getElementById('btn-stop-extract-dof').addEventListener('click', functi
             'Content-Type': 'application/json'
         }
     })
-    .then(response => {
-        if (response.ok) {
-            alert('DOF extraction has been stopped.');
-        } else {
-            alert('Failed to stop DOF extraction.');
+        .then(response => {
+            if (response.ok) {
+                alert('DOF extraction has been stopped.');
+            } else {
+                alert('Failed to stop DOF extraction.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while stopping DOF extraction.');
+        });
+});
+
+let createDofShiController = new AbortController();
+
+document.getElementById('btn-create-dof-shi').addEventListener('click', function () {
+    const subject = document.getElementById('subject-select-dof-shi').value;
+    const camera = document.getElementById('camera-select-dof-shi').value;
+    const trial = document.getElementById('trial-select-dof-shi').value;
+    const activity = document.getElementById('activity-select-dof-shi').value;
+    const method = document.getElementById('method-select-dof-shi').value;
+    console.log('Subject:', subject, 'Camera:', camera, 'Trial:', trial, 'Activity:', activity, 'Method:', method);
+    createDofShiController = new AbortController();
+
+    // Show starting message
+    alert(`Starting DOF SHI creation for Subject: ${subject}, Camera: ${camera}, Trial: ${trial}, Activity: ${activity}, Method: ${method}...`);
+
+    const startTime = Date.now();
+
+    fetch('/api/create_dof_shi', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ subject: subject, camera: camera, trial: trial, activity: activity, method: method }),
+        signal: createDofShiController.signal
+    })
+        .then(response => {
+            if (response.ok) {
+                response.text().then(text => {
+                    if (text.includes("does not exist")) {
+                        alert(`ERROR:\n ${text} The operation will abort.`);
+                        return;
+                    }
+                    const endTime = Date.now();
+                    const executionTime = ((endTime - startTime) / 1000).toFixed(2);
+                    alert(`DOF SHI creation completed successfully for Subject: ${subject}, Camera: ${camera}, Trial: ${trial}, Activity: ${activity}, Method: ${method} in ${executionTime} seconds!`);
+                });
+            } else {
+                alert('Failed to create DOF SHI.');
+            }
+        })
+        .catch(error => {
+            if (error.name === 'AbortError') {
+                console.log('DOF SHI creation was aborted.');
+            } else {
+                console.error('Error:', error);
+                alert(`An error occurred while creating DOF SHI: ${error.message}`);
+            }
+        });
+});
+
+document.getElementById('btn-stop-create-dof-shi').addEventListener('click', function () {
+    fetch('/api/stop_create_dof_shi', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
         }
     })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('An error occurred while stopping DOF extraction.');
-    });
+        .then(response => {
+            if (response.ok) {
+                alert('DOF SHI creation has been stopped.');
+            } else {
+                alert('Failed to stop DOF SHI creation.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while stopping DOF SHI creation.');
+        });
 });
