@@ -193,6 +193,8 @@ def stop_extract_fg_yolo():
 
 @app.route('/api/create_shi', methods=['POST'])
 def create_shi_api():
+    global abort_signal
+    abort_signal.clear()
     data = request.get_json()
     method = data.get('method')
     subject = data.get('subject')
@@ -210,12 +212,20 @@ def create_shi_api():
     def generate():
         if activity == 'all':
             for act in range(1, 12):
-                create_shi(method, dataset_path, subject, camera, trial, act)
+                if abort_signal.is_set():
+                    break
+                create_shi(method, dataset_path, subject, camera, trial, act, abort_signal)
                 yield f'data: Processing subject {subject}, camera {camera}, trial {trial}, activity {act}\n\n'
         else:
-            create_shi(method, dataset_path, subject, camera, trial, int(activity))
+            create_shi(method, dataset_path, subject, camera, trial, int(activity), abort_signal)
             yield f'data: Processing subject {subject}, camera {camera}, trial {trial}, activity {activity}\n\n'
     return Response(generate(), mimetype='text/event-stream')
+
+@app.route('/api/stop_create_shi', methods=['POST'])
+def stop_create_shi():
+    global abort_signal
+    abort_signal.set()
+    return jsonify({'message': 'SHI creation has been stopped.'}), 200
 
 # Serve files dynamically from the output folder
 @app.route('/output/<path:filename>')

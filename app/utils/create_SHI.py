@@ -16,7 +16,7 @@ def take_max_obj(image):
                 output[labels == i] = 0
     return output
 
-def create_shi(method, dataset_path: str, subject: int, camera: int, trial: int, activity: int):
+def create_shi(method, dataset_path: str, subject: int, camera: int, trial: int, activity: int, abort_signal):
     sub_str = f'Subject{subject}'
     cam_str = f'Camera{camera}'
     trial_str = f'Trial{trial}'
@@ -55,6 +55,9 @@ def create_shi(method, dataset_path: str, subject: int, camera: int, trial: int,
     total_files = len(file_list) - 1
     
     for index in range(1, total_files + 1):
+        if abort_signal.is_set():
+            print("SHI creation aborted.")
+            break
         start_time = time.time()
         filename = file_list[index]
         fg_frame1 = cv2.imread(os.path.join(fg_folder, file_list[index-1]))
