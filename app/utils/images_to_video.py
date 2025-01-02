@@ -11,6 +11,9 @@ def images_to_video(image_folder: str, video_path: str, fps: int = 30, image_for
 
     first_image_path = os.path.join(image_folder, images[0])
     frame = cv2.imread(first_image_path)
+    if frame is None:
+        print(f"Error: Failed to load the first image {first_image_path}")
+        return
     height, width, layers = frame.shape
 
     video = cv2.VideoWriter(video_path, cv2.VideoWriter_fourcc(*codec), fps, (width, height))
@@ -18,10 +21,13 @@ def images_to_video(image_folder: str, video_path: str, fps: int = 30, image_for
     for image in images:
         image_path = os.path.join(image_folder, image)
         frame = cv2.imread(image_path)
+        if frame is None:
+            print(f"Error: Failed to load image {image_path}")
+            continue
         video.write(frame)
 
     video.release()
-    print(f"Video saved at {video_path}")
+    # print(f"Video saved at {video_path}")
 
 # if __name__ == "__main__":
 #     image_folder = os.path.abspath(

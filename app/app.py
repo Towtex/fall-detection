@@ -139,43 +139,35 @@ def extract_fg_fd():
                         for act in range(1, 12):
                             if abort_signal.is_set():
                                 break
-                            extract_fg(DATASET_PATH, subject, camera, tr, act, abort_signal)
-                            video_name = f'subject{subject}_camera{camera}_trial{tr}_activity{act}.avi'
-                            image_folder = os.path.join(app.config['OUTPUT_FOLDER'], f'Subject_{subject}', f'Camera_{camera}', f'Trial_{tr}', f'Activity_{act}', 'extracted_fg_fd')
-                            video_path = os.path.join(image_folder, video_name)
-                            images_to_video(image_folder, video_path, fps=30, image_format=".png", codec="DIVX")
-                            print(f"Completed extraction and video creation for subject: {subject}, camera: {camera}, trial: {tr}, activity: {act}")
-                            yield f'data: Processing subject {subject}, camera {camera}, trial {tr}, activity {act}\n\n'
+                            msg = extract_fg(DATASET_PATH, subject, camera, tr, act, abort_signal)
+                            if msg:
+                                yield f'{msg}\n\n'.encode()
+                            else:
+                                yield f'Processing subject {subject}, camera {camera}, trial {tr}, activity {act}\n\n'.encode()
                     else:
-                        extract_fg(DATASET_PATH, subject, camera, tr, int(activity), abort_signal)
-                        video_name = f'subject{subject}_camera{camera}_trial{tr}_activity{activity}.avi'
-                        image_folder = os.path.join(app.config['OUTPUT_FOLDER'], f'Subject_{subject}', f'Camera_{camera}', f'Trial_{tr}', f'Activity_{activity}', 'extracted_fg_fd')
-                        video_path = os.path.join(image_folder, video_name)
-                        images_to_video(image_folder, video_path, fps=30, image_format=".png", codec="DIVX")
-                        print(f"Completed extraction and video creation for subject: {subject}, camera: {camera}, trial: {tr}, activity: {activity}")
-                        yield f'data: Processing subject {subject}, camera {camera}, trial {tr}, activity {activity}\n\n'
+                        msg = extract_fg(DATASET_PATH, subject, camera, tr, int(activity), abort_signal)
+                        if msg:
+                            yield f'{msg}\n\n'.encode()
+                        else:
+                            yield f'Success: Processing subject {subject}, camera {camera}, trial {tr}, activity {activity}\n\n'.encode()
             else:
                 if activity == 'all':
                     for act in range(1, 12):
                         if abort_signal.is_set():
                             break
-                        extract_fg(DATASET_PATH, subject, camera, int(trial), act, abort_signal)
-                        video_name = f'subject{subject}_camera{camera}_trial{trial}_activity{act}.avi'
-                        image_folder = os.path.join(app.config['OUTPUT_FOLDER'], f'Subject_{subject}', f'Camera_{camera}', f'Trial_{trial}', f'Activity_{act}', 'extracted_fg_fd')
-                        video_path = os.path.join(image_folder, video_name)
-                        images_to_video(image_folder, video_path, fps=30, image_format=".png", codec="DIVX")
-                        print(f"Completed extraction and video creation for subject: {subject}, camera: {camera}, trial: {trial}, activity: {act}")
-                        yield f'data: Processing subject {subject}, camera {camera}, trial {trial}, activity {act}\n\n'
+                        msg = extract_fg(DATASET_PATH, subject, camera, int(trial), act, abort_signal)
+                        if msg:
+                            yield f'{msg}\n\n'.encode()
+                        else:
+                            yield f'Success: Processing subject {subject}, camera {camera}, trial {trial}, activity {act}\n\n'.encode()
                 else:
-                    extract_fg(DATASET_PATH, subject, camera, int(trial), int(activity), abort_signal)
-                    video_name = f'subject{subject}_camera{camera}_trial{trial}_activity{activity}.avi'
-                    image_folder = os.path.join(app.config['OUTPUT_FOLDER'], f'Subject_{subject}', f'Camera_{camera}', f'Trial_{trial}', f'Activity_{activity}', 'extracted_fg_fd')
-                    video_path = os.path.join(image_folder, video_name)
-                    images_to_video(image_folder, video_path, fps=30, image_format=".png", codec="DIVX")
-                    print(f"Completed extraction and video creation for subject: {subject}, camera: {camera}, trial: {trial}, activity: {activity}")
-                    yield f'data: Processing subject {subject}, camera {camera}, trial {trial}, activity {activity}\n\n'
+                    msg = extract_fg(DATASET_PATH, subject, camera, int(trial), int(activity), abort_signal)
+                    if msg:
+                        yield f'{msg}\n\n'.encode()
+                    else:
+                        yield f'Success: Processing subject {subject}, camera {camera}, trial {trial}, activity {activity}\n\n'.encode()
         except FileNotFoundError as e:
-            yield f'data: {str(e)}\n\n'
+            yield f'Error: {str(e)}\n\n'.encode()
             return
 
     return Response(generate(), mimetype='text/event-stream')
@@ -201,7 +193,7 @@ def extract_fg_yolo_api():
                             image_folder = os.path.join(app.config['OUTPUT_FOLDER'], f'Subject_{subject}', f'Camera_{camera}', f'Trial_{tr}', f'Activity_{action}', 'extracted_fg_yolo')
                             video_path = os.path.join(image_folder, video_name)
                             images_to_video(image_folder, video_path, fps=30, image_format=".png", codec="DIVX")
-                            yield f'data: Processing subject {subject}, camera {camera}, trial {tr}, action {action}\n\n'
+                            yield f'Processing subject {subject}, camera {camera}, trial {tr}, action {action}\n\n'
             else:
                 for camera in range(1, 3):
                     for action in range(1, 12):
@@ -212,9 +204,9 @@ def extract_fg_yolo_api():
                         image_folder = os.path.join(app.config['OUTPUT_FOLDER'], f'Subject_{subject}', f'Camera_{camera}', f'Trial_{trial}', f'Activity_{action}', 'extracted_fg_yolo')
                         video_path = os.path.join(image_folder, video_name)
                         images_to_video(image_folder, video_path, fps=30, image_format=".png", codec="DIVX")
-                        yield f'data: Processing subject {subject}, camera {camera}, trial {trial}, action {action}\n\n'
+                        yield f'Processing subject {subject}, camera {camera}, trial {trial}, action {action}\n\n'
         except FileNotFoundError as e:
-            yield f'data: {str(e)}\n\n'
+            yield f'{str(e)}\n\n'
             return
 
     return Response(generate(), mimetype='text/event-stream')
@@ -251,17 +243,9 @@ def create_shi_api():
                             if abort_signal.is_set():
                                 break
                             create_shi(method, DATASET_PATH, subject, camera, tr, act, abort_signal)
-                            video_name = f'subject{subject}_camera{camera}_trial{tr}_activity{act}.avi'
-                            image_folder = os.path.join(app.config['OUTPUT_FOLDER'], f'Subject_{subject}', f'Camera_{camera}', f'Trial_{tr}', f'Activity_{act}', 'shi')
-                            video_path = os.path.join(image_folder, video_name)
-                            images_to_video(image_folder, video_path, fps=30, image_format=".png", codec="DIVX")
                             yield f'data: Processing subject {subject}, camera {camera}, trial {tr}, activity {act}\n\n'
                     else:
                         create_shi(method, DATASET_PATH, subject, camera, tr, int(activity), abort_signal)
-                        video_name = f'subject{subject}_camera{camera}_trial{tr}_activity{activity}.avi'
-                        image_folder = os.path.join(app.config['OUTPUT_FOLDER'], f'Subject_{subject}', f'Camera_{camera}', f'Trial_{tr}', f'Activity_{activity}', 'shi')
-                        video_path = os.path.join(image_folder, video_name)
-                        images_to_video(image_folder, video_path, fps=30, image_format=".png", codec="DIVX")
                         yield f'data: Processing subject {subject}, camera {camera}, trial {tr}, activity {activity}\n\n'
             else:
                 if activity == 'all':
@@ -269,19 +253,11 @@ def create_shi_api():
                         if abort_signal.is_set():
                             break
                         create_shi(method, DATASET_PATH, subject, camera, int(trial), act, abort_signal)
-                        video_name = f'subject{subject}_camera{camera}_trial{trial}_activity{act}.avi'
-                        image_folder = os.path.join(app.config['OUTPUT_FOLDER'], f'Subject_{subject}', f'Camera_{camera}', f'Trial_{trial}', f'Activity_{act}', 'shi')
-                        video_path = os.path.join(image_folder, video_name)
-                        images_to_video(image_folder, video_path, fps=30, image_format=".png", codec="DIVX")
                         yield f'data: Processing subject {subject}, camera {camera}, trial {trial}, activity {act}\n\n'
                 else:
                     create_shi(method, DATASET_PATH, subject, camera, int(trial), int(activity), abort_signal)
-                    video_name = f'subject{subject}_camera{camera}_trial{trial}_activity{activity}.avi'
-                    image_folder = os.path.join(app.config['OUTPUT_FOLDER'], f'Subject_{subject}', f'Camera_{camera}', f'Trial_{trial}', f'Activity_{activity}', 'shi')
-                    video_path = os.path.join(image_folder, video_name)
-                    images_to_video(image_folder, video_path, fps=30, image_format=".png", codec="DIVX")
                     yield f'data: Processing subject {subject}, camera {camera}, trial {trial}, activity {activity}\n\n'
-        except FileNotFoundError as e:
+        except Exception as e:
             yield f'data: {str(e)}\n\n'
             return
 
@@ -376,14 +352,14 @@ def create_dof_shi_api():
                             fuse_DOF_SHI(DATASET_PATH, subject, camera, tr, act, method)
                             video_name = f'subject{subject}_camera{camera}_trial{tr}_activity{act}.avi'
                             image_folder = os.path.join(app.config['OUTPUT_FOLDER'], f'Subject_{subject}', f'Camera_{camera}', f'Trial_{tr}', f'Activity_{act}', 'dof_shi')
-                            video_path = os.path.join(image_folder, video_name)
+                            video_path = os.path.join(app.config['OUTPUT_FOLDER'], video_name)
                             images_to_video(image_folder, video_path, fps=30, image_format=".png", codec="DIVX")
                             yield f'data: Processing subject {subject}, camera {camera}, trial {tr}, activity {act}\n\n'
                     else:
                         fuse_DOF_SHI(DATASET_PATH, subject, camera, tr, int(activity), method)
                         video_name = f'subject{subject}_camera{camera}_trial{tr}_activity{activity}.avi'
                         image_folder = os.path.join(app.config['OUTPUT_FOLDER'], f'Subject_{subject}', f'Camera_{camera}', f'Trial_{tr}', f'Activity_{activity}', 'dof_shi')
-                        video_path = os.path.join(image_folder, video_name)
+                        video_path = os.path.join(app.config['OUTPUT_FOLDER'], video_name)
                         images_to_video(image_folder, video_path, fps=30, image_format=".png", codec="DIVX")
                         yield f'data: Processing subject {subject}, camera {camera}, trial {tr}, activity {activity}\n\n'
             else:
@@ -394,14 +370,14 @@ def create_dof_shi_api():
                         fuse_DOF_SHI(DATASET_PATH, subject, camera, int(trial), act, method)
                         video_name = f'subject{subject}_camera{camera}_trial{trial}_activity{act}.avi'
                         image_folder = os.path.join(app.config['OUTPUT_FOLDER'], f'Subject_{subject}', f'Camera_{camera}', f'Trial_{trial}', f'Activity_{act}', 'dof_shi')
-                        video_path = os.path.join(image_folder, video_name)
+                        video_path = os.path.join(app.config['OUTPUT_FOLDER'], video_name)
                         images_to_video(image_folder, video_path, fps=30, image_format=".png", codec="DIVX")
                         yield f'data: Processing subject {subject}, camera {camera}, trial {trial}, activity {act}\n\n'
                 else:
                     fuse_DOF_SHI(DATASET_PATH, subject, camera, int(trial), int(activity), method)
                     video_name = f'subject{subject}_camera{camera}_trial{trial}_activity{activity}.avi'
                     image_folder = os.path.join(app.config['OUTPUT_FOLDER'], f'Subject_{subject}', f'Camera_{camera}', f'Trial_{trial}', f'Activity_{activity}', 'dof_shi')
-                    video_path = os.path.join(image_folder, video_name)
+                    video_path = os.path.join(app.config['OUTPUT_FOLDER'], video_name)
                     images_to_video(image_folder, video_path, fps=30, image_format=".png", codec="DIVX")
                     yield f'data: Processing subject {subject}, camera {camera}, trial {trial}, activity {activity}\n\n'
         except FileNotFoundError as e:

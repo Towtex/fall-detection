@@ -21,19 +21,15 @@ document.getElementById('btn-extract-fg-fd').addEventListener('click', function 
         body: JSON.stringify({ subject: subject, camera: camera, trial: trial, activity: activity }),
         signal: extractFgFdController.signal
     })
-        .then(response => {
-            if (response.ok) {
-                response.text().then(text => {
-                    if (text.includes("does not exist")) {
-                        alert(`ERROR:\n ${text} The operation will abort.`);
-                        return;
-                    }
-                    const endTime = Date.now();
-                    const executionTime = ((endTime - startTime) / 1000).toFixed(2);
-                    alert(`Foreground extraction using FD completed successfully for Subject: ${subject}, Camera: ${camera}, Trial: ${trial}, Activity: ${activity} in ${executionTime} seconds!`);
-                });
+        .then(response => response.text())
+        .then(text => {
+            console.log(text);
+            if (text.includes("Error:")) {
+                alert(`ERROR:\n ${text}`);
             } else {
-                alert('Failed to extract Foreground using FD.');
+                const endTime = Date.now();
+                const executionTime = ((endTime - startTime) / 1000).toFixed(2);
+                alert(`Foreground extraction using FD completed successfully for Subject: ${subject}, Camera: ${camera}, Trial: ${trial}, Activity: ${activity} in ${executionTime} seconds!`);
             }
         })
         .catch(error => {
