@@ -85,19 +85,15 @@ document.getElementById('btn-extract-fg-yolo').addEventListener('click', functio
         body: JSON.stringify({ subject: subject, camera: camera, trial: trial, activity: activity }),
         signal: extractFgYoloController.signal
     })
-        .then(response => {
-            if (response.ok) {
-                response.text().then(text => {
-                    if (text.includes("does not exist")) {
-                        alert(`ERROR:\n ${text} The operation will abort.`);
-                        return;
-                    }
-                    const endTime = Date.now();
-                    const executionTime = ((endTime - startTime) / 1000).toFixed(2);
-                    alert(`Foreground extraction using YOLO completed for Subject: ${subject}, Camera: ${camera}, Trial: ${trial}, Activity: ${activity} in ${executionTime} seconds!`);
-                });
+        .then(response => response.text())
+        .then(text => {
+            console.log(text);
+            if (text.includes("Error:")) {
+                alert(`ERROR:\n ${text}`);
             } else {
-                alert('Failed to extract Foreground using YOLO.');
+                const endTime = Date.now();
+                const executionTime = ((endTime - startTime) / 1000).toFixed(2);
+                alert(`Foreground extraction using YOLO completed for Subject: ${subject}, Camera: ${camera}, Trial: ${trial}, Activity: ${activity} in ${executionTime} seconds!`);
             }
         })
         .catch(error => {
@@ -154,19 +150,15 @@ document.getElementById('btn-create-shi').addEventListener('click', function () 
         body: JSON.stringify({ subject: subject, camera: camera, trial: trial, activity: activity, method: method }),
         signal: createShiController.signal
     })
-        .then(response => {
-            if (response.ok) {
-                response.text().then(text => {
-                    if (text.includes("does not exist")) {
-                        alert(`ERROR:\n ${text} The operation will abort.`);
-                        return;
-                    }
-                    const endTime = Date.now();
-                    const executionTime = ((endTime - startTime) / 1000).toFixed(2);
-                    alert(`SHI creation completed for Subject: ${subject}, Camera: ${camera}, Trial: ${trial}, Activity: ${activity}, Method: ${method} in ${executionTime} seconds!`);
-                });
+        .then(response => response.text())
+        .then(text => {
+            console.log(text);
+            if (text.includes("Error:")) {
+                alert(`ERROR:\n ${text}`);
             } else {
-                alert('Failed to create SHI.');
+                const endTime = Date.now();
+                const executionTime = ((endTime - startTime) / 1000).toFixed(2);
+                alert(`SHI creation completed for Subject: ${subject}, Camera: ${camera}, Trial: ${trial}, Activity: ${activity}, Method: ${method} in ${executionTime} seconds!`);
             }
         })
         .catch(error => {
@@ -222,19 +214,15 @@ document.getElementById('btn-extract-dof').addEventListener('click', function ()
         body: JSON.stringify({ subject: subject, camera: camera, trial: trial, activity: activity }),
         signal: extractDofController.signal
     })
-        .then(response => {
-            if (response.ok) {
-                response.text().then(text => {
-                    if (text.includes("does not exist")) {
-                        alert(`ERROR:\n ${text} The operation will abort.`);
-                        return;
-                    }
-                    const endTime = Date.now();
-                    const executionTime = ((endTime - startTime) / 1000).toFixed(2);
-                    alert(`DOF extraction completed for Subject: ${subject}, Camera: ${camera}, Trial: ${trial}, Activity: ${activity} in ${executionTime} seconds!`);
-                });
+        .then(response => response.text())
+        .then(text => {
+            console.log(text);
+            if (text.includes("Error:")) {
+                alert(`ERROR:\n ${text}`);
             } else {
-                alert('Failed to extract DOF.');
+                const endTime = Date.now();
+                const executionTime = ((endTime - startTime) / 1000).toFixed(2);
+                alert(`DOF extraction completed for Subject: ${subject}, Camera: ${camera}, Trial: ${trial}, Activity: ${activity} in ${executionTime} seconds!`);
             }
         })
         .catch(error => {
@@ -291,19 +279,15 @@ document.getElementById('btn-create-dof-shi').addEventListener('click', function
         body: JSON.stringify({ subject: subject, camera: camera, trial: trial, activity: activity, method: method }),
         signal: createDofShiController.signal
     })
-        .then(response => {
-            if (response.ok) {
-                response.text().then(text => {
-                    if (text.includes("does not exist")) {
-                        alert(`ERROR:\n ${text} The operation will abort.`);
-                        return;
-                    }
-                    const endTime = Date.now();
-                    const executionTime = ((endTime - startTime) / 1000).toFixed(2);
-                    alert(`DOF SHI creation completed for Subject: ${subject}, Camera: ${camera}, Trial: ${trial}, Activity: ${activity}, Method: ${method} in ${executionTime} seconds!`);
-                });
+        .then(response => response.text())
+        .then(text => {
+            console.log(text);
+            if (text.includes("Error:")) {
+                alert(`ERROR:\n ${text}`);
             } else {
-                alert('Failed to create DOF SHI.');
+                const endTime = Date.now();
+                const executionTime = ((endTime - startTime) / 1000).toFixed(2);
+                alert(`DOF SHI creation completed for Subject: ${subject}, Camera: ${camera}, Trial: ${trial}, Activity: ${activity}, Method: ${method} in ${executionTime} seconds!`);
             }
         })
         .catch(error => {

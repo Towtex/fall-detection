@@ -1,7 +1,8 @@
 import cv2 
 import os
-import shutil
 import time
+from utils.images_to_video import images_to_video
+
 
 def take_max_obj(image):
     output = image
@@ -48,11 +49,17 @@ def create_shi(method, dataset_path: str, subject: int, camera: int, trial: int,
         raise ValueError("Unsupported method: {}".format(method))
     
     if not os.path.exists(fg_folder):
-        print(f"{fg_folder} does not exist")
-        return
+        msg = f'Error: {fg_folder} does not exist'
+        print(msg)
+        return msg
     
-    file_list = os.listdir(fg_folder)
+    file_list = [f for f in os.listdir(fg_folder) if f.endswith('.png') or f.endswith('.jpg')]
     total_files = len(file_list) - 1
+    
+    if total_files <= 0:
+        msg = f'Error: No images found in {fg_folder}'
+        print(msg)
+        return msg
     
     print(f"Creating SHI for subject: {subject}, camera: {camera}, trial: {trial}, activity: {activity}")
     
@@ -71,3 +78,14 @@ def create_shi(method, dataset_path: str, subject: int, camera: int, trial: int,
         os.makedirs(output_folder, exist_ok=True)
         cv2.imwrite(os.path.join(output_folder, file_list[index]), result_img)
         print(f"SHI created for {file_list[index]} in {time.time() - start_time} seconds")
+    
+    print(f"Images saved at {output_folder}")
+    # Create video from SHI images
+    video_name = f'SHI_{method}_subject{subject}_camera{camera}_trial{trial}_activity{activity}.avi'
+    video_path = os.path.join(output_folder, video_name)
+    try:
+        images_to_video(output_folder, video_path, fps=30, image_format=".png", codec="DIVX")
+        print(f"Video created at {video_path}")
+    except Exception as e:
+        print(f"Error creating video: {str(e)}")
+    return None
