@@ -4,6 +4,8 @@ import cv2
 import os
 import shutil
 import time
+from utils.images_to_video import images_to_video
+
 
 def bwaeraopen(image, size):
     output = image
@@ -50,8 +52,8 @@ def extract_fg_yolo(dataset_path: str, subject: str, camera: int, trial: int, ac
     input_folder = os.path.join(main_folder, 'RGB')
     
     if not os.path.exists(input_folder):
-        print(f"{input_folder} does not exist")
-        return
+        msg = f'Error: {input_folder} does not exist'
+        return msg
     
     output_folder = os.path.abspath(
         os.path.join(
@@ -76,6 +78,7 @@ def extract_fg_yolo(dataset_path: str, subject: str, camera: int, trial: int, ac
         if abort_signal.is_set():
             print("Extraction aborted")
             break
+        start_time = time.time()
         img = cv2.imread(os.path.join(input_folder, file_list[index - 1]))
         img = cv2.resize(img, (width, height))
         mask = np.zeros([height, width], dtype=np.uint8)
@@ -98,4 +101,14 @@ def extract_fg_yolo(dataset_path: str, subject: str, camera: int, trial: int, ac
         )
         os.makedirs(path, exist_ok=True)
         cv2.imwrite(os.path.join(path, file_list[index - 1]), result_img)
-        print(f"Extracted FG {file_list[index - 1]}")
+        print(f"Extracted FG {file_list[index - 1]} in {time.time() - start_time} seconds")
+        
+    print(f"Images saved at {path}")
+    video_name = f'FG_Yolov8_subject{subject}_camera{camera}_trial{trial}_activity{action}.avi'
+    video_path = os.path.join(path, video_name)
+    try:
+        images_to_video(path, video_path, fps=30, image_format=".png", codec="DIVX")
+        print(f"Video created at {video_path}")
+    except Exception as e:
+        print(f"Error creating video: {str(e)}")
+    return None

@@ -178,35 +178,47 @@ def extract_fg_yolo_api():
     abort_signal.clear()
     data = request.get_json()
     subject = data.get('subject')
+    camera = data.get('camera')
     trial = data.get('trial')
+    activity = data.get('activity')
     
     def generate():
         try:
             if trial == 'all':
                 for tr in range(1, 4):
-                    for camera in range(1, 3):
-                        for action in range(1, 12):
+                    if activity == 'all':
+                        for act in range(1, 12):
                             if abort_signal.is_set():
                                 break
-                            extract_fg_yolo(DATASET_PATH, subject, camera, tr, action, abort_signal)
-                            video_name = f'subject{subject}_camera{camera}_trial{tr}_activity{action}.avi'
-                            image_folder = os.path.join(app.config['OUTPUT_FOLDER'], f'Subject_{subject}', f'Camera_{camera}', f'Trial_{tr}', f'Activity_{action}', 'extracted_fg_yolo')
-                            video_path = os.path.join(image_folder, video_name)
-                            images_to_video(image_folder, video_path, fps=30, image_format=".png", codec="DIVX")
-                            yield f'Processing subject {subject}, camera {camera}, trial {tr}, action {action}\n\n'
+                            msg = extract_fg_yolo(DATASET_PATH, subject, camera, tr, act, abort_signal)
+                            if msg:
+                                yield f'{msg}\n\n'.encode()
+                            else:
+                                yield f'Success: Processing subject {subject}, camera {camera}, trial {tr}, activity {act}\n\n'.encode()
+                    else:
+                        msg = extract_fg_yolo(DATASET_PATH, subject, camera, tr, int(activity), abort_signal)
+                        if msg:
+                            yield f'{msg}\n\n'.encode()
+                        else:
+                            yield f'Success: Processing subject {subject}, camera {camera}, trial {tr}, activity {activity}\n\n'.encode()
             else:
-                for camera in range(1, 3):
-                    for action in range(1, 12):
+                if activity == 'all':
+                    for act in range(1, 12):
                         if abort_signal.is_set():
                             break
-                        extract_fg_yolo(DATASET_PATH, subject, camera, int(trial), action, abort_signal)
-                        video_name = f'subject{subject}_camera{camera}_trial{trial}_activity{action}.avi'
-                        image_folder = os.path.join(app.config['OUTPUT_FOLDER'], f'Subject_{subject}', f'Camera_{camera}', f'Trial_{trial}', f'Activity_{action}', 'extracted_fg_yolo')
-                        video_path = os.path.join(image_folder, video_name)
-                        images_to_video(image_folder, video_path, fps=30, image_format=".png", codec="DIVX")
-                        yield f'Processing subject {subject}, camera {camera}, trial {trial}, action {action}\n\n'
+                        msg = extract_fg_yolo(DATASET_PATH, subject, camera, int(trial), act, abort_signal)
+                        if msg:
+                            yield f'{msg}\n\n'.encode()
+                        else:
+                            yield f'Success: Processing subject {subject}, camera {camera}, trial {trial}, activity {act}\n\n'.encode()
+                else:
+                    msg = extract_fg_yolo(DATASET_PATH, subject, camera, int(trial), int(activity), abort_signal)
+                    if msg:
+                        yield f'{msg}\n\n'.encode()
+                    else:
+                        yield f'Success: Processing subject {subject}, camera {camera}, trial {trial}, activity {activity}\n\n'.encode()
         except FileNotFoundError as e:
-            yield f'{str(e)}\n\n'
+            yield f'Error: {str(e)}\n\n'.encode()
             return
 
     return Response(generate(), mimetype='text/event-stream')

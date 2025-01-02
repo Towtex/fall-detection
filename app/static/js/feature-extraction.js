@@ -29,7 +29,7 @@ document.getElementById('btn-extract-fg-fd').addEventListener('click', function 
             } else {
                 const endTime = Date.now();
                 const executionTime = ((endTime - startTime) / 1000).toFixed(2);
-                alert(`Foreground extraction using FD completed successfully for Subject: ${subject}, Camera: ${camera}, Trial: ${trial}, Activity: ${activity} in ${executionTime} seconds!`);
+                alert(`Foreground extraction using FD completed for Subject: ${subject}, Camera: ${camera}, Trial: ${trial}, Activity: ${activity} in ${executionTime} seconds!`);
             }
         })
         .catch(error => {
@@ -94,7 +94,7 @@ document.getElementById('btn-extract-fg-yolo').addEventListener('click', functio
                     }
                     const endTime = Date.now();
                     const executionTime = ((endTime - startTime) / 1000).toFixed(2);
-                    alert(`Foreground extraction using YOLO completed successfully for Subject: ${subject}, Camera: ${camera}, Trial: ${trial}, Activity: ${activity} in ${executionTime} seconds!`);
+                    alert(`Foreground extraction using YOLO completed for Subject: ${subject}, Camera: ${camera}, Trial: ${trial}, Activity: ${activity} in ${executionTime} seconds!`);
                 });
             } else {
                 alert('Failed to extract Foreground using YOLO.');
@@ -163,7 +163,7 @@ document.getElementById('btn-create-shi').addEventListener('click', function () 
                     }
                     const endTime = Date.now();
                     const executionTime = ((endTime - startTime) / 1000).toFixed(2);
-                    alert(`SHI creation completed successfully for Subject: ${subject}, Camera: ${camera}, Trial: ${trial}, Activity: ${activity}, Method: ${method} in ${executionTime} seconds!`);
+                    alert(`SHI creation completed for Subject: ${subject}, Camera: ${camera}, Trial: ${trial}, Activity: ${activity}, Method: ${method} in ${executionTime} seconds!`);
                 });
             } else {
                 alert('Failed to create SHI.');
@@ -231,7 +231,7 @@ document.getElementById('btn-extract-dof').addEventListener('click', function ()
                     }
                     const endTime = Date.now();
                     const executionTime = ((endTime - startTime) / 1000).toFixed(2);
-                    alert(`DOF extraction completed successfully for Subject: ${subject}, Camera: ${camera}, Trial: ${trial}, Activity: ${activity} in ${executionTime} seconds!`);
+                    alert(`DOF extraction completed for Subject: ${subject}, Camera: ${camera}, Trial: ${trial}, Activity: ${activity} in ${executionTime} seconds!`);
                 });
             } else {
                 alert('Failed to extract DOF.');
@@ -300,7 +300,7 @@ document.getElementById('btn-create-dof-shi').addEventListener('click', function
                     }
                     const endTime = Date.now();
                     const executionTime = ((endTime - startTime) / 1000).toFixed(2);
-                    alert(`DOF SHI creation completed successfully for Subject: ${subject}, Camera: ${camera}, Trial: ${trial}, Activity: ${activity}, Method: ${method} in ${executionTime} seconds!`);
+                    alert(`DOF SHI creation completed for Subject: ${subject}, Camera: ${camera}, Trial: ${trial}, Activity: ${activity}, Method: ${method} in ${executionTime} seconds!`);
                 });
             } else {
                 alert('Failed to create DOF SHI.');
