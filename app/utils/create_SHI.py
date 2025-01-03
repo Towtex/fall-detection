@@ -18,10 +18,6 @@ def take_max_obj(image):
     return output
 
 def create_shi(method, dataset_path: str, subject: int, camera: int, trial: int, activity: int, abort_signal):
-    sub_str = f'Subject{subject}'
-    cam_str = f'Camera{camera}'
-    trial_str = f'Trial{trial}'
-    act_str = f'Activity{activity}'
     
     main_folder = os.path.abspath(
         os.path.join(
@@ -42,7 +38,7 @@ def create_shi(method, dataset_path: str, subject: int, camera: int, trial: int,
             main_folder,
             'SHI_Yolov8'
         )
-    elif method == 'CBF&BS':
+    elif method == 'CBF-BS':
         fg_folder = os.path.join(main_folder, 'extracted_fg_fd')
         output_folder = os.path.join(main_folder, 'SHI_CBF_BS')
     else:

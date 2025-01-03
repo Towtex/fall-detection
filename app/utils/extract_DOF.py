@@ -3,6 +3,7 @@ import cv2
 import os
 import math
 import time
+from utils.images_to_video import images_to_video
 
 def extract_color_dof(dataset_path: str, subject: int, camera: int, trial: int, action: int):
     sub_str = f'Subject{subject}'
@@ -21,7 +22,9 @@ def extract_color_dof(dataset_path: str, subject: int, camera: int, trial: int, 
     input_folder = os.path.join(main_folder, 'RGB')
     
     if not os.path.exists(input_folder):
-        raise FileNotFoundError(f"Folder {input_folder} does not exist")
+        msg = f'Error: {input_folder} does not exist'
+        print(msg)
+        return msg
     
     output_folder = os.path.abspath(
         os.path.join(
@@ -45,6 +48,10 @@ def extract_color_dof(dataset_path: str, subject: int, camera: int, trial: int, 
     unk_flow_min_th = 0.25
                 
     frame1 = cv2.imread(os.path.join(input_folder, file_list[start - 1]))
+    if frame1 is None:
+        msg = f'Error: Failed to load image {os.path.join(input_folder, file_list[start - 1])}'
+        print(msg)
+        return msg
     frame1 = cv2.resize(frame1, (320, 240))
     prv_img = cv2.cvtColor(frame1, cv2.COLOR_BGR2GRAY)
     hsv = np.zeros_like(frame1)
@@ -55,6 +62,10 @@ def extract_color_dof(dataset_path: str, subject: int, camera: int, trial: int, 
     for index in range(start + inc, total_files + 1, inc):
         start_time = time.time()
         frame2 = cv2.imread(os.path.join(input_folder, file_list[index - 1]))
+        if frame2 is None:
+            msg = f'Error: Failed to load image {os.path.join(input_folder, file_list[index - 1])}'
+            print(msg)
+            return msg
         frame2 = cv2.resize(frame2, (320, 240))
         next_img = cv2.cvtColor(frame2, cv2.COLOR_BGR2GRAY)
         flow = cv2.calcOpticalFlowFarneback(prv_img, next_img, None, 0.5, 3, 15, 3, 5, 1.2, 0)
@@ -77,3 +88,14 @@ def extract_color_dof(dataset_path: str, subject: int, camera: int, trial: int, 
         os.makedirs(output_folder, exist_ok=True)
         cv2.imwrite(os.path.join(output_folder, file_list[index - 1]), bgr)
         print(f"Frame {index}, {file_list[index - 1]} processed in {time.time() - start_time} seconds")
+    
+    print(f"Images saved at {output_folder}")
+    # Create video from DOF images
+    video_name = f'DOF_subject{subject}_camera{camera}_trial{trial}_activity{action}.avi'
+    video_path = os.path.join(output_folder, video_name)
+    try:
+        images_to_video(output_folder, video_path, fps=30, image_format=".png", codec="DIVX")
+        print(f"Video created at {video_path}")
+    except Exception as e:
+        print(f"Error creating video: {str(e)}")
+    return None
