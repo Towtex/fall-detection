@@ -373,20 +373,12 @@ def create_dof_shi_api():
                             if msg:
                                 yield f'{msg}\n\n'.encode()
                             else:
-                                video_name = f'subject{subject}_camera{camera}_trial{tr}_activity{act}.avi'
-                                image_folder = os.path.join(app.config['OUTPUT_FOLDER'], f'Subject_{subject}', f'Camera_{camera}', f'Trial_{tr}', f'Activity_{act}', 'dof_shi')
-                                video_path = os.path.join(app.config['OUTPUT_FOLDER'], video_name)
-                                images_to_video(image_folder, video_path, fps=30, image_format=".png", codec="DIVX")
                                 yield f'Success: Processing subject {subject}, camera {camera}, trial {tr}, activity {act}\n\n'.encode()
                     else:
                         msg = fuse_DOF_SHI(DATASET_PATH, subject, camera, tr, int(activity), method)
                         if msg:
                             yield f'{msg}\n\n'.encode()
                         else:
-                            video_name = f'subject{subject}_camera{camera}_trial{tr}_activity{activity}.avi'
-                            image_folder = os.path.join(app.config['OUTPUT_FOLDER'], f'Subject_{subject}', f'Camera_{camera}', f'Trial_{tr}', f'Activity_{activity}', 'dof_shi')
-                            video_path = os.path.join(app.config['OUTPUT_FOLDER'], video_name)
-                            images_to_video(image_folder, video_path, fps=30, image_format=".png", codec="DIVX")
                             yield f'Success: Processing subject {subject}, camera {camera}, trial {tr}, activity {activity}\n\n'.encode()
             else:
                 if activity == 'all':
@@ -397,20 +389,12 @@ def create_dof_shi_api():
                         if msg:
                             yield f'{msg}\n\n'.encode()
                         else:
-                            video_name = f'subject{subject}_camera{camera}_trial{trial}_activity{act}.avi'
-                            image_folder = os.path.join(app.config['OUTPUT_FOLDER'], f'Subject_{subject}', f'Camera_{camera}', f'Trial_{trial}', f'Activity_{act}', 'dof_shi')
-                            video_path = os.path.join(app.config['OUTPUT_FOLDER'], video_name)
-                            images_to_video(image_folder, video_path, fps=30, image_format=".png", codec="DIVX")
                             yield f'Success: Processing subject {subject}, camera {camera}, trial {trial}, activity {act}\n\n'.encode()
                 else:
                     msg = fuse_DOF_SHI(DATASET_PATH, subject, camera, int(trial), int(activity), method)
                     if msg:
                         yield f'{msg}\n\n'.encode()
                     else:
-                        video_name = f'subject{subject}_camera{camera}_trial{trial}_activity{activity}.avi'
-                        image_folder = os.path.join(app.config['OUTPUT_FOLDER'], f'Subject_{subject}', f'Camera_{camera}', f'Trial_{trial}', f'Activity_{activity}', 'dof_shi')
-                        video_path = os.path.join(app.config['OUTPUT_FOLDER'], video_name)
-                        images_to_video(image_folder, video_path, fps=30, image_format=".png", codec="DIVX")
                         yield f'Success: Processing subject {subject}, camera {camera}, trial {trial}, activity {activity}\n\n'.encode()
         except FileNotFoundError as e:
             yield f'Error: {str(e)}\n\n'.encode()

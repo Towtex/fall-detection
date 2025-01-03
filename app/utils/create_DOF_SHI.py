@@ -2,6 +2,7 @@ import numpy as np
 import cv2 
 import os
 import time
+from utils.images_to_video import images_to_video
 
 def takeMaxObj(image):
     output=image
@@ -45,7 +46,7 @@ def fuse_DOF_SHI(dataset_path: str, subject: int, camera: int, trial: int, actio
     if not (os.path.exists(fg_folder) and os.path.exists(dof_folder)):
         raise FileNotFoundError(f"{fg_folder} or {dof_folder} does not exist")
     
-    file_list = os.listdir(dof_folder)
+    file_list = [f for f in os.listdir(dof_folder) if f.endswith('.png') or f.endswith('.jpg')]
     total_files = len(file_list)    
 
     for index in range(total_files):
@@ -89,3 +90,13 @@ def fuse_DOF_SHI(dataset_path: str, subject: int, camera: int, trial: int, actio
         os.makedirs(output_folder, exist_ok=True)
         cv2.imwrite(os.path.join(output_folder, filename), result_img)
         print(f"DOF_SHI created for {filename} in {time.time() - start_time} seconds")
+    
+    print(f"Images saved at {output_folder}")
+    # Create video from DOF_SHI images
+    video_name = f'DOF_SHI_{method}_subject{subject}_camera{camera}_trial{trial}_activity{action}.avi'
+    video_path = os.path.join(output_folder, video_name)
+    try:
+        images_to_video(output_folder, video_path, fps=30, image_format=".png", codec="DIVX")
+        print(f"Video created at {video_path}")
+    except Exception as e:
+        print(f"Error creating video: {str(e)}")
