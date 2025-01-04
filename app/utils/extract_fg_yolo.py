@@ -104,11 +104,12 @@ def extract_fg_yolo(dataset_path: str, subject: str, camera: int, trial: int, ac
         print(f"Extracted FG {file_list[index - 1]} in {time.time() - start_time} seconds")
         
     print(f"Images saved at {path}")
-    video_name = f'FG_Yolov8_subject{subject}_camera{camera}_trial{trial}_activity{action}.avi'
+    video_name = f'FG_Yolov8_subject{subject}_camera{camera}_trial{trial}_activity{action}.mp4'
     video_path = os.path.join(path, video_name)
     try:
-        images_to_video(path, video_path, fps=30, image_format=".png", codec="DIVX")
+        images_to_video(path, video_path, fps=10, image_format=".png")
         print(f"Video created at {video_path}")
     except Exception as e:
         print(f"Error creating video: {str(e)}")
-    return None
+        return None
+    return video_path
