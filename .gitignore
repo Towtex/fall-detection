@@ -5,3 +5,4 @@ UP_Fall_Dataset/
 output/
 app/yolov8m-seg.pt
 yolov8m-seg.pt
+version.ps1
