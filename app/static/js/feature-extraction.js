@@ -68,30 +68,93 @@ document.getElementById('btn-result-fg-fd').addEventListener('click', function (
     const trial = document.getElementById('trial-select-fg').value;
     const activity = document.getElementById('activity-select-fg').value;
 
-    fetch('/api/get_fg_fd_video', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ subject: subject, camera: camera, trial: trial, activity: activity })
-    })
-        .then(response => response.json())
-        .then(data => {
-            if (data.video_url) {
-                const videoSource = document.getElementById('videoSource');
-                videoSource.src = data.video_url;
-                const video = document.getElementById('extractedVideo');
-                video.load();
-                video.play();
-                document.getElementById('video-container').style.display = 'block';
-            } else {
-                alert('No video found.');
-            }
+    if (trial === 'all') {
+        alert('Please select a specific trial.');
+        return;
+    }
+
+    if (activity === 'all') {
+        fetch('/api/get_fg_fd_videos', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ subject: subject, camera: camera, trial: trial })
         })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('An error occurred while fetching the video.');
-        });
+            .then(response => response.json())
+            .then(data => {
+                const videosContainer = document.getElementById('videos-container');
+                videosContainer.innerHTML = ''; // Clear previous videos
+                if (data.videos && data.videos.length > 0) {
+                    data.videos.forEach((video_url, index) => {
+                        const videoWrapper = document.createElement('div');
+                        videoWrapper.style.marginBottom = '1rem'; // Add space between videos
+                        const label = document.createElement('p');
+                        label.textContent = `Activity ${index + 1}`;
+                        const videoElement = document.createElement('video');
+                        videoElement.width = 320;
+                        videoElement.height = 240;
+                        videoElement.loop = true;
+                        videoElement.autoplay = true;
+                        videoElement.controls = true;
+                        const sourceElement = document.createElement('source');
+                        sourceElement.src = video_url;
+                        sourceElement.type = 'video/mp4';
+                        videoElement.appendChild(sourceElement);
+                        videoWrapper.appendChild(videoElement);
+                        videoWrapper.appendChild(label);
+                        videosContainer.appendChild(videoWrapper);
+                    });
+                    const title = document.createElement('h3');
+                    title.textContent = `Subject: ${subject}, Camera: ${camera}, Trial: ${trial}, Activity: All`;
+                    videosContainer.insertBefore(title, videosContainer.firstChild);
+                    videosContainer.style.display = 'block';
+                    document.getElementById('video-container').style.display = 'none';
+                } else {
+                    alert('No videos found.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while fetching the videos.');
+            });
+    } else {
+        fetch('/api/get_fg_fd_video', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ subject: subject, camera: camera, trial: trial, activity: activity })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.video_url) {
+                    const videoSource = document.getElementById('videoSource');
+                    videoSource.src = data.video_url;
+                    const video = document.getElementById('extractedVideo');
+                    video.load();
+                    video.play();
+                    const title = document.createElement('h3');
+                    title.textContent = `Subject: ${subject}, Camera: ${camera}, Trial: ${trial}, Activity: ${activity}`;
+                    const videoContainer = document.getElementById('video-container');
+                    videoContainer.insertBefore(title, videoContainer.firstChild);
+                    videoContainer.style.display = 'block';
+                    document.getElementById('videos-container').style.display = 'none';
+                } else {
+                    alert('No video found.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while fetching the video.');
+            });
+    }
+});
+
+document.getElementById('btn-clear-videos').addEventListener('click', function () {
+    document.getElementById('video-container').style.display = 'none';
+    document.getElementById('videos-container').style.display = 'none';
+    document.getElementById('videos-container').innerHTML = '';
 });
 
 let extractFgYoloController = new AbortController();

@@ -182,6 +182,61 @@ def stop_extract_fg_fd():
     global abort_signal
     abort_signal.set()
     return jsonify({'message': 'Foreground extraction using FD has been stopped.'}), 200
+
+@app.route('/api/get_fg_fd_video', methods=['POST'])
+def get_fg_fd_video():
+    data = request.get_json()
+    subject = data.get('subject')
+    camera = data.get('camera')
+    trial = data.get('trial')
+    activity = data.get('activity')
+    
+    video_name = f'FG_FD_subject{subject}_camera{camera}_trial{trial}_activity{activity}.mp4'
+    video_path = os.path.join(
+        app.config['OUTPUT_FOLDER'],
+        f'Subject_{subject}',
+        f'Camera_{camera}',
+        f'Trial_{trial}',
+        f'Activity_{activity}',
+        'extracted_fg_fd',
+        video_name
+    )
+    
+    if os.path.exists(video_path):
+        video_url = url_for('output_file', filename=os.path.relpath(video_path, app.config['OUTPUT_FOLDER']).replace('\\', '/'))
+        return jsonify({'video_url': video_url}), 200
+    else:
+        return jsonify({'video_url': None}), 404
+
+@app.route('/api/get_fg_fd_videos', methods=['POST'])
+def get_fg_fd_videos():
+    data = request.get_json()
+    subject = data.get('subject')
+    camera = data.get('camera')
+    trial = data.get('trial')
+    
+    video_urls = []
+    for activity in range(1, 12):
+        video_name = f'FG_FD_subject{subject}_camera{camera}_trial{trial}_activity{activity}.mp4'
+        video_path = os.path.join(
+            app.config['OUTPUT_FOLDER'],
+            f'Subject_{subject}',
+            f'Camera_{camera}',
+            f'Trial_{trial}',
+            f'Activity_{activity}',
+            'extracted_fg_fd',
+            video_name
+        )
+        
+        if os.path.exists(video_path):
+            video_url = url_for('output_file', filename=os.path.relpath(video_path, app.config['OUTPUT_FOLDER']).replace('\\', '/'))
+            video_urls.append(video_url)
+    
+    if video_urls:
+        return jsonify({'videos': video_urls}), 200
+    else:
+        return jsonify({'videos': []}), 404
+
 ###############
 
 # extract_fg_yolo API route
@@ -241,6 +296,7 @@ def stop_extract_fg_yolo():
     global abort_signal
     abort_signal.set()
     return jsonify({'message': 'Foreground extraction using YOLO has been stopped.'}), 200
+
 ###############
 
 # create_shi API route
@@ -301,6 +357,7 @@ def stop_create_shi():
     global abort_signal
     abort_signal.set()
     return jsonify({'message': 'SHI creation has been stopped.'}), 200
+
 ###############
 
 # extract_dof API route
@@ -360,6 +417,7 @@ def stop_extract_dof():
     global abort_signal
     abort_signal.set()
     return jsonify({'message': 'DOF extraction has been stopped.'}), 200
+
 ###############
 
 # create_dof_shi API route
@@ -420,7 +478,8 @@ def stop_create_dof_shi():
     global abort_signal
     abort_signal.set()
     return jsonify({'message': 'DOF SHI creation has been stopped.'}), 200
-###############
+
+##############
 
 # Serve files dynamically from the output folder
 @app.route('/output/<path:filename>')
@@ -445,31 +504,6 @@ def serve_image(subject, camera, trial, activity, filename):
 def serve_common_image(filename):
     folder_path = os.path.join(app.config['OUTPUT_FOLDER'], 'common_background_images')
     return send_from_directory(folder_path, filename)
-
-@app.route('/api/get_fg_fd_video', methods=['POST'])
-def get_fg_fd_video():
-    data = request.get_json()
-    subject = data.get('subject')
-    camera = data.get('camera')
-    trial = data.get('trial')
-    activity = data.get('activity')
-    
-    video_name = f'FG_FD_subject{subject}_camera{camera}_trial{trial}_activity{activity}.mp4'
-    video_path = os.path.join(
-        app.config['OUTPUT_FOLDER'],
-        f'Subject_{subject}',
-        f'Camera_{camera}',
-        f'Trial_{trial}',
-        f'Activity_{activity}',
-        'extracted_fg_fd',
-        video_name
-    )
-    
-    if os.path.exists(video_path):
-        video_url = url_for('output_file', filename=os.path.relpath(video_path, app.config['OUTPUT_FOLDER']).replace('\\', '/'))
-        return jsonify({'video_url': video_url}), 200
-    else:
-        return jsonify({'video_url': None}), 404
 
 ### End API routes
 

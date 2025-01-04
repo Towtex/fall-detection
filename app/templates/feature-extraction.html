@@ -321,11 +321,18 @@
 <!-- Add a video container to display the video -->
 <div class="row" style="margin: 2rem;">
     <div class="col-md-12 text-center">
+        <button type="button" class="btn btn-secondary" id="btn-clear-videos" style="margin-bottom: 1rem;">Clear
+            Videos</button>
+    </div>
+    <div class="col-md-12 text-center">
         <div id="video-container" style="display: none;">
             <video id="extractedVideo" width="320" height="240" loop autoplay controls>
                 <source id="videoSource" type="video/mp4">
                 Your browser does not support the video tag.
             </video>
+        </div>
+        <div id="videos-container" style="display: none;">
+            <!-- Multiple videos will be appended here -->
         </div>
     </div>
 </div>

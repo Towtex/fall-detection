@@ -16,7 +16,7 @@ def images_to_video(image_folder: str, video_path: str, fps: int = 30, image_for
         return
     height, width, layers = frame.shape
 
-    video = cv2.VideoWriter(video_path, cv2.VideoWriter_fourcc(*'H264'), fps, (width, height))
+    video = cv2.VideoWriter(video_path, cv2.VideoWriter_fourcc(*'avc1'), fps, (width, height))
 
     for image in images:
         image_path = os.path.join(image_folder, image)
