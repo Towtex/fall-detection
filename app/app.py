@@ -61,6 +61,7 @@ def testing():
 ### End page routes
 
 ### API routes
+# create_common_background API route
 @app.route('/api/create_common_background', methods=['POST'])
 def create_common_background():
     data = request.get_json()
@@ -84,7 +85,9 @@ def create_common_background():
         'message': 'Common background created successfully.',
         'image': image_url
     }), 200
+###############
 
+# create_background API route
 @app.route('/api/create_background', methods=['POST'])
 def create_background():
     data = request.get_json()
@@ -120,7 +123,9 @@ def create_background():
             'message': 'Background image created successfully.',
             'image': image_url
         }), 200
+#############
 
+# extract_fg_fd API route
 @app.route('/api/extract_fg_fd', methods=['POST'])
 def extract_fg_fd():
     global abort_signal
@@ -172,6 +177,14 @@ def extract_fg_fd():
 
     return Response(generate(), mimetype='text/event-stream')
 
+@app.route('/api/stop_extract_fg_fd', methods=['POST'])
+def stop_extract_fg_fd():
+    global abort_signal
+    abort_signal.set()
+    return jsonify({'message': 'Foreground extraction using FD has been stopped.'}), 200
+###############
+
+# extract_fg_yolo API route
 @app.route('/api/extract_fg_yolo', methods=['POST'])
 def extract_fg_yolo_api():
     global abort_signal
@@ -223,18 +236,14 @@ def extract_fg_yolo_api():
 
     return Response(generate(), mimetype='text/event-stream')
 
-@app.route('/api/stop_extract_fg_fd', methods=['POST'])
-def stop_extract_fg_fd():
-    global abort_signal
-    abort_signal.set()
-    return jsonify({'message': 'Foreground extraction using FD has been stopped.'}), 200
-
 @app.route('/api/stop_extract_fg_yolo', methods=['POST'])
 def stop_extract_fg_yolo():
     global abort_signal
     abort_signal.set()
     return jsonify({'message': 'Foreground extraction using YOLO has been stopped.'}), 200
+###############
 
+# create_shi API route
 @app.route('/api/create_shi', methods=['POST'])
 def create_shi_api():
     global abort_signal
@@ -292,7 +301,9 @@ def stop_create_shi():
     global abort_signal
     abort_signal.set()
     return jsonify({'message': 'SHI creation has been stopped.'}), 200
+###############
 
+# extract_dof API route
 @app.route('/api/extract_dof', methods=['POST'])
 def extract_dof_api():
     global abort_signal
@@ -349,7 +360,9 @@ def stop_extract_dof():
     global abort_signal
     abort_signal.set()
     return jsonify({'message': 'DOF extraction has been stopped.'}), 200
+###############
 
+# create_dof_shi API route
 @app.route('/api/create_dof_shi', methods=['POST'])
 def create_dof_shi_api():
     global abort_signal
@@ -407,13 +420,14 @@ def stop_create_dof_shi():
     global abort_signal
     abort_signal.set()
     return jsonify({'message': 'DOF SHI creation has been stopped.'}), 200
+###############
 
 # Serve files dynamically from the output folder
 @app.route('/output/<path:filename>')
 def output_file(filename):
     return send_from_directory(app.config['OUTPUT_FOLDER'], filename)
 
-# Serve files dynamically from the output folder
+# Serve background_image dynamically from the output folder
 @app.route('/output/<subject>/Camera_<camera>/Trial_<trial>/Activity_<activity>/background_image/<filename>')
 def serve_image(subject, camera, trial, activity, filename):
     folder_path = os.path.join(
@@ -426,7 +440,7 @@ def serve_image(subject, camera, trial, activity, filename):
     )
     return send_from_directory(folder_path, filename)
 
-# Serve files dynamically from the output folder
+# Serve common_background_images dynamically from the output folder
 @app.route('/output/common_background_images/<filename>')
 def serve_common_image(filename):
     folder_path = os.path.join(app.config['OUTPUT_FOLDER'], 'common_background_images')
