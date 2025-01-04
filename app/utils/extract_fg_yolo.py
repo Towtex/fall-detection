@@ -97,7 +97,7 @@ def extract_fg_yolo(dataset_path: str, subject: str, camera: int, trial: int, ac
         result_img = take_max_obj(mask)
         path = os.path.join(
             output_folder,
-            'extracted_fg_yolo',
+            'FG_Yolov8',
         )
         os.makedirs(path, exist_ok=True)
         cv2.imwrite(os.path.join(path, file_list[index - 1]), result_img)

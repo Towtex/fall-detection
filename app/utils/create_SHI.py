@@ -33,13 +33,13 @@ def create_shi(method, dataset_path: str, subject: int, camera: int, trial: int,
     )
     
     if method == 'Yolov8':
-        fg_folder = os.path.join(main_folder, 'extracted_fg_yolo')
+        fg_folder = os.path.join(main_folder, 'FG_Yolov8')
         output_folder = os.path.join(
             main_folder,
             'SHI_Yolov8'
         )
     elif method == 'CBF-BS':
-        fg_folder = os.path.join(main_folder, 'extracted_fg_fd')
+        fg_folder = os.path.join(main_folder, 'FG_FD')
         output_folder = os.path.join(main_folder, 'SHI_CBF-BS')
     else:
         raise ValueError("Unsupported method: {}".format(method))

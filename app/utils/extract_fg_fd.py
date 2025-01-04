@@ -106,7 +106,7 @@ def extract_fg(dataset_path: str, subject: str, camera: int, trial: int, action:
         result_img = take_max_obj(dilate_img1)
         path = os.path.join(
             output_folder,
-            'extracted_fg_fd',
+            'FG_FD',
         )
         os.makedirs(path, exist_ok=True)
         cv2.imwrite(os.path.join(path, file_list[index-1]), result_img)

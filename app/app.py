@@ -643,6 +643,62 @@ def stop_create_dof_shi():
     abort_signal.set()
     return jsonify({'message': 'DOF SHI creation has been stopped.'}), 200
 
+@app.route('/api/get_dof_shi_video', methods=['POST'])
+def get_dof_shi_video():
+    data = request.get_json()
+    subject = data.get('subject')
+    camera = data.get('camera')
+    trial = data.get('trial')
+    activity = data.get('activity')
+    method = data.get('method')
+    
+    video_name = f'DOF_SHI_{method}_subject{subject}_camera{camera}_trial{trial}_activity{activity}.mp4'
+    video_path = os.path.join(
+        app.config['OUTPUT_FOLDER'],
+        f'Subject_{subject}',
+        f'Camera_{camera}',
+        f'Trial_{trial}',
+        f'Activity_{activity}',
+        f'DOF_SHI_{method}',
+        video_name
+    )
+    
+    if os.path.exists(video_path):
+        video_url = url_for('output_file', filename=os.path.relpath(video_path, app.config['OUTPUT_FOLDER']).replace('\\', '/'))
+        return jsonify({'video_url': video_url}), 200
+    else:
+        return jsonify({'video_url': None}), 404
+
+@app.route('/api/get_dof_shi_videos', methods=['POST'])
+def get_dof_shi_videos():
+    data = request.get_json()
+    subject = data.get('subject')
+    camera = data.get('camera')
+    trial = data.get('trial')
+    method = data.get('method')
+    
+    video_urls = []
+    for activity in range(1, 12):
+        video_name = f'DOF_SHI_{method}_subject{subject}_camera{camera}_trial{trial}_activity{activity}.mp4'
+        video_path = os.path.join(
+            app.config['OUTPUT_FOLDER'],
+            f'Subject_{subject}',
+            f'Camera_{camera}',
+            f'Trial_{trial}',
+            f'Activity_{activity}',
+            f'DOF_SHI_{method}',
+            video_name
+        )
+        
+        if os.path.exists(video_path):
+            video_url = url_for('output_file', filename=os.path.relpath(video_path, app.config['OUTPUT_FOLDER']).replace('\\', '/'))
+            video_urls.append(video_url)
+    
+    if video_urls:
+        return jsonify({'videos': video_urls}), 200
+    else:
+        return jsonify({'videos': []}), 404
+
 ##############
 
 # Serve files dynamically from the output folder

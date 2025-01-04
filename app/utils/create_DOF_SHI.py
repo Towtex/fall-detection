@@ -36,12 +36,8 @@ def fuse_DOF_SHI(dataset_path: str, subject: int, camera: int, trial: int, actio
     
     dof_folder = os.path.join(main_folder, 'ColorDOF')
     
-    if method == 'Yolov8':
-        fg_folder = os.path.join(main_folder, 'SHI_Yolov8')
-        output_folder = os.path.join(main_folder, 'DOF_SHI_Yolov8')
-    else:
-        fg_folder = os.path.join(main_folder, f'SHI_CBF_BS')
-        output_folder = os.path.join(main_folder, f'DOF_SHI')
+    fg_folder = os.path.join(main_folder, f'SHI_{method}')
+    output_folder = os.path.join(main_folder, f'DOF_SHI_{method}')
     
     if not (os.path.exists(fg_folder) and os.path.exists(dof_folder)):
         raise FileNotFoundError(f"{fg_folder} or {dof_folder} does not exist")
@@ -93,10 +89,12 @@ def fuse_DOF_SHI(dataset_path: str, subject: int, camera: int, trial: int, actio
     
     print(f"Images saved at {output_folder}")
     # Create video from DOF_SHI images
-    video_name = f'DOF_SHI_{method}_subject{subject}_camera{camera}_trial{trial}_activity{action}.avi'
+    video_name = f'DOF_SHI_{method}_subject{subject}_camera{camera}_trial{trial}_activity{action}.mp4'
     video_path = os.path.join(output_folder, video_name)
     try:
-        images_to_video(output_folder, video_path, fps=30, image_format=".png", codec="DIVX")
+        images_to_video(output_folder, video_path, fps=10, image_format=".png")
         print(f"Video created at {video_path}")
     except Exception as e:
         print(f"Error creating video: {str(e)}")
+        return None
+    return video_path

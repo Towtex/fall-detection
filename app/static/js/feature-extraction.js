@@ -714,6 +714,105 @@ document.getElementById('btn-stop-create-dof-shi').addEventListener('click', fun
         });
 });
 
+document.getElementById('btn-result-dof-shi').addEventListener('click', function () {
+    const subject = document.getElementById('subject-select-dof-shi').value;
+    const camera = document.getElementById('camera-select-dof-shi').value;
+    const trial = document.getElementById('trial-select-dof-shi').value;
+    const activity = document.getElementById('activity-select-dof-shi').value;
+    const method = document.getElementById('method-select-dof-shi').value;
+
+    if (trial === 'all') {
+        alert('Please select a specific trial.');
+        return;
+    }
+
+    if (activity === 'all') {
+        fetch('/api/get_dof_shi_videos', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ subject: subject, camera: camera, trial: trial, method: method })
+        })
+            .then(response => response.json())
+            .then(data => {
+                const videosContainer = document.getElementById('videos-container');
+                videosContainer.innerHTML = ''; // Clear previous videos
+                if (data.videos && data.videos.length > 0) {
+                    data.videos.forEach((video_url, index) => {
+                        const videoWrapper = document.createElement('div');
+                        videoWrapper.style.marginBottom = '1rem'; // Add space between videos
+                        const label = document.createElement('p');
+                        const activityNumber = video_url.match(/activity(\d+)/i)[1]; // Extract activity number from URL
+                        label.textContent = `Activity ${activityNumber}`;
+                        const videoElement = document.createElement('video');
+                        videoElement.width = 320;
+                        videoElement.height = 240;
+                        videoElement.loop = true;
+                        videoElement.autoplay = true;
+                        videoElement.controls = true;
+                        const sourceElement = document.createElement('source');
+                        sourceElement.src = video_url;
+                        sourceElement.type = 'video/mp4';
+                        videoElement.appendChild(sourceElement);
+                        videoWrapper.appendChild(videoElement);
+                        videoWrapper.appendChild(label);
+                        videosContainer.appendChild(videoWrapper);
+                    });
+                    const existingTitle = videosContainer.querySelector('h3');
+                    if (existingTitle) {
+                        videosContainer.removeChild(existingTitle);
+                    }
+                    const title = document.createElement('h3');
+                    title.textContent = `DOF SHI ${method}, Subject: ${subject}, Camera: ${camera}, Trial: ${trial}, Activity: All`;
+                    videosContainer.insertBefore(title, videosContainer.firstChild);
+                    videosContainer.style.display = 'block';
+                    document.getElementById('video-container').style.display = 'none';
+                } else {
+                    alert('No videos found.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while fetching the videos.');
+            });
+    } else {
+        fetch('/api/get_dof_shi_video', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ subject: subject, camera: camera, trial: trial, activity: activity, method: method })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.video_url) {
+                    const videoSource = document.getElementById('videoSource');
+                    videoSource.src = data.video_url;
+                    const video = document.getElementById('extractedVideo');
+                    video.load();
+                    video.play();
+                    const videoContainer = document.getElementById('video-container');
+                    const existingTitle = videoContainer.querySelector('h3');
+                    if (existingTitle) {
+                        videoContainer.removeChild(existingTitle);
+                    }
+                    const title = document.createElement('h3');
+                    title.textContent = `DOF SHI ${method}, Subject: ${subject}, Camera: ${camera}, Trial: ${trial}, Activity: ${activity}`;
+                    videoContainer.insertBefore(title, videoContainer.firstChild);
+                    videoContainer.style.display = 'block';
+                    document.getElementById('videos-container').style.display = 'none';
+                } else {
+                    alert('No video found.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while fetching the video.');
+            });
+    }
+});
+
 document.getElementById('btn-clear-videos').addEventListener('click', function () {
     document.getElementById('video-container').style.display = 'none';
     document.getElementById('videos-container').style.display = 'none';
