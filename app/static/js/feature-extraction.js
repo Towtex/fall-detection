@@ -25,7 +25,7 @@ document.getElementById('btn-extract-fg-fd').addEventListener('click', function 
         .then(text => {
             console.log(text);
             if (text.includes("Error:")) {
-                alert(`ERROR:\n ${text}`);
+                alert(`${text}`);
             } else {
                 const endTime = Date.now();
                 const executionTime = ((endTime - startTime) / 1000).toFixed(2);
@@ -62,6 +62,38 @@ document.getElementById('btn-stop-extract-fg-fd').addEventListener('click', func
         });
 });
 
+document.getElementById('btn-result-fg-fd').addEventListener('click', function () {
+    const subject = document.getElementById('subject-select-fg').value;
+    const camera = document.getElementById('camera-select-fg').value;
+    const trial = document.getElementById('trial-select-fg').value;
+    const activity = document.getElementById('activity-select-fg').value;
+
+    fetch('/api/get_fg_fd_video', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ subject: subject, camera: camera, trial: trial, activity: activity })
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.video_url) {
+                const videoSource = document.getElementById('videoSource');
+                videoSource.src = data.video_url;
+                const video = document.getElementById('extractedVideo');
+                video.load();
+                video.play();
+                document.getElementById('video-container').style.display = 'block';
+            } else {
+                alert('No video found.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while fetching the video.');
+        });
+});
+
 let extractFgYoloController = new AbortController();
 
 document.getElementById('btn-extract-fg-yolo').addEventListener('click', function () {
@@ -89,7 +121,7 @@ document.getElementById('btn-extract-fg-yolo').addEventListener('click', functio
         .then(text => {
             console.log(text);
             if (text.includes("Error:")) {
-                alert(`ERROR:\n ${text}`);
+                alert(`${text}`);
             } else {
                 const endTime = Date.now();
                 const executionTime = ((endTime - startTime) / 1000).toFixed(2);
@@ -154,7 +186,7 @@ document.getElementById('btn-create-shi').addEventListener('click', function () 
         .then(text => {
             console.log(text);
             if (text.includes("Error:")) {
-                alert(`ERROR:\n ${text}`);
+                alert(`${text}`);
             } else {
                 const endTime = Date.now();
                 const executionTime = ((endTime - startTime) / 1000).toFixed(2);
@@ -218,7 +250,7 @@ document.getElementById('btn-extract-dof').addEventListener('click', function ()
         .then(text => {
             console.log(text);
             if (text.includes("Error:")) {
-                alert(`ERROR:\n ${text}`);
+                alert(`${text}`);
             } else {
                 const endTime = Date.now();
                 const executionTime = ((endTime - startTime) / 1000).toFixed(2);
@@ -283,7 +315,7 @@ document.getElementById('btn-create-dof-shi').addEventListener('click', function
         .then(text => {
             console.log(text);
             if (text.includes("Error:")) {
-                alert(`ERROR:\n ${text}`);
+                alert(`${text}`);
             } else {
                 const endTime = Date.now();
                 const executionTime = ((endTime - startTime) / 1000).toFixed(2);

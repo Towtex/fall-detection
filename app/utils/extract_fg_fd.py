@@ -114,12 +114,13 @@ def extract_fg(dataset_path: str, subject: str, camera: int, trial: int, action:
     
     print(f"Images saved at {path}")
     # Create video from FG FD images
-    video_name = f'FG_FD_subject{subject}_camera{camera}_trial{trial}_activity{action}.avi'
+    video_name = f'FG_FD_subject{subject}_camera{camera}_trial{trial}_activity{action}.mp4'
     video_path = os.path.join(path, video_name)
     try:
-        images_to_video(path, video_path, fps=30, image_format=".png", codec="DIVX")
+        # Adjust the frame rate if necessary
+        images_to_video(path, video_path, fps=10, image_format=".png")
         print(f"Video created at {video_path}")
     except Exception as e:
         print(f"Error creating video: {str(e)}")
-    return None
-  
+        return None
+    return video_path

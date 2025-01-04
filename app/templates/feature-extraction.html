@@ -318,5 +318,17 @@
     </div>
 </div>
 
+<!-- Add a video container to display the video -->
+<div class="row" style="margin: 2rem;">
+    <div class="col-md-12 text-center">
+        <div id="video-container" style="display: none;">
+            <video id="extractedVideo" width="320" height="240" loop autoplay controls>
+                <source id="videoSource" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+    </div>
+</div>
+
 <script src="{{ url_for('static', filename='js/feature-extraction.js') }}"></script>
 {% endblock %}
