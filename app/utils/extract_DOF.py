@@ -91,11 +91,12 @@ def extract_color_dof(dataset_path: str, subject: int, camera: int, trial: int, 
     
     print(f"Images saved at {output_folder}")
     # Create video from DOF images
-    video_name = f'DOF_subject{subject}_camera{camera}_trial{trial}_activity{action}.avi'
+    video_name = f'DOF_subject{subject}_camera{camera}_trial{trial}_activity{action}.mp4'
     video_path = os.path.join(output_folder, video_name)
     try:
-        images_to_video(output_folder, video_path, fps=30, image_format=".png", codec="DIVX")
+        images_to_video(output_folder, video_path, fps=10, image_format=".png")
         print(f"Video created at {video_path}")
     except Exception as e:
         print(f"Error creating video: {str(e)}")
-    return None
+        return None
+    return video_path
