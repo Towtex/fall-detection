@@ -40,7 +40,7 @@ def create_shi(method, dataset_path: str, subject: int, camera: int, trial: int,
         )
     elif method == 'CBF-BS':
         fg_folder = os.path.join(main_folder, 'extracted_fg_fd')
-        output_folder = os.path.join(main_folder, 'SHI_CBF_BS')
+        output_folder = os.path.join(main_folder, 'SHI_CBF-BS')
     else:
         raise ValueError("Unsupported method: {}".format(method))
     
@@ -77,11 +77,12 @@ def create_shi(method, dataset_path: str, subject: int, camera: int, trial: int,
     
     print(f"Images saved at {output_folder}")
     # Create video from SHI images
-    video_name = f'SHI_{method}_subject{subject}_camera{camera}_trial{trial}_activity{activity}.avi'
+    video_name = f'SHI_{method}_subject{subject}_camera{camera}_trial{trial}_activity{activity}.mp4'
     video_path = os.path.join(output_folder, video_name)
     try:
-        images_to_video(output_folder, video_path, fps=30, image_format=".png", codec="DIVX")
+        images_to_video(output_folder, video_path, fps=10, image_format=".png")
         print(f"Video created at {video_path}")
     except Exception as e:
         print(f"Error creating video: {str(e)}")
-    return None
+        return None
+    return video_path
