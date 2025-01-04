@@ -105,8 +105,12 @@ document.getElementById('btn-result-fg-fd').addEventListener('click', function (
                         videoWrapper.appendChild(label);
                         videosContainer.appendChild(videoWrapper);
                     });
+                    const existingTitle = videosContainer.querySelector('h3');
+                    if (existingTitle) {
+                        videosContainer.removeChild(existingTitle);
+                    }
                     const title = document.createElement('h3');
-                    title.textContent = `Subject: ${subject}, Camera: ${camera}, Trial: ${trial}, Activity: All`;
+                    title.textContent = `FG FD, Subject: ${subject}, Camera: ${camera}, Trial: ${trial}, Activity: All`;
                     videosContainer.insertBefore(title, videosContainer.firstChild);
                     videosContainer.style.display = 'block';
                     document.getElementById('video-container').style.display = 'none';
@@ -134,9 +138,13 @@ document.getElementById('btn-result-fg-fd').addEventListener('click', function (
                     const video = document.getElementById('extractedVideo');
                     video.load();
                     video.play();
-                    const title = document.createElement('h3');
-                    title.textContent = `Subject: ${subject}, Camera: ${camera}, Trial: ${trial}, Activity: ${activity}`;
                     const videoContainer = document.getElementById('video-container');
+                    const existingTitle = videoContainer.querySelector('h3');
+                    if (existingTitle) {
+                        videoContainer.removeChild(existingTitle);
+                    }
+                    const title = document.createElement('h3');
+                    title.textContent = `FD FD, Subject: ${subject}, Camera: ${camera}, Trial: ${trial}, Activity: ${activity}`;
                     videoContainer.insertBefore(title, videoContainer.firstChild);
                     videoContainer.style.display = 'block';
                     document.getElementById('videos-container').style.display = 'none';
@@ -151,11 +159,6 @@ document.getElementById('btn-result-fg-fd').addEventListener('click', function (
     }
 });
 
-document.getElementById('btn-clear-videos').addEventListener('click', function () {
-    document.getElementById('video-container').style.display = 'none';
-    document.getElementById('videos-container').style.display = 'none';
-    document.getElementById('videos-container').innerHTML = '';
-});
 
 let extractFgYoloController = new AbortController();
 
@@ -264,8 +267,12 @@ document.getElementById('btn-result-fg-yolo').addEventListener('click', function
                         videoWrapper.appendChild(label);
                         videosContainer.appendChild(videoWrapper);
                     });
+                    const existingTitle = videosContainer.querySelector('h3');
+                    if (existingTitle) {
+                        videosContainer.removeChild(existingTitle);
+                    }
                     const title = document.createElement('h3');
-                    title.textContent = `Subject: ${subject}, Camera: ${camera}, Trial: ${trial}, Activity: All`;
+                    title.textContent = `FG Yolo, Subject: ${subject}, Camera: ${camera}, Trial: ${trial}, Activity: All`;
                     videosContainer.insertBefore(title, videosContainer.firstChild);
                     videosContainer.style.display = 'block';
                     document.getElementById('video-container').style.display = 'none';
@@ -293,9 +300,13 @@ document.getElementById('btn-result-fg-yolo').addEventListener('click', function
                     const video = document.getElementById('extractedVideo');
                     video.load();
                     video.play();
-                    const title = document.createElement('h3');
-                    title.textContent = `Subject: ${subject}, Camera: ${camera}, Trial: ${trial}, Activity: ${activity}`;
                     const videoContainer = document.getElementById('video-container');
+                    const existingTitle = videoContainer.querySelector('h3');
+                    if (existingTitle) {
+                        videoContainer.removeChild(existingTitle);
+                    }
+                    const title = document.createElement('h3');
+                    title.textContent = `FG Yolo, Subject: ${subject}, Camera: ${camera}, Trial: ${trial}, Activity: ${activity}`;
                     videoContainer.insertBefore(title, videoContainer.firstChild);
                     videoContainer.style.display = 'block';
                     document.getElementById('videos-container').style.display = 'none';
@@ -502,4 +513,10 @@ document.getElementById('btn-stop-create-dof-shi').addEventListener('click', fun
             console.error('Error:', error);
             alert('An error occurred while stopping DOF SHI creation.');
         });
+});
+
+document.getElementById('btn-clear-videos').addEventListener('click', function () {
+    document.getElementById('video-container').style.display = 'none';
+    document.getElementById('videos-container').style.display = 'none';
+    document.getElementById('videos-container').innerHTML = '';
 });
