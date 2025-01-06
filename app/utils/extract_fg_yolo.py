@@ -32,7 +32,7 @@ def take_max_obj(image):
 def extract_fg_yolo(dataset_path: str, subject: str, camera: int, trial: int, action: int, abort_signal):
     model = YOLO('yolov8m-seg.pt')
     yolo_classes = list(model.names.values())
-    class_ids = [yolo_classes.index(clas) for clas in yolo_classes]
+    # class_ids = [yolo_classes.index(clas) for clas in yolo_classes]
     se2 = np.ones((1, 20), np.uint8)
     conf = 0.5
     width = 320
@@ -52,7 +52,7 @@ def extract_fg_yolo(dataset_path: str, subject: str, camera: int, trial: int, ac
     input_folder = os.path.join(main_folder, 'RGB')
     
     if not os.path.exists(input_folder):
-        msg = f'Error: {input_folder} does not exist'
+        msg = f'Error: "{input_folder}" does not exist'
         return msg
     
     output_folder = os.path.abspath(
@@ -90,7 +90,7 @@ def extract_fg_yolo(dataset_path: str, subject: str, camera: int, trial: int, ac
                     points = np.int32([mask_points])
                     class_id = int(box.cls[0])
                     if class_id == 0:
-                        color_number = class_ids.index(int(box.cls[0]))
+                        # color_number = class_ids.index(int(box.cls[0]))
                         cv2.fillPoly(mask, points, 255)
 
         mask = cv2.convertScaleAbs(mask)

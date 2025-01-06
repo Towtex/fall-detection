@@ -53,47 +53,25 @@ def create_background_image(dataset_path: str, cbg_path: str, subject: str, came
     image_path = os.path.join(main_folder, 'RGB')
     mask_path = os.path.join(main_folder, 'Mask')
     file_list = os.listdir(image_path)
-    total_files =len(file_list) -1
     filename1 = file_list[0]
-    copyFlag = 0
 
     if os.path.exists(mask_path):
         file_list2 = os.listdir(mask_path)
         filename2 = file_list2 [0]
-        mask0 = cv2.imread(os.path.join(mask_path, filename2))
-        if not filename2.endswith('.png'):
-            copyFlag = 1
+        mask = cv2.imread(os.path.join(mask_path, filename2))
     else:
-        copyFlag = 1
+        print("Mask File does not exist")
+        return
     
     image1 = cv2.imread(os.path.join(image_path, filename1))
     image1 = cv2.resize(image1,(320,240))
     cbg_image = cv2.imread(cbg_filename)
     cbg_image = cv2.resize(cbg_image,(320,240))
     
-    if copyFlag == 1:
-        print('Mask File does not exist')
-        file_list3 = os.listdir(
-            os.path.join(
-                main_folder,
-                'FgResult'
-            )
-        )
-        
-        fg_path = os.path.join(
-            main_folder,
-            'FgResult',
-            file_list3[0]
-        )
-        
-        mask0 = cv2.imread(fg_path)
-    
-    copyFlag = 0
-    
-    mask0 = cv2.resize(mask0,(320,240))
+    mask = cv2.resize(mask,(320,240))
        
     kernel = np.ones((3,3), np.uint8)
-    mask1 = cv2.dilate(mask0, kernel, iterations=1)
+    mask1 = cv2.dilate(mask, kernel, iterations=1)
     thresh = 128
     im_bool1 = mask1 >= thresh
     im_bool2 = mask1 < thresh

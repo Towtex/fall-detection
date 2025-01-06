@@ -17,7 +17,7 @@ def take_max_obj(image):
                 output[labels == i] = 0
     return output
 
-def create_shi(method, dataset_path: str, subject: int, camera: int, trial: int, activity: int, abort_signal):
+def create_shi(method, subject: int, camera: int, trial: int, activity: int, abort_signal):
     
     main_folder = os.path.abspath(
         os.path.join(
@@ -38,9 +38,9 @@ def create_shi(method, dataset_path: str, subject: int, camera: int, trial: int,
             main_folder,
             'SHI_Yolov8'
         )
-    elif method == 'CBF-BS':
+    elif method == 'FD':
         fg_folder = os.path.join(main_folder, 'FG_FD')
-        output_folder = os.path.join(main_folder, 'SHI_CBF-BS')
+        output_folder = os.path.join(main_folder, 'SHI_FD')
     else:
         raise ValueError("Unsupported method: {}".format(method))
     

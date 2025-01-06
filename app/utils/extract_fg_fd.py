@@ -72,12 +72,12 @@ def extract_fg(dataset_path: str, subject: str, camera: int, trial: int, action:
     )
     
     if not os.path.exists(bg_file):
-        msg = f'Error: Background image {bg_file} does not exist'
+        msg = f'Error: Background image "{bg_file}" does not exist'
         return msg
     
     bg_frame = cv2.imread(bg_file)
     if bg_frame is None:
-        msg = f'Error: Failed to load background image {bg_file}'
+        msg = f'Error: Failed to load background image "{bg_file}"'
         return msg
     bg_frame = cv2.resize(bg_frame, (320, 240))
     
@@ -88,7 +88,7 @@ def extract_fg(dataset_path: str, subject: str, camera: int, trial: int, action:
         start_time = time.time()
         frame2 = cv2.imread(os.path.join(input_folder, file_list[index-1]))
         if frame2 is None:
-            msg = f'Error: Failed to load image {os.path.join(input_folder, file_list[index-1])}'
+            msg = f'Error: Failed to load image "{os.path.join(input_folder, file_list[index-1])}"'
             print(msg)
             return msg
         frame2 = cv2.resize(frame2, (320, 240))

@@ -36,7 +36,7 @@ def extract_color_dof(dataset_path: str, subject: int, camera: int, trial: int, 
             f'Camera_{camera}',
             f'Trial_{trial}',
             f'Activity_{action}',
-            'ColorDOF'
+            'DOF'
         )
     )  
         
@@ -57,7 +57,7 @@ def extract_color_dof(dataset_path: str, subject: int, camera: int, trial: int, 
     hsv = np.zeros_like(frame1)
     hsv[..., 1] = 255
 
-    print(f"Extracting ColorDOF for subject: {subject}, camera: {camera}, trial: {trial}, activity: {action}")
+    print(f"Extracting DOF for subject: {subject}, camera: {camera}, trial: {trial}, activity: {action}")
     
     for index in range(start + inc, total_files + 1, inc):
         start_time = time.time()

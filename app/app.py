@@ -378,13 +378,13 @@ def create_shi_api():
                         for act in range(1, 12):
                             if abort_signal.is_set():
                                 break
-                            msg = create_shi(method, DATASET_PATH, subject, camera, tr, act, abort_signal)
+                            msg = create_shi(method, subject, camera, tr, act, abort_signal)
                             if msg:
                                 yield f'{msg}\n\n'.encode()
                             else:
                                 yield f'Success: Processing subject {subject}, camera {camera}, trial {tr}, activity {act}\n\n'.encode()
                     else:
-                        msg = create_shi(method, DATASET_PATH, subject, camera, tr, int(activity), abort_signal)
+                        msg = create_shi(method, subject, camera, tr, int(activity), abort_signal)
                         if msg:
                             yield f'{msg}\n\n'.encode()
                         else:
@@ -394,13 +394,13 @@ def create_shi_api():
                     for act in range(1, 12):
                         if abort_signal.is_set():
                             break
-                        msg = create_shi(method, DATASET_PATH, subject, camera, int(trial), act, abort_signal)
+                        msg = create_shi(method, subject, camera, int(trial), act, abort_signal)
                         if msg:
                             yield f'{msg}\n\n'.encode()
                         else:
                             yield f'Success: Processing subject {subject}, camera {camera}, trial {trial}, activity {act}\n\n'.encode()
                 else:
-                    msg = create_shi(method, DATASET_PATH, subject, camera, int(trial), int(activity), abort_signal)
+                    msg = create_shi(method, subject, camera, int(trial), int(activity), abort_signal)
                     if msg:
                         yield f'{msg}\n\n'.encode()
                     else:

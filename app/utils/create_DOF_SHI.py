@@ -34,7 +34,7 @@ def fuse_DOF_SHI(dataset_path: str, subject: int, camera: int, trial: int, actio
         )
     ) 
     
-    dof_folder = os.path.join(main_folder, 'ColorDOF')
+    dof_folder = os.path.join(main_folder, 'DOF')
     
     fg_folder = os.path.join(main_folder, f'SHI_{method}')
     output_folder = os.path.join(main_folder, f'DOF_SHI_{method}')
@@ -82,7 +82,6 @@ def fuse_DOF_SHI(dataset_path: str, subject: int, camera: int, trial: int, actio
         img4 = takeMaxObj(img3)
         result_img = img2        
         result_img[img4 == 0] = 0
-        #print("--- %s seconds ---" % (time.time() - start_time))
         os.makedirs(output_folder, exist_ok=True)
         cv2.imwrite(os.path.join(output_folder, filename), result_img)
         print(f"DOF_SHI created for {filename} in {time.time() - start_time} seconds")
