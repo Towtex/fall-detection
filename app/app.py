@@ -203,7 +203,7 @@ def get_fg_fd_video():
         f'Camera_{camera}',
         f'Trial_{trial}',
         f'Activity_{activity}',
-        'extracted_fg_fd',
+        'FG_FD',
         video_name
     )
     
@@ -229,7 +229,7 @@ def get_fg_fd_videos():
             f'Camera_{camera}',
             f'Trial_{trial}',
             f'Activity_{activity}',
-            'extracted_fg_fd',
+            'FG_FD',
             video_name
         )
         
@@ -317,7 +317,7 @@ def get_fg_yolo_video():
         f'Camera_{camera}',
         f'Trial_{trial}',
         f'Activity_{activity}',
-        'extracted_fg_yolo',
+        'FG_Yolov8',
         video_name
     )
     
@@ -343,7 +343,7 @@ def get_fg_yolo_videos():
             f'Camera_{camera}',
             f'Trial_{trial}',
             f'Activity_{activity}',
-            'extracted_fg_yolo',
+            'FG_Yolov8',
             video_name
         )
         
@@ -548,7 +548,7 @@ def get_dof_video():
         f'Camera_{camera}',
         f'Trial_{trial}',
         f'Activity_{activity}',
-        'ColorDOF',
+        'DOF',
         video_name
     )
     
@@ -574,7 +574,7 @@ def get_dof_videos():
             f'Camera_{camera}',
             f'Trial_{trial}',
             f'Activity_{activity}',
-            'ColorDOF',
+            'DOF',
             video_name
         )
         
