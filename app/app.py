@@ -13,6 +13,7 @@ from utils.create_SHI import create_shi
 from utils.extract_DOF import extract_color_dof
 from utils.create_DOF_SHI import fuse_DOF_SHI
 from utils.images_to_video import images_to_video
+from utils.create_label_datalist_test_tiral3 import create_data_list
 
 app = Flask(__name__, static_folder='static', template_folder='templates')
 app.config['OUTPUT_FOLDER'] = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'output'))
@@ -771,6 +772,21 @@ def stop_extract_deep_features():
     global abort_signal
     abort_signal.set()
     return jsonify({'message': 'Deep feature extraction has been stopped.'}), 200
+
+# create_label API route
+@app.route('/api/create_label', methods=['POST'])
+def create_label():
+    data = request.get_json()
+    feature = data.get('feature')
+    class_limit = data.get('class_limit')
+    subject = data.get('subject')
+    camera = data.get('camera')
+    
+    try:
+        create_data_list(feature, int(class_limit), int(subject), camera)
+        return jsonify({'message': 'Label created successfully.'}), 200
+    except Exception as e:
+        return jsonify({'message': f'Error: {str(e)}'}), 500
 
 # Serve files dynamically from the output folder
 @app.route('/output/<path:filename>')
