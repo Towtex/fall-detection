@@ -1,9 +1,10 @@
 import os
 import webview
 import threading
-import logging
+# import logging
 
 from flask import Flask, render_template, request, jsonify, url_for, send_from_directory, Response
+from utils.extract_CNN_features import extract_cnn_features
 from utils.create_common_background import create_common_background_image
 from utils.create_background import create_background_image
 from utils.extract_fg_fd import extract_fg
@@ -17,7 +18,7 @@ app = Flask(__name__, static_folder='static', template_folder='templates')
 app.config['OUTPUT_FOLDER'] = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'output'))
 
 # Configure logging
-logging.basicConfig(level=logging.DEBUG)
+# logging.basicConfig(level=logging.DEBUG)
 
 # Global variable to store the abort signal
 abort_signal = threading.Event()
@@ -59,6 +60,10 @@ def training():
 def testing():
     return render_template('testing.html', active_page='testing')
 
+@app.route('/deep-feature-extraction')
+def deep_feature_extraction():
+    return render_template('deep-feature-extraction.html', active_page='deep-feature-extraction')
+
 @app.route('/multicam')
 def multicam():
     return render_template('multicam.html', active_page='multicam')
@@ -75,7 +80,7 @@ def create_common_background():
     dataset_path = os.path.join(DATASET_PATH, 'Common Background Creation')
     
     image_path = create_common_background_image(dataset_path, condition=f'Camera{camera}_Con{condition}')
-    logging.debug(f'Created common background image path: {image_path}')
+    # logging.debug(f'Created common background image path: {image_path}')
     
     if image_path is None:
         return jsonify({
@@ -696,7 +701,8 @@ def get_dof_shi_videos():
         )
         
         if os.path.exists(video_path):
-            video_url = url_for('output_file', filename=os.path.relpath(video_path, app.config['OUTPUT_FOLDER']).replace('\\', '/'))
+            filename = os.path.relpath(video_path, app.config['OUTPUT_FOLDER']).replace('\\', '/')
+            video_url = url_for('output_file', filename)
             video_urls.append(video_url)
     
     if video_urls:
@@ -705,6 +711,66 @@ def get_dof_shi_videos():
         return jsonify({'videos': []}), 404
 
 ##############
+
+# extract_deep_features API route
+@app.route('/api/extract_deep_features', methods=['POST'])
+def extract_deep_features():
+    global abort_signal
+    abort_signal.clear()
+    data = request.get_json()
+    feature = data.get('feature')
+    subject = data.get('subject')
+    camera = data.get('camera')
+    trial = data.get('trial')
+    activity = data.get('activity')
+
+    def generate():
+        try:
+            if trial == 'all':
+                for tr in range(1, 4):
+                    if activity == 'all':
+                        for act in range(1, 12):
+                            if abort_signal.is_set():
+                                break
+                            result = extract_cnn_features(feature, int(subject), int(camera), tr, act, abort_signal)
+                            if result and "Error" in result:
+                                yield f'{result}\n\n'.encode()
+                                return
+                            yield f'Success: Extracted deep features for subject {subject}, camera {camera}, trial {tr}, activity {act}\n\n'.encode()
+                    else:
+                        result = extract_cnn_features(feature, int(subject), int(camera), tr, int(activity), abort_signal)
+                        if result and "Error" in result:
+                            yield f'{result}\n\n'.encode()
+                            return
+                        yield f'Success: Extracted deep features for subject {subject}, camera {camera}, trial {tr}, activity {activity}\n\n'.encode()
+            else:
+                if activity == 'all':
+                    for act in range(1, 12):
+                        if abort_signal.is_set():
+                            break
+                        result = extract_cnn_features(feature, int(subject), int(camera), int(trial), act, abort_signal)
+                        if result and "Error" in result:
+                            yield f'{result}\n\n'.encode()
+                            return
+                        yield f'Success: Extracted deep features for subject {subject}, camera {camera}, trial {trial}, activity {act}\n\n'.encode()
+                else:
+                    result = extract_cnn_features(feature, int(subject), int(camera), int(trial), int(activity), abort_signal)
+                    if result and "Error" in result:
+                        yield f'{result}\n\n'.encode()
+                        return
+                    yield f'Success: Extracted deep features for subject {subject}, camera {camera}, trial {trial}, activity {activity}\n\n'.encode()
+        except FileNotFoundError as e:
+            yield f'Error: File not found - {str(e)}\n\n'.encode()
+        except Exception as e:
+            yield f'Error: {str(e)}\n\n'.encode()
+
+    return Response(generate(), mimetype='text/event-stream')
+
+@app.route('/api/stop_extract_deep_features', methods=['POST'])
+def stop_extract_deep_features():
+    global abort_signal
+    abort_signal.set()
+    return jsonify({'message': 'Deep feature extraction has been stopped.'}), 200
 
 # Serve files dynamically from the output folder
 @app.route('/output/<path:filename>')

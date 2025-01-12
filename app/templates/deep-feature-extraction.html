@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Deep Feature Extraction - Fall Detection{% endblock %}
+
+{% block content %}
+<div class="row" style="margin: 0.5rem;">
+    <div class="col-md-9 text-center">
+        <label for="method-select-deep-feature">Feature: </label>
+        <select id="method-select-deep-feature">
+            <option value="SHI_FD">SHI_FD</option>
+            <option value="SHI_Yolov8">SHI_Yolov8</option>
+            <option value="DOF">DOF</option>
+            <option value="DOF_SHI">DOF_SHI</option>
+            <option value="DOF_SHI_Yolov8">DOF_SHI_Yolov8</option>
+        </select>
+        <label for="subject-select-deep-feature">Subject: </label>
+        <select id="subject-select-deep-feature">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+            <option value="13">13</option>
+            <option value="14">14</option>
+            <option value="15">15</option>
+            <option value="16">16</option>
+            <option value="17">17</option>
+        </select>
+        <label for="camera-select-deep-feature">Camera: </label>
+        <select id="camera-select-deep-feature">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">1+2</option>
+        </select>
+        <label for="trial-select-deep-feature">Trial: </label>
+        <select id="trial-select-deep-feature">
+            <option value="all">All</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+        </select>
+        <label for="activity-select-deep-feature">Activity: </label>
+        <select id="activity-select-deep-feature">
+            <option value="all">All</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+        </select>
+    </div>
+    <div class="col-md-1 text-center">
+        <button type="button" class="btn btn-primary" id="btn-extract-deep-features">Extract</button>
+    </div>
+    <div class="col-md-1 text-center">
+        <button type="button" class="btn btn-danger" id="btn-stop-deep-extraction">Stop</button>
+    </div>
+</div>
+<script src="{{ url_for('static', filename='js/deep-feature-extraction.js') }}"></script>
+{% endblock %}
