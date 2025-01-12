@@ -115,50 +115,33 @@ def extract_cnn_features(feature: str, subject: int, camera: int, trial: int, ac
                 'output',
                 f'Subject_{subject}',
                 f'Camera_{camera}',
-                f'Trial_{trial}',
-                f'Activity_{action}',
             )
         )
         
         if camera == 3:
             print(f"Starting feature extraction for Subject: {subject}, Camera: 1+2, Trial: {trial}, Action: {action}")
-            feat_path1 = os.path.abspath(
-                os.path.join(
-                    os.path.dirname(__file__),
-                    '..',
-                    '..',
-                    'output',
-                    f'Subject_{subject}',
-                    f'Camera_1',
-                    f'Trial_{trial}',
-                    f'Activity_{action}',
-                    feature
-                )
+            feat_path1 = os.path.join(
+                main_path,
+                '..',
+                f'Camera_1',
+                f'Trial_{trial}',
+                f'Activity_{action}',
+                feature
             )
             
-            feat_path2 = os.path.abspath(
-                os.path.join(
-                    os.path.dirname(__file__),
-                    '..',
-                    '..',
-                    'output',
-                    f'Subject_{subject}',
-                    f'Camera_2',
-                    f'Trial_{trial}',
-                    f'Activity_{action}',
-                    feature
-                )
+            feat_path2 = os.path.join(
+                main_path,
+                '..',
+                f'Camera_2',
+                f'Trial_{trial}',
+                f'Activity_{action}',
+                feature
             )
             
-            output_path = os.path.abspath(
-                os.path.join(
-                    os.path.dirname(__file__),
-                    '..',
-                    '..',
-                    'output',
-                    f'Subject_{subject}',
-                    f'CNN_features_sequences_{feature}'
-                )
+            output_path = os.path.join(
+                main_path,
+                '..',
+                f'CNN_features_sequences_{feature}'
             )
             
             frames_path1 = glob.glob(os.path.join(feat_path1, '*.png'))
@@ -171,9 +154,17 @@ def extract_cnn_features(feature: str, subject: int, camera: int, trial: int, ac
             frames_path = frames_path1
         else:
             print(f"Starting feature extraction for Subject: {subject}, Camera: {camera}, Trial: {trial}, Action: {action}")
-            feat_path1 = os.path.join(main_path, feature)
+            feat_path1 = os.path.join(
+                main_path,
+                f'Trial_{trial}',
+                f'Activity_{action}',
+                feature
+            )
             feat_path2 = None
-            output_path = os.path.join(main_path, f'CNN_features_sequences_{feature}')
+            output_path = os.path.join(
+                main_path,
+                f'CNN_features_sequences_{feature}'
+            )
             frames_path = glob.glob(os.path.join(feat_path1, '*.png'))
         
             if len(frames_path) == 0:
