@@ -157,9 +157,6 @@ def extract_cnn_features(feature: str, subject: int, camera: int, trial: int, ac
                     '..',
                     'output',
                     f'Subject_{subject}',
-                    f'Camera_1_2',
-                    f'Trial_{trial}',
-                    f'Activity_{action}',
                     f'CNN_features_sequences_{feature}'
                 )
             )
