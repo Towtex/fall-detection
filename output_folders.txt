@@ -1,0 +1,30 @@
+# Output Folders
+
+## From create_common_background.py
+/output/common_background_images
+
+## From create_background.py
+/output/Subject_{subject}/Camera_{camera}/Trial_{trial}/Activity_{activity}/background_image
+
+## From extract_fg_yolo.py
+/output/Subject_{subject}/Camera_{camera}/Trial_{trial}/Activity_{action}/FG_Yolov8
+
+## From extract_fg_fd.py
+/output/Subject_{subject}/Camera_{camera}/Trial_{trial}/Activity_{action}/FG_FD
+
+## From extract_DOF.py
+/output/Subject_{subject}/Camera_{camera}/Trial_{trial}/Activity_{action}/ColorDOF
+
+## From create_SHI.py
+/output/Subject_{subject}/Camera_{camera}/Trial_{trial}/Activity_{activity}/SHI_Yolov8
+(OR)
+/output/Subject_{subject}/Camera_{camera}/Trial_{trial}/Activity_{activity}/SHI_CBF-BS
+
+
+## From create_DOF_SHI.py
+/output/Subject_{subject}/Camera_{camera}/Trial_{trial}/Activity_{action}/DOF_SHI_Yolov8
+(OR)
+/output/Subject_{subject}/Camera_{camera}/Trial_{trial}/Activity_{action}/DOF_SHI_CBF-BS
+
+## From extract_CNN_features.py
+/output/Subject_{subject}/Camera_{camera}/Trial_{trial}/Activity_{action}/CNN_features_sequences_{method}
