@@ -58,7 +58,7 @@ def create_data_list(feature: str, class_limit: int, subject: int, camera: str):
         else:
             class_str = class_list[action - 1]
 
-        out_str += f'{train_or_test}, {class_str}, Subject{subject}, Camera{camera}, {all_parts[2]}, {all_parts[3]}, {feature_path}\n'
+        out_str += f'{train_or_test},{class_str},Subject{subject},Camera{camera},{all_parts[2]},{all_parts[3]},{feature_path}\n'
     
     out_file_name = os.path.join(
         output_folder,
