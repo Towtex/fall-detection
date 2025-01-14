@@ -42,8 +42,12 @@ def create_data_list(feature: str, class_limit: int, subject: int, camera: str):
     
     print(f"CNN Features Folder: {img_folder}")
     all_feature_files = glob.glob(os.path.join(img_folder, '*.npy'))
-    print(f'Total File: {len(all_feature_files)}')
+    total_files = len(all_feature_files)
     
+    if total_files == 0:
+        print(f"Total Files: {total_files}")
+        print('Error: No files found!')
+        raise FileNotFoundError(f'No files found in {img_folder}')
     out_str = ''
     for feature_path in all_feature_files:
         all_parts = os.path.basename(feature_path).split('-')

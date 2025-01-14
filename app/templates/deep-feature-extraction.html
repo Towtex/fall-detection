@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="row" style="margin: 0.5rem;">
-    <div class="col-md-9 text-center">
+    <div class="col-md-9 text-end">
         <label for="method-select-deep-feature">Feature: </label>
         <select id="method-select-deep-feature">
             <option value="SHI_FD">SHI_FD</option>
@@ -62,10 +62,9 @@
             <option value="11">11</option>
         </select>
     </div>
-    <div class="col-md-1 text-center">
-        <button type="button" class="btn btn-primary" id="btn-extract-deep-features">Extract</button>
-    </div>
-    <div class="col-md-1 text-center">
+    <div class="col-md-3 text-start">
+        <button type="button" class="btn btn-primary" id="btn-extract-deep-features"
+            style="margin-right: 1.5rem;">Extract</button>
         <button type="button" class="btn btn-danger" id="btn-stop-deep-extraction">Stop</button>
     </div>
 </div>

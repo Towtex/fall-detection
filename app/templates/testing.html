@@ -3,7 +3,33 @@
 {% block title %}Testing Analysis - Fall Detection{% endblock %}
 
 {% block content %}
-    <h1>Testing</h1>
-    <p>Testing is important.</p>
+<div class="row" style="margin: 0.5rem;">
+    <div class="col-md-8 text-end">
+        <label for="feature-select-testing">Feature: </label>
+        <select id="feature-select-testing">
+            <option value="SHI_FD">SHI_FD</option>
+            <option value="SHI_Yolov8">SHI_Yolov8</option>
+            <option value="DOF">DOF</option>
+            <option value="DOF_SHI">DOF_SHI</option>
+            <option value="DOF_SHI_Yolov8">DOF_SHI_Yolov8</option>
+        </select>
+        <label for="class-limit-select-testing">Class Limit: </label>
+        <select id="class-limit-select-testing">
+            <option value="2">2</option>
+            <option value="7">7</option>
+            <option value="11">11</option>
+        </select>
+        <label for="camera-select-testing">Camera: </label>
+        <select id="camera-select-testing">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="1_2">1+2</option>
+        </select>
+    </div>
+    <div class="col-md-4 text-start">
+        <button type="button" class="btn btn-primary" id="btn-test-model" style="margin-right: 1.5rem;">Test Model</button>
+        <button type="button" class="btn btn-success" id="btn-result-test-model">Result</button>
+    </div>
+</div>
+<script src="{{ url_for('static', filename='js/testing.js') }}"></script>
 {% endblock %}
-
