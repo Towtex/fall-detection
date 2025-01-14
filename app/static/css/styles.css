@@ -27,7 +27,8 @@ select {
 .info {
     font-size: 1.2em;
     line-height: 0.8em;
-    margin-top: 5rem; /* Default margin-top */
+    margin-top: 5rem;
+    font-weight: bold;
 }
 
 .medium-image {
