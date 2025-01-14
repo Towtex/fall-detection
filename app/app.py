@@ -14,6 +14,8 @@ from utils.extract_DOF import extract_color_dof
 from utils.create_DOF_SHI import fuse_DOF_SHI
 from utils.images_to_video import images_to_video
 from utils.create_label_datalist_test_tiral3 import create_data_list
+from utils.train_classes_test_trial3 import train
+from utils.test_model import test
 
 app = Flask(__name__, static_folder='static', template_folder='templates')
 app.config['OUTPUT_FOLDER'] = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'output'))
@@ -785,6 +787,40 @@ def create_label():
     try:
         create_data_list(feature, int(class_limit), int(subject), camera)
         return jsonify({'message': 'Label created successfully.'}), 200
+    except Exception as e:
+        return jsonify({'message': f'Error: {str(e)}'}), 500
+
+@app.route('/api/start_training', methods=['POST'])
+def start_training():
+    feature = request.args.get('feature')
+    class_limit = request.args.get('class_limit')
+    camera = request.args.get('camera')
+
+    def generate():
+        try:
+            train(feature, int(class_limit), camera)
+            yield 'Training completed successfully.\n\n'
+        except Exception as e:
+            yield f'Error: {str(e)}\n\n'
+
+    return Response(generate(), mimetype='text/event-stream')
+
+@app.route('/api/stop_training', methods=['POST'])
+def stop_training():
+    global abort_signal
+    abort_signal.set()
+    return jsonify({'message': 'Training has been stopped.'}), 200
+
+@app.route('/api/start-testing', methods=['POST'])
+def start_testing():
+    data = request.get_json()
+    feature = data.get('feature')
+    class_limit = data.get('class_limit')
+    camera = data.get('camera')
+    
+    try:
+        test(feature, int(class_limit), camera)
+        return jsonify({'message': 'Model has been tested successfully.'}), 200
     except Exception as e:
         return jsonify({'message': f'Error: {str(e)}'}), 500
 
