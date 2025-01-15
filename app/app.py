@@ -1,3 +1,4 @@
+import json
 import os
 import webview
 import threading
@@ -789,7 +790,9 @@ def create_label():
         return jsonify({'message': 'Label created successfully.'}), 200
     except Exception as e:
         return jsonify({'message': f'Error: {str(e)}'}), 500
+##########
 
+# training API route
 @app.route('/api/start_training', methods=['POST'])
 def start_training():
     feature = request.args.get('feature')
@@ -810,7 +813,9 @@ def stop_training():
     global abort_signal
     abort_signal.set()
     return jsonify({'message': 'Training has been stopped.'}), 200
+##########
 
+# testing API route
 @app.route('/api/start-testing', methods=['POST'])
 def start_testing():
     data = request.get_json()
@@ -823,6 +828,32 @@ def start_testing():
         return jsonify({'message': 'Model has been tested successfully.'}), 200
     except Exception as e:
         return jsonify({'message': f'Error: {str(e)}'}), 500
+
+@app.route('/api/get-test-result', methods=['POST'])
+def get_test_result():
+    data = request.get_json()
+    feature = data.get('feature')
+    class_limit = data.get('class_limit')
+    camera = data.get('camera')
+    
+    # Construct the file path based on the parameters
+    file_path = os.path.join(app.config['OUTPUT_FOLDER'], f'train_data_{class_limit}_classes_cam_{camera}_test_trial3_{feature}_performance_eval.json')
+    plot_image_path = os.path.join(app.config['OUTPUT_FOLDER'], f'train_data_{class_limit}_classes_cam_{camera}_test_trial3_{feature}_performance_eval.png')
+    print(f"Looking for file at: {file_path}")
+    
+    try:
+        with open(file_path, 'r') as file:
+            result_data = json.load(file)
+        result_data['plot_image_path'] = url_for('output_file', filename=os.path.relpath(plot_image_path, app.config['OUTPUT_FOLDER']).replace('\\', '/'))
+        return jsonify(result_data), 200
+    except FileNotFoundError:
+        print("File not found.")
+        return jsonify({'error': 'Result file not found'}), 404
+    except json.JSONDecodeError:
+        print("Invalid JSON in result file.")
+        return jsonify({'error': 'Invalid JSON in result file'}), 500
+
+##########
 
 # Serve files dynamically from the output folder
 @app.route('/output/<path:filename>')
