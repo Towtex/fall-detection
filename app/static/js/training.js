@@ -34,21 +34,33 @@ document.getElementById('btn-start-training').addEventListener('click', function
 
     const loadingCircleContainer = document.createElement('div');
     loadingCircleContainer.id = 'loading-circle';
-    loadingCircleContainer.className = 'd-flex align-items-center';
+    loadingCircleContainer.className = 'd-flex flex-column align-items-center';
     loadingCircleContainer.style = 'margin-top: 1rem;';
 
     const spinner = document.createElement('div');
     spinner.className = 'spinner-border';
     spinner.role = 'status';
-    spinner.style = 'margin-right: 1rem;';
+    spinner.style = 'margin-bottom: 1rem;';
 
     const strongText = document.createElement('strong');
     strongText.textContent = 'Training...';
 
+    const runningTime = document.createElement('div');
+    runningTime.id = 'running-time';
+    runningTime.style = 'margin-top: 1rem;';
+
     loadingCircleContainer.appendChild(spinner);
     loadingCircleContainer.appendChild(strongText);
+    loadingCircleContainer.appendChild(runningTime);
 
     document.querySelector('.d-flex.justify-content-center.align-items-center').appendChild(loadingCircleContainer);
+
+    const startTime = Date.now();
+    const intervalId = setInterval(() => {
+        const currentTime = Date.now();
+        const elapsedTime = ((currentTime - startTime) / 1000).toFixed(0);
+        document.getElementById('running-time').textContent = `${elapsedTime} seconds`;
+    }, 1000);
 
     fetch('/api/start_training', {
         method: 'POST',
@@ -63,12 +75,14 @@ document.getElementById('btn-start-training').addEventListener('click', function
     })
         .then(response => response.text())
         .then(data => {
+            clearInterval(intervalId);
             document.getElementById('loading-circle').remove();
             const endTime = Date.now();
-            const executionTime = (endTime - startTime) / 1000;
+            const executionTime = ((endTime - startTime) / 1000).toFixed(2);
             alert(`${data}\nExecution time: ${executionTime} seconds`);
         })
         .catch(error => {
+            clearInterval(intervalId);
             document.getElementById('loading-circle').remove();
             console.error('Error:', error);
             alert('An error occurred while starting the training.');
