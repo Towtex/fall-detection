@@ -795,15 +795,21 @@ def create_label():
 # training API route
 @app.route('/api/start_training', methods=['POST'])
 def start_training():
-    feature = request.args.get('feature')
-    class_limit = request.args.get('class_limit')
-    camera = request.args.get('camera')
-
+    global abort_signal
+    abort_signal.clear()
+    data = request.get_json()
+    feature = data.get('feature')
+    class_limit = data.get('class_limit')
+    camera = data.get('camera')
+    print("***** Training started *****")
+    print(f"feature: {feature}, class_limit: {class_limit}, camera: {camera}")
+    
     def generate():
         try:
-            train(feature, int(class_limit), camera)
-            yield 'Training completed successfully.\n\n'
+            result = train(feature, int(class_limit), camera, abort_signal)
+            yield f'{result}\n\n'
         except Exception as e:
+            print(f"Error: {str(e)}")
             yield f'Error: {str(e)}\n\n'
 
     return Response(generate(), mimetype='text/event-stream')
@@ -822,7 +828,7 @@ def start_testing():
     feature = data.get('feature')
     class_limit = data.get('class_limit')
     camera = data.get('camera')
-    
+    print("***** Testing started *****")
     try:
         test(feature, int(class_limit), camera)
         return jsonify({'message': 'Model has been tested successfully.'}), 200
@@ -889,7 +895,7 @@ if __name__ == '__main__':
     flask_thread.start()
 
     webview.create_window(
-        'Fall Detection and Classification with Multiple Cameras Based on Features Fusion and CNN-LST',
+        'Fall Detection and Classification Using Multiple Cameras Based on Features Fusion and CNN-LST',
         'http://127.0.0.1:5000'
     )
     webview.start()

@@ -79,7 +79,6 @@ class DatasetNew():
             for row in data:
                 seq_file_path = row[6]
                 if os.path.isfile(seq_file_path):
-                    print(f"Loading sequence file {seq_file_path}")
                     x_data = np.load(seq_file_path)
                     sequence = np.asarray(x_data).astype('float32')
                     x.append(sequence)
