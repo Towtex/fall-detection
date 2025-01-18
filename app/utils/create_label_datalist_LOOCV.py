@@ -78,7 +78,7 @@ def create_data_list_loocv(feature: str, class_limit: int, test_subject: int, ca
         
         out_file_name = os.path.join(
             out_file_dir,
-            f'train_data_{class_limit}_classes_cam_{camera}_test_subject{test_subject}_{feature}.csv'
+            f'train_data_{class_limit}_classes_cam_{camera}_test_subject{test_subject}_LOOCV_{feature}.csv'
         )
         with open(out_file_name, 'w') as f:
             f.write(out_str)

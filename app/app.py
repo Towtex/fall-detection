@@ -16,6 +16,7 @@ from utils.create_DOF_SHI import fuse_DOF_SHI
 from utils.images_to_video import images_to_video
 from utils.create_label_datalist_test_trial3 import create_data_list  # Updated import statement
 from utils.train_classes_test_trial3 import train
+from utils.train_classes_test_LOOCV import train as train_loocv
 from utils.test_model import test
 from utils.create_label_datalist_LOOCV import create_data_list_loocv
 
@@ -834,6 +835,36 @@ def stop_training():
     global abort_signal
     abort_signal.set()
     return jsonify({'message': 'Training has been stopped.'}), 200
+
+# LOOCV training API route
+@app.route('/api/start_training_loocv', methods=['POST'])
+def start_training_loocv():
+    global abort_signal
+    abort_signal.clear()
+    data = request.get_json()
+    feature = data.get('feature')
+    class_limit = data.get('class_limit')
+    subject = data.get('subject')
+    camera = data.get('camera')
+    print("***** LOOCV Training started *****")
+    print(f"feature: {feature}, class_limit: {class_limit}, camera: {camera}")
+    
+    def generate():
+        try:
+            result = train_loocv(feature, class_limit, subject, camera, abort_signal)
+            yield f'{result}\n\n'
+        except Exception as e:
+            print(f"Error: {str(e)}")
+            yield f'Error: {str(e)}\n\n'
+
+    return Response(generate(), mimetype='text/event-stream')
+
+@app.route('/api/stop_training_loocv', methods=['POST'])
+def stop_training_loocv():
+    global abort_signal
+    abort_signal.set()
+    return jsonify({'message': 'LOOCV Training has been stopped.'}), 200
+
 ##########
 
 # testing API route

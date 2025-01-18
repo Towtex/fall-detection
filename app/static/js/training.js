@@ -145,6 +145,7 @@ document.getElementById('btn-create-label-loocv').addEventListener('click', func
 document.getElementById('btn-start-training-loocv').addEventListener('click', function () {
     const feature = document.getElementById('feature-select-training-loocv').value;
     const classLimit = document.getElementById('class-limit-select-training-loocv').value;
+    const subject = document.getElementById('subject-select-training-loocv').value;
     const camera = document.getElementById('camera-select-training-loocv').value;
     alert(`LOOCV Training started for ${feature} with classes: ${classLimit} and camera: ${camera}.`);
 
@@ -174,8 +175,8 @@ document.getElementById('btn-start-training-loocv').addEventListener('click', fu
     const startTime = Date.now();
     const intervalId = setInterval(() => {
         const currentTime = Date.now();
-        const elapsedTime = ((currentTime - startTime) / 1000).toFixed(2);
-        document.getElementById('running-time-loocv').textContent = `Running time: ${elapsedTime} seconds`;
+        const elapsedTime = ((currentTime - startTime) / 1000).toFixed(0);
+        document.getElementById('running-time-loocv').textContent = `${elapsedTime} seconds`;
     }, 1000);
 
     fetch('/api/start_training_loocv', {
@@ -186,6 +187,7 @@ document.getElementById('btn-start-training-loocv').addEventListener('click', fu
         body: JSON.stringify({
             feature: feature,
             class_limit: classLimit,
+            subject: subject,
             camera: camera
         }),
     })
