@@ -14,7 +14,7 @@ from utils.create_SHI import create_shi
 from utils.extract_DOF import extract_color_dof
 from utils.create_DOF_SHI import fuse_DOF_SHI
 from utils.images_to_video import images_to_video
-from utils.create_label_datalist_test_tiral3 import create_data_list
+from utils.create_label_datalist_test_trial3 import create_data_list  # Updated import statement
 from utils.train_classes_test_trial3 import train
 from utils.test_model import test
 
