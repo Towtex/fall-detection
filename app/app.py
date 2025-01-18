@@ -19,6 +19,7 @@ from utils.train_classes_test_trial3 import train
 from utils.train_classes_test_LOOCV import train as train_loocv
 from utils.test_trial3 import test
 from utils.create_label_datalist_LOOCV import create_data_list_loocv
+from utils.test_LOOCV import test_loocv
 
 app = Flask(__name__, static_folder='static', template_folder='templates')
 app.config['OUTPUT_FOLDER'] = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'output'))
@@ -891,6 +892,46 @@ def get_test_result():
     # Construct the file path based on the parameters
     file_path = os.path.join(app.config['OUTPUT_FOLDER'], f'train_data_{class_limit}_classes_cam_{camera}_test_trial3_{feature}_performance_eval.json')
     plot_image_path = os.path.join(app.config['OUTPUT_FOLDER'], f'train_data_{class_limit}_classes_cam_{camera}_test_trial3_{feature}_performance_eval.png')
+    print(f"Looking for file at: {file_path}")
+    
+    try:
+        with open(file_path, 'r') as file:
+            result_data = json.load(file)
+        result_data['plot_image_path'] = url_for('output_file', filename=os.path.relpath(plot_image_path, app.config['OUTPUT_FOLDER']).replace('\\', '/'))
+        return jsonify(result_data), 200
+    except FileNotFoundError:
+        print("File not found.")
+        return jsonify({'error': 'Result file not found'}), 404
+    except json.JSONDecodeError:
+        print("Invalid JSON in result file.")
+        return jsonify({'error': 'Invalid JSON in result file'}), 500
+
+# testing LOOCV API route
+@app.route('/api/start-testing-loocv', methods=['POST'])
+def start_testing_loocv():
+    data = request.get_json()
+    feature = data.get('feature')
+    class_limit = data.get('class_limit')
+    subject = data.get('subject')
+    camera = data.get('camera')
+    print("***** LOOCV Testing started *****")
+    try:
+        test_loocv(feature, int(class_limit), subject, camera)
+        return jsonify({'message': 'LOOCV model has been tested successfully.'}), 200
+    except Exception as e:
+        return jsonify({'message': f'Error: {str(e)}'}), 500
+
+@app.route('/api/get-test-loocv-result', methods=['POST'])
+def get_test_loocv_result():
+    data = request.get_json()
+    feature = data.get('feature')
+    class_limit = data.get('class_limit')
+    subject = data.get('subject')
+    camera = data.get('camera')
+    
+    # Construct the file path based on the parameters
+    file_path = os.path.join(app.config['OUTPUT_FOLDER'], f'Subject_{subject}', f'train_data_{class_limit}_classes_cam_{camera}_test_subject{subject}_LOOCV_{feature}_performance_eval.json')
+    plot_image_path = os.path.join(app.config['OUTPUT_FOLDER'], f'Subject_{subject}', f'train_data_{class_limit}_classes_cam_{camera}_test_subject{subject}_LOOCV_{feature}_performance_eval.png')
     print(f"Looking for file at: {file_path}")
     
     try:

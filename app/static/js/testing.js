@@ -1,14 +1,17 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const btnTestModel = document.getElementById('btn-test-model');
-    const btnShowResult = document.getElementById('btn-result-test-model');
-    const btnClearResult = document.getElementById('btn-clear-test-model');
+    const btnTestModel = document.getElementById('btn-test-trial3');
+    const btnTestLoocvModel = document.getElementById('btn-test-loocv');
+    const btnShowResult = document.getElementById('btn-result-test-trial3');
+    const btnShowLoocvResult = document.getElementById('btn-result-test-loocv');
+    const btnClearResult = document.getElementById('btn-clear');
     const resultsContainer = document.getElementById('results-container');
+    const resultsHeader = document.getElementById('results-header');
     const resultsContent = document.getElementById('results-content');
 
     btnTestModel.addEventListener('click', function () {
-        const feature = document.getElementById('feature-select-testing').value;
-        const classLimit = document.getElementById('class-limit-select-testing').value;
-        const camera = document.getElementById('camera-select-testing').value;
+        const feature = document.getElementById('feature-select-test-trial3').value;
+        const classLimit = document.getElementById('class-limit-select-test-trial3').value;
+        const camera = document.getElementById('camera-select-test-trial3').value;
         const requestBody = JSON.stringify({
             feature: feature,
             class_limit: classLimit,
@@ -31,10 +34,40 @@ document.addEventListener('DOMContentLoaded', function () {
                 console.error('Error:', error);
             });
     });
+
+    btnTestLoocvModel.addEventListener('click', function () {
+        const feature = document.getElementById('feature-select-test-loocv').value;
+        const classLimit = document.getElementById('class-limit-select-test-loocv').value;
+        const subject = document.getElementById('subject-select-test-loocv').value;
+        const camera = document.getElementById('camera-select-test-loocv').value;
+        const requestBody = JSON.stringify({
+            feature: feature,
+            class_limit: classLimit,
+            subject: subject,
+            camera: camera
+        });
+        alert('LOOCV Testing started. Please wait for the results.');
+        console.log(requestBody);
+        fetch('/api/start-testing-loocv', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: requestBody
+        })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    });
+
     btnShowResult.addEventListener('click', function () {
-        const feature = document.getElementById('feature-select-testing').value;
-        const classLimit = document.getElementById('class-limit-select-testing').value;
-        const camera = document.getElementById('camera-select-testing').value;
+        const feature = document.getElementById('feature-select-test-trial3').value;
+        const classLimit = document.getElementById('class-limit-select-test-trial3').value;
+        const camera = document.getElementById('camera-select-test-trial3').value;
         alert('Fetching results. Please wait.')
         fetch('/api/get-test-result', {
             method: 'POST',
@@ -54,6 +87,42 @@ document.addEventListener('DOMContentLoaded', function () {
                 return response.json();
             })
             .then(data => {
+                resultsHeader.textContent = 'Test Results for Trial 3';
+                displayResults(data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert('Error fetching results: ' + error.message);
+                resultsContent.innerHTML = '<div class="alert alert-danger">Error fetching results. Please try again.</div>';
+            });
+    });
+
+    btnShowLoocvResult.addEventListener('click', function () {
+        const feature = document.getElementById('feature-select-test-loocv').value;
+        const classLimit = document.getElementById('class-limit-select-test-loocv').value;
+        const camera = document.getElementById('camera-select-test-loocv').value;
+        const subject = document.getElementById('subject-select-test-loocv').value;
+        alert('Fetching LOOCV results. Please wait.');
+        fetch('/api/get-test-loocv-result', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                feature: feature,
+                class_limit: classLimit,
+                subject: subject,
+                camera: camera
+            }),
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Result file not found');
+                }
+                return response.json();
+            })
+            .then(data => {
+                resultsHeader.textContent = 'Test Results for LOOCV';
                 displayResults(data);
             })
             .catch((error) => {
