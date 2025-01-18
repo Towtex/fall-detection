@@ -4,6 +4,11 @@
 
 {% block content %}
 <div class="container mt-5">
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <h3>For Trial 3,</h3>
+        </div>
+    </div>
     <div class="row" style="margin: 0.5rem;">
         <div class="col-md-8 text-end">
             <label for="feature-select-create-label">Feature: </label>
@@ -78,6 +83,87 @@
             <button type="button" class="btn btn-primary" id="btn-start-training" style="margin-right: 1.5rem;">Start
                 Training</button>
             <button type="button" class="btn btn-danger" id="btn-stop-training">Stop Training</button>
+        </div>
+    </div>
+    <div class="row mt-5">
+        <div class="col-md-12 text-center">
+            <h3>For LOOCV,</h3>
+        </div>
+    </div>
+    <div class="row" style="margin: 0.5rem;">
+        <div class="col-md-8 text-end">
+            <label for="feature-select-create-label-loocv">Feature: </label>
+            <select id="feature-select-create-label-loocv">
+                <option value="SHI_FD">SHI_FD</option>
+                <option value="SHI_Yolov8">SHI_Yolov8</option>
+                <option value="DOF">DOF</option>
+                <option value="DOF_SHI_FD">DOF_SHI_FD</option>
+                <option value="DOF_SHI_Yolov8">DOF_SHI_Yolov8</option>
+            </select>
+            <label for="class-limit-select-create-label-loocv">Class Limit: </label>
+            <select id="class-limit-select-create-label-loocv">
+                <option value="2">2</option>
+                <option value="7">7</option>
+                <option value="11">11</option>
+            </select>
+            <label for="subject-select-create-label-loocv">Subject: </label>
+            <select id="subject-select-create-label-loocv">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+                <option value="13">13</option>
+                <option value="14">14</option>
+                <option value="15">15</option>
+                <option value="16">16</option>
+                <option value="17">17</option>
+            </select>
+            <label for="camera-select-create-label-loocv">Camera: </label>
+            <select id="camera-select-create-label-loocv">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="1_2">1+2</option>
+            </select>
+        </div>
+        <div class="col-md-4 text-start">
+            <button type="button" class="btn btn-primary" id="btn-create-label-loocv">Create Label</button>
+        </div>
+    </div>
+    <div class="row" style="margin: 0.5rem;">
+        <div class="col-md-8 text-end">
+            <label for="feature-select-training-loocv">Feature: </label>
+            <select id="feature-select-training-loocv">
+                <option value="SHI_FD">SHI_FD</option>
+                <option value="SHI_Yolov8">SHI_Yolov8</option>
+                <option value="DOF">DOF</option>
+                <option value="DOF_SHI_FD">DOF_SHI_FD</option>
+                <option value="DOF_SHI_Yolov8">DOF_SHI_Yolov8</option>
+            </select>
+            <label for="class-limit-select-training-loocv">Class Limit: </label>
+            <select id="class-limit-select-training-loocv">
+                <option value="2">2</option>
+                <option value="7">7</option>
+                <option value="11">11</option>
+            </select>
+            <label for="camera-select-training-loocv">Camera: </label>
+            <select id="camera-select-training-loocv">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="1_2">1+2</option>
+            </select>
+        </div>
+        <div class="col-md-4 text-start">
+            <button type="button" class="btn btn-primary" id="btn-start-training-loocv" style="margin-right: 1.5rem;">Start
+                Training</button>
+            <button type="button" class="btn btn-danger" id="btn-stop-training-loocv">Stop Training</button>
         </div>
     </div>
     <div class="d-flex justify-content-center align-items-center" style="height: 50vh;">
