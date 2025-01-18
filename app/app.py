@@ -17,7 +17,7 @@ from utils.images_to_video import images_to_video
 from utils.create_label_datalist_test_trial3 import create_data_list  # Updated import statement
 from utils.train_classes_test_trial3 import train
 from utils.train_classes_test_LOOCV import train as train_loocv
-from utils.test_model import test
+from utils.test_trial3 import test
 from utils.create_label_datalist_LOOCV import create_data_list_loocv
 
 app = Flask(__name__, static_folder='static', template_folder='templates')

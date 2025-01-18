@@ -6,5 +6,5 @@ Extract_CNNFeatures_1Camera.py + Extract_CNNFeatures_2Cameras.py ==> extract_CNN
 Extract_DOF.py                  ==> extract_DOF.py
 Extract_Fg_FD.py                ==> extract_fg_fd.py
 Extract_Fg_Yolo.py              ==> extract_fg_yolo.py
-Test_Trial3.py                  ==> test_model.py
+Test_Trial3.py                  ==> test_trial3.py
 Train_classes_test_trial3.py    ==> train_classes_test_trial3.py
