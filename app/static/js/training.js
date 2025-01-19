@@ -26,6 +26,141 @@ document.getElementById('btn-create-label').addEventListener('click', function (
         });
 });
 
+document.getElementById('btn-label-result').addEventListener('click', function () {
+    const feature = document.getElementById('feature-select-create-label').value;
+    const classLimit = document.getElementById('class-limit-select-create-label').value;
+    const subject = document.getElementById('subject-select-create-label').value;
+    const camera = document.getElementById('camera-select-create-label').value;
+    alert(`Fetching label result for ${feature} with classes: ${classLimit}, subject: ${subject} and camera: ${camera}.`);
+
+    // Clear previous results
+    const existingResultContainer = document.querySelector('.result-container');
+    if (existingResultContainer) {
+        existingResultContainer.remove();
+    }
+
+    fetch('/api/get_label_result', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            feature: feature,
+            class_limit: classLimit,
+            subject: subject,
+            camera: camera
+        })
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert(data.error);
+            } else {
+                alert('Label result fetched successfully.');
+                const resultContainer = document.createElement('div');
+                resultContainer.className = 'result-container';
+                resultContainer.style.marginTop = '0rem';
+
+                const title = document.createElement('h4');
+                title.textContent = 'Label Result for Trial 1 and 2';
+                resultContainer.appendChild(title);
+
+                const table = document.createElement('table');
+                table.className = 'table table-bordered';
+                const tbody = document.createElement('tbody');
+
+                data.data.forEach(row => {
+                    const tr = document.createElement('tr');
+                    row.forEach(cell => {
+                        const td = document.createElement('td');
+                        td.textContent = cell;
+                        tr.appendChild(td);
+                    });
+                    tbody.appendChild(tr);
+                });
+
+                table.appendChild(tbody);
+                resultContainer.appendChild(table);
+                document.querySelector('.container').appendChild(resultContainer);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while fetching the label result.');
+        });
+});
+
+document.getElementById('btn-label-result-loocv').addEventListener('click', function () {
+    const feature = document.getElementById('feature-select-create-label-loocv').value;
+    const classLimit = document.getElementById('class-limit-select-create-label-loocv').value;
+    const subject = document.getElementById('subject-select-create-label-loocv').value;
+    const camera = document.getElementById('camera-select-create-label-loocv').value;
+    alert(`Fetching label result for ${feature} with classes: ${classLimit}, subject: ${subject} and camera: ${camera}.`);
+
+    // Clear previous results
+    const existingResultContainer = document.querySelector('.result-container');
+    if (existingResultContainer) {
+        existingResultContainer.remove();
+    }
+
+    fetch('/api/get_label_result', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            feature: feature,
+            class_limit: classLimit,
+            subject: subject,
+            camera: camera,
+            loocv: true
+        })
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert(data.error);
+            } else {
+                alert('Label result fetched successfully.');
+                const resultContainer = document.createElement('div');
+                resultContainer.className = 'result-container';
+
+                const title = document.createElement('h4');
+                title.textContent = 'Label Result for LOOCV';
+                resultContainer.appendChild(title);
+
+                const table = document.createElement('table');
+                table.className = 'table table-bordered';
+                const tbody = document.createElement('tbody');
+
+                data.data.forEach(row => {
+                    const tr = document.createElement('tr');
+                    row.forEach(cell => {
+                        const td = document.createElement('td');
+                        td.textContent = cell;
+                        tr.appendChild(td);
+                    });
+                    tbody.appendChild(tr);
+                });
+
+                table.appendChild(tbody);
+                resultContainer.appendChild(table);
+                document.querySelector('.container').appendChild(resultContainer);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while fetching the label result.');
+        });
+});
+
+document.getElementById('btn-clear-results').addEventListener('click', function () {
+    const existingResultContainer = document.querySelector('.result-container');
+    if (existingResultContainer) {
+        existingResultContainer.remove();
+    }
+});
+
 document.getElementById('btn-start-training').addEventListener('click', function () {
     const feature = document.getElementById('feature-select-training').value;
     const classLimit = document.getElementById('class-limit-select-training').value;

@@ -2,6 +2,7 @@ import json
 import os
 import webview
 import threading
+import csv
 # import logging
 
 from flask import Flask, render_template, request, jsonify, url_for, send_from_directory, Response
@@ -811,6 +812,35 @@ def create_label_loocv():
         return jsonify({'message': message}), 200
     except Exception as e:
         return jsonify({'message': [f'Error: {str(e)}']}), 500
+
+@app.route('/api/get_label_result', methods=['POST'])
+def get_label_result():
+    data = request.get_json()
+    feature = data.get('feature')
+    class_limit = data.get('class_limit')
+    subject = data.get('subject')
+    camera = data.get('camera')
+    
+    if 'loocv' in data:
+        # Construct the file path for LOOCV based on the parameters
+        file_path = os.path.join(app.config['OUTPUT_FOLDER'], f'Subject_{subject}', f'train_data_{class_limit}_classes_cam_{camera}_test_subject{subject}_LOOCV_{feature}.csv')
+    else:
+        # Construct the file path for regular training based on the parameters
+        file_path = os.path.join(app.config['OUTPUT_FOLDER'], f'train_data_{class_limit}_classes_cam_{camera}_test_trial3_{feature}.csv')
+    
+    print(f"Looking for file at: {file_path}")
+    
+    try:
+        with open(file_path, 'r') as file:
+            csv_reader = csv.reader(file)
+            csv_data = [row for row in csv_reader]
+        return jsonify({'data': csv_data}), 200
+    except FileNotFoundError:
+        print("File not found.")
+        return jsonify({'error': 'Result file not found'}), 404
+    except Exception as e:
+        print(f"Error: {str(e)}")
+        return jsonify({'error': str(e)}), 500
 ##########
 
 # training API route
