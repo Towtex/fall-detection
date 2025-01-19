@@ -51,6 +51,10 @@ def index():
 
 app.add_url_rule('/index', 'index', index)
 
+@app.route('/information')
+def information():
+    return render_template('information.html', active_page='information')
+
 @app.route('/preprocessing')
 def preprocessing():
     return render_template('preprocessing.html', active_page='preprocessing')
