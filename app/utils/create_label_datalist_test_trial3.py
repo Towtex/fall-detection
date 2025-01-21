@@ -26,7 +26,9 @@ def create_data_list(feature: str, class_limit: int, camera: str):
         )
     )
     
-    for subject in range(1, 18):
+    out_str = ''  # Initialize out_str here
+    
+    for subject in range(1, 3):
         if camera == '1_2':
             img_folder = os.path.join(
                 output_folder,
@@ -49,7 +51,7 @@ def create_data_list(feature: str, class_limit: int, camera: str):
             print(f"Total Files: {total_files}")
             print('Error: No files found!')
             raise FileNotFoundError(f'No files found in {img_folder}')
-        out_str = ''
+        
         for feature_path in all_feature_files:
             all_parts = os.path.basename(feature_path).split('-')
             trial = int(all_parts[2].split('Trial')[1])
