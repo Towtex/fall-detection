@@ -28,7 +28,7 @@ def create_data_list(feature: str, class_limit: int, camera: str):
     
     out_str = ''  # Initialize out_str here
     
-    for subject in range(1, 3):
+    for subject in range(1, 18):
         if camera == '1_2':
             img_folder = os.path.join(
                 output_folder,
