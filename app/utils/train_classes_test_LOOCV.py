@@ -29,7 +29,7 @@ from utils.dataset_new import DatasetNew
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 warnings.filterwarnings('ignore')
 
-def manage_model_files(model_folder, max_models=5):
+def manage_model_files(model_folder, max_models=3):
     """Keep only the best `max_models` models and delete the rest."""
     model_files = glob.glob(os.path.join(model_folder, '*.hdf5'))
     if len(model_files) <= max_models:
