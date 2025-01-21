@@ -790,11 +790,10 @@ def create_label():
     data = request.get_json()
     feature = data.get('feature')
     class_limit = data.get('class_limit')
-    subject = data.get('subject')
     camera = data.get('camera')
     
     try:
-        create_data_list(feature, int(class_limit), int(subject), camera)
+        create_data_list(feature, int(class_limit), camera)
         return jsonify({'message': 'Label created successfully.'}), 200
     except Exception as e:
         return jsonify({'message': f'Error: {str(e)}'}), 500
@@ -818,12 +817,17 @@ def get_label_result():
     data = request.get_json()
     feature = data.get('feature')
     class_limit = data.get('class_limit')
-    subject = data.get('subject')
     camera = data.get('camera')
     
     if 'loocv' in data:
+        subject = data.get('subject')
+        print(subject)
         # Construct the file path for LOOCV based on the parameters
-        file_path = os.path.join(app.config['OUTPUT_FOLDER'], f'Subject_{subject}', f'train_data_{class_limit}_classes_cam_{camera}_test_subject{subject}_LOOCV_{feature}.csv')
+        file_path = os.path.join(
+            app.config['OUTPUT_FOLDER'],
+            f'Subject_{subject}',
+            f'train_data_{class_limit}_classes_cam_{camera}_test_subject{subject}_LOOCV_{feature}.csv'
+        )
     else:
         # Construct the file path for regular training based on the parameters
         file_path = os.path.join(app.config['OUTPUT_FOLDER'], f'train_data_{class_limit}_classes_cam_{camera}_test_trial3_{feature}.csv')

@@ -1,7 +1,6 @@
 document.getElementById('btn-create-label').addEventListener('click', function () {
     const feature = document.getElementById('feature-select-create-label').value;
     const classLimit = document.getElementById('class-limit-select-create-label').value;
-    const subject = document.getElementById('subject-select-create-label').value;
     const camera = document.getElementById('camera-select-create-label').value;
 
     fetch('/api/create_label', {
@@ -12,7 +11,6 @@ document.getElementById('btn-create-label').addEventListener('click', function (
         body: JSON.stringify({
             feature: feature,
             class_limit: classLimit,
-            subject: subject,
             camera: camera
         })
     })
@@ -29,9 +27,8 @@ document.getElementById('btn-create-label').addEventListener('click', function (
 document.getElementById('btn-label-result').addEventListener('click', function () {
     const feature = document.getElementById('feature-select-create-label').value;
     const classLimit = document.getElementById('class-limit-select-create-label').value;
-    const subject = document.getElementById('subject-select-create-label').value;
     const camera = document.getElementById('camera-select-create-label').value;
-    alert(`Fetching label result for ${feature} with classes: ${classLimit}, subject: ${subject} and camera: ${camera}.`);
+    alert(`Fetching label result for ${feature} with classes: ${classLimit}, and camera: ${camera}.`);
 
     // Clear previous results
     const existingResultContainer = document.querySelector('.result-container');
@@ -47,7 +44,6 @@ document.getElementById('btn-label-result').addEventListener('click', function (
         body: JSON.stringify({
             feature: feature,
             class_limit: classLimit,
-            subject: subject,
             camera: camera
         })
     })
