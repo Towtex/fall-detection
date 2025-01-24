@@ -99,12 +99,14 @@ def train(feature_str: str, class_limit: int, camera: str, abort_signal):
             'lstm_features-val_loss_{val_loss:.3f}-epoch_{epoch:03d}.hdf5'
         ),
         verbose = 1,
-        save_best_only = True
+        save_best_only = True,
+        monitor='val_accuracy',
+        mode='max'
     )
 
     tb = TensorBoard(log_dir=os.path.join(output_folder, 'logs', 'lstm'))
     early_stopping = EarlyStopping(
-        monitor = 'val_loss',
+        monitor = 'val_accuracy',
         patience = 10,
         verbose = 1
     )

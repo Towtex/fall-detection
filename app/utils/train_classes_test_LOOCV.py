@@ -102,12 +102,13 @@ def train(feature_str: str, class_limit: str, subject: str, camera: str, abort_s
         ),
         verbose = 1,
         save_best_only = True,
-        monitor='val_loss'
+        monitor='val_accuracy',
+        mode='max'
     )
 
     tb = TensorBoard(log_dir=os.path.join(output_folder, 'logs', 'lstm'))
     early_stopping = EarlyStopping(
-        monitor = 'val_loss',
+        monitor = 'val_accuracy',
         patience = 10,
         verbose = 1
     )
