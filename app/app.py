@@ -997,13 +997,14 @@ def api_write_video():
     camera = data.get('camera')
     feature = data.get('feature')
     class_limit = data.get('class_limit')
+    action = data.get('action')
     
     try:
         if 'loocv' in data:
             trial = data.get('trial')
-            loocv_subject_write_video(app.config['OUTPUT_FOLDER'], DATASET_PATH, subject, camera, trial, feature, int(class_limit))
+            loocv_subject_write_video(app.config['OUTPUT_FOLDER'], DATASET_PATH, subject, camera, int(trial), feature, int(class_limit), int(action))
         else:
-            test_trial3_write_video(app.config['OUTPUT_FOLDER'], DATASET_PATH, subject, camera, feature, int(class_limit))
+            test_trial3_write_video(app.config['OUTPUT_FOLDER'], DATASET_PATH, subject, camera, feature, int(class_limit), int(action))
         return jsonify({'message': 'Video written successfully.'}), 200
     except Exception as e:
         return jsonify({'message': f'Error: {str(e)}'}), 500

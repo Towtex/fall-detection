@@ -11,11 +11,13 @@ document.addEventListener('DOMContentLoaded', function () {
         const camera = document.getElementById('camera-select-write-video-trial3').value;
         const feature = document.getElementById('feature-select-write-video-trial3').value;
         const classLimit = document.getElementById('class-limit-select-write-video-trial3').value;
+        const action = document.getElementById('activity-select-write-video-trial3').value;
         const requestBody = JSON.stringify({
             subject: subject,
             camera: camera,
             feature: feature,
             class_limit: classLimit,
+            action: action
         });
         alert('Writing video started. Please wait for the results.');
         console.log(requestBody);
@@ -41,14 +43,16 @@ document.addEventListener('DOMContentLoaded', function () {
         const camera = document.getElementById('camera-select-write-video-loocv').value;
         const feature = document.getElementById('feature-select-write-video-loocv').value;
         const classLimit = document.getElementById('class-limit-select-write-video-loocv').value;
-        const trial = document.getElementById('trial-select-write-video').value;
+        const trial = document.getElementById('trial-select-write-video-loocv').value;
+        const action = document.getElementById('activity-select-write-video-loocv').value;
         const requestBody = JSON.stringify({
             subject: subject,
             camera: camera,
             feature: feature,
             class_limit: classLimit,
             loocv: true,
-            trial: trial
+            trial: trial,
+            action: action
         });
         alert('Writing video for LOOCV started. Please wait for the results.');
         console.log(requestBody);

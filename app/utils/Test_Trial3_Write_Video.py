@@ -38,7 +38,7 @@ class_list=[
                 'Laying'
                 ]
 
-def test_by_features(output_path: str, dataset_path: str, subject: int, camera: str, feature_str: str, class_limit: int):
+def test_by_features(output_path: str, dataset_path: str, subject: int, camera: str, feature_str: str, class_limit: int, action: int):
     model_str = os.path.join(output_path, f'train_data_{class_limit}_classes_cam_{camera}_test_trial3_{feature_str}')
     model_fld = os.path.join(model_str, 'weight_models')
     print(f'model_fld: {model_fld}')
@@ -80,119 +80,84 @@ def test_by_features(output_path: str, dataset_path: str, subject: int, camera: 
     #     img_str='ColorDOF'    
         #img_str='DOF' 
     trial = 3
-    for action in range(1, 12):
-        trialStr = f'Trial{trial}'
-        actStr = f'Activity{action}'
-        img_fld_1 = ''
-        img_fld_2 = ''
-        fg_fld_1 = ''
-        fg_fld_2 = ''
-        output_fld_1 = ''
-        output_fld_2 = ''
+    trialStr = f'Trial{trial}'
+    actStr = f'Activity{action}'
+    img_fld_1 = ''
+    img_fld_2 = ''
+    fg_fld_1 = ''
+    fg_fld_2 = ''
+    output_fld_1 = ''
+    output_fld_2 = ''
 
+    if camera == '1_2':
+        img_fld_1 = os.path.join(dataset_path, subStr, 'Camera1', trialStr, f'{subStr}{actStr}{trialStr}Camera1', 'RGB')
+        img_fld_2 = os.path.join(dataset_path, subStr, 'Camera2', trialStr, f'{subStr}{actStr}{trialStr}Camera2', 'RGB')
+        fg_fld_1 = os.path.join(output_path, f'Subject_{subject}', 'Camera_1', f'Trial_{trial}', f'Activity_{action}', 'SHI_FD')
+        fg_fld_2 = os.path.join(output_path, f'Subject_{subject}', 'Camera_2', f'Trial_{trial}', f'Activity_{action}', 'SHI_FD')
+        features_fld = os.path.join(output_path, f'Subject_{subject}', f'CNN_features_sequences_{feature_str}')
+        output_fld_1 = os.path.join(output_path, f'Subject_{subject}', 'Camera_1', f'Trial_{trial}', f'Activity_{action}', f'{camStr}_{feature_str}_Test_Trial3_{class_limit}_Classes_Results.mp4')
+        output_fld_2 = os.path.join(output_path, f'Subject_{subject}', 'Camera_2', f'Trial_{trial}', f'Activity_{action}', f'{camStr}_{feature_str}_Test_Trial3_{class_limit}_Classes_Results.mp4')
+        os.makedirs(os.path.dirname(output_fld_1), exist_ok=True)
+        os.makedirs(os.path.dirname(output_fld_2), exist_ok=True)
+        video_writer_1 = cv2.VideoWriter(output_fld_1, fourcc, fps, (int(width), int(height)))
+        video_writer_2 = cv2.VideoWriter(output_fld_2, fourcc, fps, (int(width), int(height)))
+        frames_path_1 = glob.glob(os.path.join(fg_fld_1, '*.png'))
+        frames_path_1.sort(key=os.path.getctime)
+        frames_path_2 = glob.glob(os.path.join(fg_fld_2, '*.png'))
+        frames_path_2.sort(key=os.path.getctime)
+        frames_len_1 = len(frames_path_1)
+        print(f'frames_len_1 = {frames_len_1}')
+        frames_len_2 = len(frames_path_2)
+        print(f'frames_len_2 = {frames_len_2}')
+    
+    else: 
+        img_fld_1 = os.path.join(dataset_path, subStr, camStr, trialStr, f'{subStr}{actStr}{trialStr}{camStr}', 'RGB')
+        fg_fld_1 = os.path.join(output_path, f'Subject_{subject}', f'Camera_{camera}', f'Trial_{trial}', f'Activity_{action}', 'SHI_FD')
+        features_fld = os.path.join(output_path, f'Subject_{subject}', f'Camera_{camera}', f'CNN_features_sequences_{feature_str}')
+        output_fld_1 = os.path.join(output_path, f'Subject_{subject}', f'Camera_{camera}', f'Trial_{trial}', f'Activity_{action}', f'{camStr}_{feature_str}_Test_Trial3_{class_limit}_Classes_Results.mp4')
+        os.makedirs(os.path.dirname(output_fld_1), exist_ok=True)
+        video_writer_1 = cv2.VideoWriter(output_fld_1, fourcc, fps, (int(width), int(height)))
+        print(f"Video created: {output_fld_1}")
+        frames_path_1 = glob.glob(os.path.join(fg_fld_1, '*.png'))
+        frames_path_1.sort(key=os.path.getctime)
+        frames_len_1 = len(frames_path_1)
+        print(f'frames_len_1 = {frames_len_1}')
+                
+    startF = 0        
+    incStartF = 0
+    incEndF = seq_length    
+
+    while True:
+        endF = startF + incEndF
+        subFrame_path_1 = frames_path_1[startF + incStartF:endF]
         if camera == '1_2':
-            img_fld_1 = os.path.join(dataset_path, subStr, 'Camera1', trialStr, f'{subStr}{actStr}{trialStr}Camera1', 'RGB')
-            img_fld_2 = os.path.join(dataset_path, subStr, 'Camera2', trialStr, f'{subStr}{actStr}{trialStr}Camera2', 'RGB')
-            fg_fld_1 = os.path.join(output_path, f'Subject_{subject}', 'Camera_1', f'Trial_{trial}', f'Activity_{action}', 'SHI_FD')
-            fg_fld_2 = os.path.join(output_path, f'Subject_{subject}', 'Camera_2', f'Trial_{trial}', f'Activity_{action}', 'SHI_FD')
-            features_fld = os.path.join(output_path, f'Subject_{subject}', f'CNN_features_sequences_{feature_str}')
-            output_fld_1 = os.path.join(output_path, f'Subject_{subject}', 'Camera_1', f'Trial_{trial}', f'Activity_{action}', f'{camStr}_{feature_str}_Test_Trial3_{class_limit}_Classes_Results.mp4')
-            output_fld_2 = os.path.join(output_path, f'Subject_{subject}', 'Camera_2', f'Trial_{trial}', f'Activity_{action}', f'{camStr}_{feature_str}_Test_Trial3_{class_limit}_Classes_Results.mp4')
-            os.makedirs(os.path.dirname(output_fld_1), exist_ok=True)
-            os.makedirs(os.path.dirname(output_fld_2), exist_ok=True)
-            video_writer_1 = cv2.VideoWriter(output_fld_1, fourcc, fps, (int(width), int(height)))
-            video_writer_2 = cv2.VideoWriter(output_fld_2, fourcc, fps, (int(width), int(height)))
-            frames_path_1 = glob.glob(os.path.join(fg_fld_1, '*.png'))
-            frames_path_1.sort(key=os.path.getctime)
-            frames_path_2 = glob.glob(os.path.join(fg_fld_2, '*.png'))
-            frames_path_2.sort(key=os.path.getctime)
-            frames_len_1 = len(frames_path_1)
-            print(f'frames_len_1 = {frames_len_1}')
-            frames_len_2 = len(frames_path_2)
-            print(f'frames_len_2 = {frames_len_2}')
+            subFrame_path_2 = frames_path_2[startF + incStartF:endF]
+
+        features_path = os.path.join(features_fld, f'Subject{subject}-Camera{camera}-Trial{trial}-Activity{action}-{endF}-{seq_length}-features.npy')
+        if not os.path.exists(features_path):
+            print(f'Features file not found: {features_path}')
+            break
+
+        x_data = np.load(features_path)
+        features1 = np.asarray(x_data).astype('float32')
+        test_data = np.array([features1])
+        predicted_classes = np.argmax(model.predict(test_data), axis=-1)
+        #class_list=''
         
-        else: 
-            img_fld_1 = os.path.join(dataset_path, subStr, camStr, trialStr, f'{subStr}{actStr}{trialStr}{camStr}', 'RGB')
-            fg_fld_1 = os.path.join(output_path, f'Subject_{subject}', f'Camera_{camera}', f'Trial_{trial}', f'Activity_{action}', 'SHI_FD')
-            features_fld = os.path.join(output_path, f'Subject_{subject}', f'Camera_{camera}', f'CNN_features_sequences_{feature_str}')
-            output_fld_1 = os.path.join(output_path, f'Subject_{subject}', f'Camera_{camera}', f'Trial_{trial}', f'Activity_{action}', f'{camStr}_{feature_str}_Test_Trial3_{class_limit}_Classes_Results.mp4')
-            os.makedirs(os.path.dirname(output_fld_1), exist_ok=True)
-            video_writer_1 = cv2.VideoWriter(output_fld_1, fourcc, fps, (int(width), int(height)))
-            print(f"Video created: {output_fld_1}")
-            frames_path_1 = glob.glob(os.path.join(fg_fld_1, '*.png'))
-            frames_path_1.sort(key=os.path.getctime)
-            frames_len_1 = len(frames_path_1)
-            print(f'frames_len_1 = {frames_len_1}')
-                    
-        startF = 0        
-        incStartF = 0
-        incEndF = seq_length    
-
-        while True:
-            endF = startF + incEndF
-            subFrame_path_1 = frames_path_1[startF + incStartF:endF]
-            if camera == '1_2':
-                subFrame_path_2 = frames_path_2[startF + incStartF:endF]
-
-            features_path = os.path.join(features_fld, f'Subject{subject}-Camera{camera}-Trial{trial}-Activity{action}-{endF}-{seq_length}-features.npy')
-            if not os.path.exists(features_path):
-                print(f'Features file not found: {features_path}')
-                break
-
-            x_data = np.load(features_path)
-            features1 = np.asarray(x_data).astype('float32')
-            test_data = np.array([features1])
-            predicted_classes = np.argmax(model.predict(test_data), axis=-1)
-            #class_list=''
-            
-            if class_limit == 2:
+        if class_limit == 2:
+            if predicted_classes == 0:
+                class_str = 'Falling'
+                color = (0, 0, 255)  # Red color in BGR
+            else:
+                class_str = 'Not Falling'
+                color = (0, 0, 255)  # Red color in BGR
+        elif class_limit == 7:
+            if predicted_classes < 5:
+                class_str = 'Falling'
+                color = (0, 0, 255)  # Red color in BGR
+            else:
                 if predicted_classes == 0:
                     class_str = 'Falling'
-                    color = (0, 0, 255)  # Red color in BGR
-                else:
-                    class_str = 'Not Falling'
-                    color = (0, 0, 255)  # Red color in BGR
-            elif class_limit == 7:
-                if predicted_classes < 5:
-                    class_str = 'Falling'
-                    color = (0, 0, 255)  # Red color in BGR
-                else:
-                    if predicted_classes == 0:
-                        class_str = 'Falling'
-                        color = (0, 0, 255)  # Red color in BGR
-                    elif predicted_classes == 5:
-                        class_str = 'Walking'
-                        color = (0, 0, 255)  # Red color in BGR
-                    elif predicted_classes == 6:
-                        class_str = 'Standing'
-                        color = (0, 0, 255)  # Red color in BGR
-                    elif predicted_classes == 7:
-                        class_str = 'Sitting'
-                        color = (0, 0, 255)  # Red color in BGR
-                    elif predicted_classes == 8:
-                        class_str = 'Picking Object'
-                        color = (0, 0, 255)  # Red color in BGR
-                    elif predicted_classes == 9:
-                        class_str = 'Jumping'
-                        color = (0, 0, 255)  # Red color in BGR
-                    else:
-                        class_str = 'Laying'
-                        color = (0, 0, 255)  # Red color in BGR
-            elif class_limit == 11:
-                if predicted_classes == 0:
-                    class_str = 'Falling forward using hands'
-                    color = (0, 0, 255)  # Red color in BGR
-                elif predicted_classes == 1:
-                    class_str = 'Falling forward using knees'
-                    color = (0, 0, 255)  # Red color in BGR
-                elif predicted_classes == 2:
-                    class_str = 'Falling backward'
-                    color = (0, 0, 255)  # Red color in BGR
-                elif predicted_classes == 3:
-                    class_str = 'Falling sideway'
-                    color = (0, 0, 255)  # Red color in BGR
-                elif predicted_classes == 4:
-                    class_str = 'Falling while attempting to sit in an empty chair'
                     color = (0, 0, 255)  # Red color in BGR
                 elif predicted_classes == 5:
                     class_str = 'Walking'
@@ -212,74 +177,108 @@ def test_by_features(output_path: str, dataset_path: str, subject: int, camera: 
                 else:
                     class_str = 'Laying'
                     color = (0, 0, 255)  # Red color in BGR
+        elif class_limit == 11:
+            if predicted_classes == 0:
+                class_str = 'Falling forward using hands'
+                color = (0, 0, 255)  # Red color in BGR
+            elif predicted_classes == 1:
+                class_str = 'Falling forward using knees'
+                color = (0, 0, 255)  # Red color in BGR
+            elif predicted_classes == 2:
+                class_str = 'Falling backward'
+                color = (0, 0, 255)  # Red color in BGR
+            elif predicted_classes == 3:
+                class_str = 'Falling sideway'
+                color = (0, 0, 255)  # Red color in BGR
+            elif predicted_classes == 4:
+                class_str = 'Falling while attempting to sit in an empty chair'
+                color = (0, 0, 255)  # Red color in BGR
+            elif predicted_classes == 5:
+                class_str = 'Walking'
+                color = (0, 0, 255)  # Red color in BGR
+            elif predicted_classes == 6:
+                class_str = 'Standing'
+                color = (0, 0, 255)  # Red color in BGR
+            elif predicted_classes == 7:
+                class_str = 'Sitting'
+                color = (0, 0, 255)  # Red color in BGR
+            elif predicted_classes == 8:
+                class_str = 'Picking Object'
+                color = (0, 0, 255)  # Red color in BGR
+            elif predicted_classes == 9:
+                class_str = 'Jumping'
+                color = (0, 0, 255)  # Red color in BGR
+            else:
+                class_str = 'Laying'
+                color = (0, 0, 255)  # Red color in BGR
 
-        
-            ind = 1
-            i = 0
-            while i < len(subFrame_path_1):
-                image_path1 = subFrame_path_1[i]
-                image_path_list = image_path1.split('\\')
+    
+        ind = 1
+        i = 0
+        while i < len(subFrame_path_1):
+            image_path1 = subFrame_path_1[i]
+            image_path_list = image_path1.split('\\')
+            img_fileName = image_path_list[-1]
+            img_path1 = os.path.join(img_fld_1, img_fileName)
+            image_1 = cv2.imread(img_path1)
+            image_1 = cv2.resize(image_1, (320, 240))
+            fg_path_1 = os.path.join(fg_fld_1, img_fileName)
+            fg_img_1 = cv2.imread(fg_path_1, cv2.IMREAD_GRAYSCALE)
+            (thresh, im_bw) = cv2.threshold(fg_img_1, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+            contours, hierarchy = cv2.findContours(fg_img_1, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)[-2:]
+            bounding_boxes = []
+            for c in contours:
+                rect = cv2.boundingRect(c)
+                if cv2.contourArea(c) >= 1000: 
+                    bounding_boxes.append(rect) 
+            
+            if len(bounding_boxes) > 0:
+                x, y, w, h = bounding_boxes[0]
+                image_1 = cv2.rectangle(image_1, (x, y), (x + w, y + h), (0, 255, 0), 2)
+                video_writer_1.write(image_1)                   
+
+            if camera == '1_2':
+                image_path2 = subFrame_path_2[i]
+                image_path_list = image_path2.split('\\')
                 img_fileName = image_path_list[-1]
-                img_path1 = os.path.join(img_fld_1, img_fileName)
-                image_1 = cv2.imread(img_path1)
-                image_1 = cv2.resize(image_1, (320, 240))
-                fg_path_1 = os.path.join(fg_fld_1, img_fileName)
-                fg_img_1 = cv2.imread(fg_path_1, cv2.IMREAD_GRAYSCALE)
-                (thresh, im_bw) = cv2.threshold(fg_img_1, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
-                contours, hierarchy = cv2.findContours(fg_img_1, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)[-2:]
+                img_path2 = os.path.join(img_fld_2, img_fileName)
+                image_2 = cv2.imread(img_path2)
+                image_2 = cv2.resize(image_2, (320, 240))
+                fg_path_2 = os.path.join(fg_fld_2, img_fileName)
+                fg_img_2 = cv2.imread(fg_path_2)
+                fg_path_2 = os.path.join(fg_fld_2, img_fileName)
+                fg_img_2 = cv2.imread(fg_path_2, cv2.IMREAD_GRAYSCALE)
+                (thresh, im_bw) = cv2.threshold(fg_img_2, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+                contours, hierarchy = cv2.findContours(fg_img_2, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)[-2:]
                 bounding_boxes = []
+
                 for c in contours:
                     rect = cv2.boundingRect(c)
                     if cv2.contourArea(c) >= 1000: 
                         bounding_boxes.append(rect) 
                 
                 if len(bounding_boxes) > 0:
-                    x, y, w, h = bounding_boxes[0]
-                    image_1 = cv2.rectangle(image_1, (x, y), (x + w, y + h), (0, 255, 0), 2)
-                    video_writer_1.write(image_1)                   
+                    x, y, w, h = bounding_boxes[0] 
+                    image_2 = cv2.rectangle(image_2, (x, y), (x + w, y + h), (0, 255, 0), 2)
+                    video_writer_2.write(image_2)
 
-                if camera == '1_2':
-                    image_path2 = subFrame_path_2[i]
-                    image_path_list = image_path2.split('\\')
-                    img_fileName = image_path_list[-1]
-                    img_path2 = os.path.join(img_fld_2, img_fileName)
-                    image_2 = cv2.imread(img_path2)
-                    image_2 = cv2.resize(image_2, (320, 240))
-                    fg_path_2 = os.path.join(fg_fld_2, img_fileName)
-                    fg_img_2 = cv2.imread(fg_path_2)
-                    fg_path_2 = os.path.join(fg_fld_2, img_fileName)
-                    fg_img_2 = cv2.imread(fg_path_2, cv2.IMREAD_GRAYSCALE)
-                    (thresh, im_bw) = cv2.threshold(fg_img_2, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
-                    contours, hierarchy = cv2.findContours(fg_img_2, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)[-2:]
-                    bounding_boxes = []
+            image_1 = cv2.putText(image_1, class_str, org, font, 
+                            fontScale, color, thickness, cv2.LINE_AA)                    
+            video_writer_1.write(image_1)
+            if camera == '1_2':
+                image_2 = cv2.putText(image_2, class_str, org, font, 
+                            fontScale, color, thickness, cv2.LINE_AA)                        
+                video_writer_2.write(image_2) 
+            i += 1  
+            
+        incStartF = 9
+        startF = startF + incStartF
+        if startF + incEndF > frames_len_1: 
+            break
 
-                    for c in contours:
-                        rect = cv2.boundingRect(c)
-                        if cv2.contourArea(c) >= 1000: 
-                            bounding_boxes.append(rect) 
-                    
-                    if len(bounding_boxes) > 0:
-                        x, y, w, h = bounding_boxes[0] 
-                        image_2 = cv2.rectangle(image_2, (x, y), (x + w, y + h), (0, 255, 0), 2)
-                        video_writer_2.write(image_2)
-
-                image_1 = cv2.putText(image_1, class_str, org, font, 
-                                fontScale, color, thickness, cv2.LINE_AA)                    
-                video_writer_1.write(image_1)
-                if camera == '1_2':
-                    image_2 = cv2.putText(image_2, class_str, org, font, 
-                                fontScale, color, thickness, cv2.LINE_AA)                        
-                    video_writer_2.write(image_2) 
-                i += 1  
-                
-            incStartF = 9
-            startF = startF + incStartF
-            if startF + incEndF > frames_len_1: 
-                break
-
-        video_writer_1.release()
-        if camera == '1_2':
-            video_writer_2.release()
+    video_writer_1.release()
+    if camera == '1_2':
+        video_writer_2.release()
             
 # if __name__ == '__main__':
 #     #dataset_path= gv.dataset_path

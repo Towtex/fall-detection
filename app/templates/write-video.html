@@ -10,7 +10,7 @@
         </div>
     </div>
     <div class="row" style="margin: 0.5rem;">
-        <div class="col-md-9 text-end">
+        <div class="col-md-10 text-end">
             <label for="subject-select-write-video-trial3">Subject: </label>
             <select id="subject-select-write-video-trial3">
                 {% for i in range(1, 18) %}
@@ -37,8 +37,14 @@
                 <option value="2">2</option>
                 <option value="1_2">1+2</option>
             </select>
+            <label for="activity-select-write-video-trial3">Activity: </label>
+            <select id="activity-select-write-video-trial3">
+                {% for i in range(1, 12) %}
+                <option value="{{ i }}">{{ i }}</option>
+                {% endfor %}
+            </select>
         </div>
-        <div class="col-md-3 text-start">
+        <div class="col-md-2 text-start">
             <button type="button" class="btn btn-success" id="btn-result-write-video-trial3"
                 style="margin-right: 1.5rem;">Result</button>
         </div>
@@ -49,7 +55,7 @@
         </div>
     </div>
     <div class="row" style="margin: 0.5rem;">
-        <div class="col-md-9 text-end">
+        <div class="col-md-10 text-end">
             <label for="feature-select-write-video-loocv">Feature: </label>
             <select id="feature-select-write-video-loocv">
                 <option value="SHI_FD">SHI_FD</option>
@@ -76,14 +82,20 @@
                 <option value="2">2</option>
                 <option value="1_2">1+2</option>
             </select>
-            <label for="trial-select-write-video">Trial: </label>
-            <select id="trial-select-write-video">
+            <label for="trial-select-write-video-loocv">Trial: </label>
+            <select id="trial-select-write-video-loocv">
                 <option value="1">1</option>
                 <option value="2">2</option>
                 <option value="3">3</option>
             </select>
+            <label for="activity-select-write-video-loocv">Activity: </label>
+            <select id="activity-select-write-video-loocv">
+                {% for i in range(1, 12) %}
+                <option value="{{ i }}">{{ i }}</option>
+                {% endfor %}
+            </select>
         </div>
-        <div class="col-md-3 text-start">
+        <div class="col-md-2 text-start">
             <button type="button" class="btn btn-success" id="btn-result-write-video-loocv"
                 style="margin-right: 1.5rem;">Result</button>
         </div>

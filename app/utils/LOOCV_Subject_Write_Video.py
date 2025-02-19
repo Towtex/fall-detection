@@ -38,7 +38,7 @@ class_list=[
                 "Laying"
                 ]
 
-def test_by_features(output_path:str, dataset_path:str,subject:int,camera:str, trial:int,feature_str:str,class_limit:int):
+def test_by_features(output_path:str, dataset_path:str,subject:int,camera:str, trial:int,feature_str:str,class_limit:int, action: int):
     model_str = os.path.join(output_path, f"Subject{subject}", f"train_data_{class_limit}_classes_cam_{camera}_test_subject{subject}_{feature_str}")
     
     model_fld = os.path.join(model_str, 'weight_models')
