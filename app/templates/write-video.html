@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}Writing Video - Fall Detection{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <h3>Write Video Trial 3</h3>
+        </div>
+    </div>
+    <div class="row" style="margin: 0.5rem;">
+        <div class="col-md-9 text-end">
+            <label for="subject-select-write-video-trial3">Subject: </label>
+            <select id="subject-select-write-video-trial3">
+                {% for i in range(1, 18) %}
+                <option value="{{ i }}">{{ i }}</option>
+                {% endfor %}
+            </select>
+            <label for="feature-select-write-video-trial3">Feature: </label>
+            <select id="feature-select-write-video-trial3">
+                <option value="SHI_FD">SHI_FD</option>
+                <option value="SHI_Yolov8">SHI_Yolov8</option>
+                <option value="DOF">DOF</option>
+                <option value="DOF_SHI_FD">DOF_SHI_FD</option>
+                <option value="DOF_SHI_Yolov8">DOF_SHI_Yolov8</option>
+            </select>
+            <label for="class-limit-select-write-video-trial3">Class Limit: </label>
+            <select id="class-limit-select-write-video-trial3">
+                <option value="2">2</option>
+                <option value="7">7</option>
+                <option value="11">11</option>
+            </select>
+            <label for="camera-select-write-video-trial3">Camera: </label>
+            <select id="camera-select-write-video-trial3">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="1_2">1+2</option>
+            </select>
+        </div>
+        <div class="col-md-3 text-start">
+            <button type="button" class="btn btn-success" id="btn-result-write-video-trial3"
+                style="margin-right: 1.5rem;">Result</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <h3>Write Video LOOCV (Leave One Out Cross Validation)</h3>
+        </div>
+    </div>
+    <div class="row" style="margin: 0.5rem;">
+        <div class="col-md-9 text-end">
+            <label for="feature-select-write-video-loocv">Feature: </label>
+            <select id="feature-select-write-video-loocv">
+                <option value="SHI_FD">SHI_FD</option>
+                <option value="SHI_Yolov8">SHI_Yolov8</option>
+                <option value="DOF">DOF</option>
+                <option value="DOF_SHI_FD">DOF_SHI_FD</option>
+                <option value="DOF_SHI_Yolov8">DOF_SHI_Yolov8</option>
+            </select>
+            <label for="class-limit-select-write-video-loocv">Class Limit: </label>
+            <select id="class-limit-select-write-video-loocv">
+                <option value="2">2</option>
+                <option value="7">7</option>
+                <option value="11">11</option>
+            </select>
+            <label for="subject-select-write-video-loocv">Subject: </label>
+            <select id="subject-select-write-video-loocv">
+                {% for i in range(1, 18) %}
+                <option value="{{ i }}">{{ i }}</option>
+                {% endfor %}
+            </select>
+            <label for="camera-select-write-video-loocv">Camera: </label>
+            <select id="camera-select-write-video-loocv">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="1_2">1+2</option>
+            </select>
+            <label for="trial-select-write-video">Trial: </label>
+            <select id="trial-select-write-video">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+            </select>
+        </div>
+        <div class="col-md-3 text-start">
+            <button type="button" class="btn btn-success" id="btn-result-write-video-loocv"
+                style="margin-right: 1.5rem;">Result</button>
+        </div>
+    </div>
+    <div row="row" class="col-md-12 text-center mt-4">
+        <button type="button" class="btn btn-secondary" id="btn-clear">Clear Results</button>
+    </div>
+    <div id="results-container" class="mt-4" style="display: none;">
+        <h2 id="results-header" class="mb-4">Test Results</h2>
+        <div id="results-content"></div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/write-video.js') }}"></script>
+{% endblock %}

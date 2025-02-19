@@ -21,6 +21,8 @@ from utils.train_classes_test_LOOCV import train as train_loocv
 from utils.test_trial3 import test
 from utils.create_label_datalist_LOOCV import create_data_list_loocv
 from utils.test_LOOCV import test_loocv
+from utils.Test_Trial3_Write_Video import test_by_features as test_trial3_write_video
+from utils.LOOCV_Subject_Write_Video import test_by_features as loocv_subject_write_video
 
 app = Flask(__name__, static_folder='static', template_folder='templates')
 app.config['OUTPUT_FOLDER'] = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'output'))
@@ -79,6 +81,10 @@ def deep_feature_extraction():
 @app.route('/multicam')
 def multicam():
     return render_template('multicam.html', active_page='multicam')
+
+@app.route('/write-video')
+def write_video():
+    return render_template('write-video.html', active_page='write-video')
 
 ### End page routes
 
@@ -983,6 +989,24 @@ def get_test_loocv_result():
     except json.JSONDecodeError:
         print("Invalid JSON in result file.")
         return jsonify({'error': 'Invalid JSON in result file'}), 500
+
+@app.route('/api/write_video', methods=['POST'])
+def api_write_video():
+    data = request.get_json()
+    subject = data.get('subject')
+    camera = data.get('camera')
+    feature = data.get('feature')
+    class_limit = data.get('class_limit')
+    
+    try:
+        if 'loocv' in data:
+            trial = data.get('trial')
+            loocv_subject_write_video(app.config['OUTPUT_FOLDER'], DATASET_PATH, subject, camera, trial, feature, int(class_limit))
+        else:
+            test_trial3_write_video(app.config['OUTPUT_FOLDER'], DATASET_PATH, subject, camera, feature, int(class_limit))
+        return jsonify({'message': 'Video written successfully.'}), 200
+    except Exception as e:
+        return jsonify({'message': f'Error: {str(e)}'}), 500
 
 ##########
 
