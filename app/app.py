@@ -476,7 +476,7 @@ def get_shi_videos():
     
     video_urls = []
     for activity in range(1, 12):
-        video_name = f'SHI_{method}_subject{subject}_camera{camera}_trial{trial}_activity{activity}.mp4'
+        video_name = f'SHI_{method}_subject{subject}_camera{camera}_trial_{trial}_activity_{activity}.mp4'
         video_path = os.path.join(
             app.config['OUTPUT_FOLDER'],
             f'Subject_{subject}',
@@ -1008,6 +1008,78 @@ def api_write_video():
         return jsonify({'message': 'Video written successfully.'}), 200
     except Exception as e:
         return jsonify({'message': f'Error: {str(e)}'}), 500
+
+@app.route('/api/get_video_result', methods=['POST'])
+def get_video_result():
+    data = request.get_json()
+    subject = data.get('subject')
+    camera = data.get('camera')
+    feature = data.get('feature')
+    class_limit = data.get('class_limit')
+    action = data.get('action')
+    loocv = data.get('loocv', False)
+    video_urls = []
+
+    if loocv:
+        trial = data.get('trial')
+        if camera == '1_2':
+            for cam in ['1', '2']:
+                video_path = os.path.join(
+                    app.config['OUTPUT_FOLDER'],
+                    f'Subject_{subject}',
+                    f'Camera_{cam}',
+                    f'Trial_{trial}',
+                    f'Activity_{action}',
+                    f'Camera{camera}_{feature}_Test_LOOCV_Subject{subject}_{class_limit}_Classes_Results.mp4'
+                )
+                print(video_path)
+                if os.path.exists(video_path):
+                    video_url = url_for('output_file', filename=os.path.relpath(video_path, app.config['OUTPUT_FOLDER']).replace('\\', '/'))
+                    video_urls.append(video_url)
+        else:
+            video_path = os.path.join(
+                app.config['OUTPUT_FOLDER'],
+                f'Subject_{subject}',
+                f'Camera_{camera}',
+                f'Trial_{trial}',
+                f'Activity_{action}',
+                f'Camera{camera}_{feature}_Test_LOOCV_Subject{subject}_{class_limit}_Classes_Results.mp4'
+            )
+            if os.path.exists(video_path):
+                video_url = url_for('output_file', filename=os.path.relpath(video_path, app.config['OUTPUT_FOLDER']).replace('\\', '/'))
+                video_urls.append(video_url)
+    else:
+        trial = 3  # Define trial for non-LOOCV case
+        if camera == '1_2':
+            for cam in ['1', '2']:
+                video_path = os.path.join(
+                    app.config['OUTPUT_FOLDER'],
+                    f'Subject_{subject}',
+                    f'Camera_{cam}',
+                    f'Trial_{trial}',
+                    f'Activity_{action}',
+                    f'Camera{cam}_{feature}_Test_Trial3_{class_limit}_Classes_Results.mp4'
+                )
+                if os.path.exists(video_path):
+                    video_url = url_for('output_file', filename=os.path.relpath(video_path, app.config['OUTPUT_FOLDER']).replace('\\', '/'))
+                    video_urls.append(video_url)
+        else:
+            video_path = os.path.join(
+                app.config['OUTPUT_FOLDER'],
+                f'Subject_{subject}',
+                f'Camera_{camera}',
+                f'Trial_{trial}',
+                f'Activity_{action}',
+                f'Camera{camera}_{feature}_Test_Trial3_{class_limit}_Classes_Results.mp4'
+            )
+            if os.path.exists(video_path):
+                video_url = url_for('output_file', filename=os.path.relpath(video_path, app.config['OUTPUT_FOLDER']).replace('\\', '/'))
+                video_urls.append(video_url)
+
+    if video_urls:
+        return jsonify({'videos': video_urls}), 200
+    else:
+        return jsonify({'videos': []}), 404
 
 ##########
 
