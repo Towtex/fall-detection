@@ -95,6 +95,7 @@ def test_by_features(output_path: str, dataset_path: str, subject: int, camera: 
     if camera == '1_2':
         img_fld_1 = os.path.join(dataset_path, subStr, 'Camera1', trialStr, f'{subStr}{actStr}{trialStr}Camera1', 'RGB')
         img_fld_2 = os.path.join(dataset_path, subStr, 'Camera2', trialStr, f'{subStr}{actStr}{trialStr}Camera2', 'RGB')
+        fg_fld_1 = os.path.join(output_path, out_subStr, 'Camera_1', out_trialStr, out_actStr, 'SHI_FD')
         fg_fld_2 = os.path.join(output_path, out_subStr, 'Camera_2', out_trialStr, out_actStr, 'SHI_FD')
         features_fld = os.path.join(output_path, out_subStr, f'CNN_features_sequences_{feature_str}')
         output_fld_1 = os.path.join(output_path, out_subStr, 'Camera_1', out_trialStr, out_actStr, f'{camStr}_{feature_str}_Test_LOOCV_{subStr}_{class_limit}_Classes_Results.mp4')
