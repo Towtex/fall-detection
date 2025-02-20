@@ -1058,7 +1058,7 @@ def get_video_result():
                     f'Camera_{cam}',
                     f'Trial_{trial}',
                     f'Activity_{action}',
-                    f'Camera{cam}_{feature}_Test_Trial3_{class_limit}_Classes_Results.mp4'
+                    f'Camera{camera}_{feature}_Test_Trial3_{class_limit}_Classes_Results.mp4'
                 )
                 if os.path.exists(video_path):
                     video_url = url_for('output_file', filename=os.path.relpath(video_path, app.config['OUTPUT_FOLDER']).replace('\\', '/'))
